@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2fa5e3d6-9b8f-4033-b135-a035cd8e3fac" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/98d0b9e2-48d3-4864-be39-4ffb96c3d61e.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/98d0b9e2-48d3-4864-be39-4ffb96c3d61e.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/base/settings/Settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/base/settings/Settings.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/user/controller/BaseUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/user/controller/BaseUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/log/db_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/log/db_log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/log/log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/log/log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/log/user_log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/log/user_log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/default/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/templates/default/assets/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/default/include/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/templates/default/include/header.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpDebugGeneral" listening_started="true" />
+  <component name="PhpServers">
+    <servers>
+      <server host="my.im.php" id="224ef1ec-b6ac-448f-beee-de0e2f8369f2" name="my.im.php" />
+    </servers>
+  </component>
+  <component name="ProjectId" id="1uaGGXblTJ8xVTMG028eueZxJAX" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="mariadb&#10;sqlserver&#10;mysql" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\openserver\OSPanel\domains\my.im.php\public_html\core\admin\view\js" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2fa5e3d6-9b8f-4033-b135-a035cd8e3fac" name="Default Changelist" comment="" />
+      <created>1624896190603</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1624896190603</updated>
+      <workItem from="1624896191890" duration="772000" />
+      <workItem from="1626278542536" duration="8700000" />
+      <workItem from="1626369864361" duration="4949000" />
+      <workItem from="1626457408551" duration="3474000" />
+      <workItem from="1626621701652" duration="5607000" />
+      <workItem from="1626711626321" duration="5343000" />
+      <workItem from="1626790940852" duration="11608000" />
+      <workItem from="1626867593365" duration="5126000" />
+      <workItem from="1626971305559" duration="4631000" />
+      <workItem from="1627120661197" duration="3502000" />
+      <workItem from="1627211750233" duration="6095000" />
+      <workItem from="1627404824201" duration="3404000" />
+      <workItem from="1627492381025" duration="1305000" />
+      <workItem from="1627575935279" duration="4477000" />
+      <workItem from="1627659639264" duration="8345000" />
+      <workItem from="1627727610367" duration="8720000" />
+      <workItem from="1628010103564" duration="2485000" />
+      <workItem from="1628704848471" duration="125000" />
+      <workItem from="1643563219632" duration="3673000" />
+      <workItem from="1643734624531" duration="4211000" />
+      <workItem from="1643821570076" duration="3191000" />
+      <workItem from="1643906756992" duration="4755000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1643916254416">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1643916254416" />
+    <state width="1877" height="291" key="GridCell.Tab.0.bottom" timestamp="1643919412682">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412682" />
+    <state width="1877" height="291" key="GridCell.Tab.0.center" timestamp="1643919412681">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412681" />
+    <state width="1877" height="291" key="GridCell.Tab.0.left" timestamp="1643919412680">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412680" />
+    <state width="1877" height="291" key="GridCell.Tab.0.right" timestamp="1643919412682">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412682" />
+    <state width="1877" height="291" key="GridCell.Tab.1.bottom" timestamp="1643919412684">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412684" />
+    <state width="1877" height="291" key="GridCell.Tab.1.center" timestamp="1643919412683">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412683" />
+    <state width="1877" height="291" key="GridCell.Tab.1.left" timestamp="1643919412682">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412682" />
+    <state width="1877" height="291" key="GridCell.Tab.1.right" timestamp="1643919412684">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412684" />
+    <state width="1877" height="291" key="GridCell.Tab.2.bottom" timestamp="1643919412684">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412684" />
+    <state width="1877" height="291" key="GridCell.Tab.2.center" timestamp="1643919412684">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412684" />
+    <state width="1877" height="291" key="GridCell.Tab.2.left" timestamp="1643919412684">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412684" />
+    <state width="1877" height="291" key="GridCell.Tab.2.right" timestamp="1643919412684">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="291" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1643919412684" />
+    <state x="699" y="376" width="316" height="260" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1643741499843">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="699" y="376" width="316" height="260" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1/0.0.1920.1040@0.0.1920.1040" timestamp="1643741499843" />
+    <state x="756" y="330" width="408" height="376" key="com.intellij.database.psi.DbRenamePsiElementProcessor.DbRenameDialog" timestamp="1643827036038">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="756" y="330" width="408" height="376" key="com.intellij.database.psi.DbRenamePsiElementProcessor.DbRenameDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1643827036038" />
+    <state x="614" y="248" width="842" height="703" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog" timestamp="1643915974656">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="614" y="248" width="842" height="703" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1643915974656" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/core/admin/model/Model.php</url>
+          <line>182</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
