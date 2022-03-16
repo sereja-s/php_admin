@@ -1,12 +1,14 @@
 <?php
 
+// условие: если константа безопасности VG_ACCESS установлена (т.е. вернёт true), то код ниже условия выполнится, иначе вернёт (покажет): Access denied (доступ запрещён)
 defined('VG_ACCESS') or die('Access denied');
 
-const SITE_URL = 'https://kraft.net.ua/';
-const PATH = '/';
+// определим константы
+const SITE_URL = 'http://web-im.my';  // константа хранит полный путь к сайту
+const PATH = '/';  // константа хранит корень пути нашего сайта (по умолчанию)
 
-const HOST = 'localhost';
-const USER = 'root';
-const PASS = '';
-const DB_NAME = 'im';
-
+// константы подключения к базе данных
+const HOST = 'localhost';  // адрес (здесь это- это специальный частный адрес, с помощью которого компьютер ссылается на себя)
+const USER = 'root';  // имя пользователя
+const PASS = '';  // пароль к базе данных
+const DB_NAME = 'web-im';  // название базы данных

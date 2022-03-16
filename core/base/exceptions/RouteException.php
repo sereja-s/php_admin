@@ -4,29 +4,28 @@ namespace core\base\exceptions;
 
 use core\base\controller\BaseMethods;
 
-class RouteException extends \Exception  {
+// создаём класс обработки исключений, который наследует базовый класс Exception обработки исключений языка PHP
+// (знак \ говорит, что искать базовый класс Exception необходимо в глобальном пространстве имён)
+class RouteException extends \Exception
+{
 
-    protected $messages;
+	protected $messages;
 
-    use BaseMethods;
+	use BaseMethods;
 
-    public function __construct($message = "", $code = 0)
-    {
-        parent::__construct($message, $code);
+	public function __construct($message = "", $code = 0)
+	{
+		parent::__construct($message, $code);
 
-        $this->messages = include 'messages.php';
+		$this->messages = include 'messages.php';
 
-        $error = $this->getMessage() ? $this->getMessage() : $this->messages($this->getCode());
+		$error = $this->getMessage() ? $this->getMessage() : $this->messages($this->getCode());
 
-        $error .= "\r\n" . 'file ' . $this->getFile() . "\r\n" . 'In line ' . $this->getLine() . "\r\n";
+		$error .= "\r\n" . 'file ' . $this->getFile() . "\r\n" . 'In line ' . $this->getLine() . "\r\n";
 
-//      if($this->messages[$this->getCode()]) {
-//            $this->message = $this->messages[$this->getCode()];
-//        }
-        $this->writeLog($error);
-
-    }
-
+		//      if($this->messages[$this->getCode()]) {
+		//            $this->message = $this->messages[$this->getCode()];
+		//        }
+		$this->writeLog($error);
+	}
 }
-
-?>

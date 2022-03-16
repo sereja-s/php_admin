@@ -1148,3 +1148,371 @@ Fault: 11-03-2022 21:36:59 - Ошибка подключение к базе д�
 file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
 In line 50
 
+Fault: 12-03-2022 18:37:26 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 18:39:25 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 18:40:03 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 18:48:25 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 18:49:01 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:14:25 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:14:29 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:14:32 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:18:53 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:18:57 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:19:54 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:19:56 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:20:00 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:21:30 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:21:37 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:21:41 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:34:05 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:34:08 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:34:11 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:40:48 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:40:55 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 19:56:53 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:11:38 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:11:45 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:11:53 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:15:53 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:16:21 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:16:30 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:16:32 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:16:37 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:02 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:03 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:04 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:07 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:08 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:12 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:14 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:15 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:29 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:22:34 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:24:50 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:33:53 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:33:58 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 12-03-2022 20:34:00 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:05 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:07 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:11 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:13 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:15 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:22 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:25 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:27 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:08:48 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:09:06 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:09:08 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:09:25 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:10:46 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:11:22 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:12:41 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:13:56 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:14:01 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:15:04 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:15:20 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:26:23 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:26:33 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 11:29:58 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 12:07:10 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 12:07:49 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 12:07:53 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 12:31:57 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 12:32:00 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 12:47:32 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:31:08 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:31:13 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:31:14 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:31:16 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:31:18 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:33:29 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:33:32 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:33:34 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:33:37 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:33:39 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:33:43 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:35:35 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 16:35:42 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 17:07:21 - Ошибка подключение к базе данных: 1045 Access denied for user 'root'@'localhost' (using password: NO)
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 13-03-2022 20:56:02 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 15-03-2022 21:22:35 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 15-03-2022 21:26:12 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 16-03-2022 20:37:15 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 16-03-2022 20:37:31 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 16-03-2022 20:37:35 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+

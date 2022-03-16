@@ -1,0 +1,21 @@
+В файле .htaccess опишем директивы, которые надо выполнить серверу Apache:
+---------------------------------------------------------------------------
+
+RewriteEngine on  // в Apache включили модуль mod rewrite (перенаправит все запросы на единую точку входа (файл index.php))
+
+php_value upload_max_filesize 100M
+
+// Укажем условия:
+// если то, что запросил пользователь не является:
+RewriteCond %{REQUEST_FILENAME} !-f  //  файлом, необходимо выполнить правило (указанное ниже)
+RewriteCond %{REQUEST_FILENAME} !-d  // директорией (папкой),  необходимо выполнить правило (указанное ниже)
+RewriteCond %{REQUEST_FILENAME} !favicon.icon
+
+RewriteCond %{REQUEST_URI} !^.*\.(jpg|css|js|gif|png)$ [NC]
+
+// Укажем правила:
+RewriteRule ^(.*) index.php [L]  // перенаправить пользователя на файл index.php, лежащий в корне нашего сайта
+
+php_flag magic_quotes_qpc off  // отключить экранирование кавычек (будем обрабатывать зти данные внутри кода сами)
+AddDefaultCharset utf-8  // установили кодировку по умолчанию
+DirectoryIndex index.php  // сервер будет искать только этот файл (а index.html и др.файлы с названием index - нет)
