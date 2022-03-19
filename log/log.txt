@@ -13826,3 +13826,11 @@ Fault: 19-03-2022 19:53:08 - Class core\user\controller\Favicon.icoController do
 file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
 In line 49
 
+Fault: 19-03-2022 19:56:47 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 49
+
+Fault: 19-03-2022 19:57:07 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 49
+
