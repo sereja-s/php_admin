@@ -2,28 +2,39 @@
 
 namespace core\base\controller;
 
+// ШАБЛОН ПРОЕКТИРОВАНИЯ Singleton
+// (при создании любого количества объектов класса, использующего этот шаблон, это будет один и тот же объкт класса, который хранится в статическом свойстве $_instance данного класса) Шаблон не допустит дублирование объектов, например чтобы избежать увеличения нагрузки и утечек памяти
+
 trait Singleton
 {
-    static private $_instance;
+	static private $_instance; // ссылка  на объект класса, который хранится в данном свойстве
 
-    private function __construct() {
+	private function __construct()
+	{
+	}
 
-    }
+	private function __clone()
+	{
+	}
 
-    private function __clone() {
+	static public function instance()
+	{
+		// в статическом контексте, конструкция $this не доступна (т.к. она является ссылкой на объект класса, а объкта класса здесь не существует Мы просто ипользуем метод класса, не создавая объект) Здесь используется конструкция (ключевое слово) self которая,означает ,что мы ссылаемся на наш собственный класс)
 
-    }
+		// сделаем проверку выполнения условия:
+		// проверяем хранится ли в свойстве нашего класса self::$_instance (такую проверку осуществляет конструкция instanceof), объект self нашего класса в котором мы работаем
+		if (self::$_instance instanceof self) {
+			// если да, то мы вернём это свойство 
+			return self::$_instance;
+		}
 
-    static public function instance() {
-        if(self::$_instance instanceof self) {
-            return self::$_instance;
-        }
+		// если объекта нет, то вернём это свойство в которое будет записан (сохранён) не объект нашего класса, а ссылка на объект (т.е.самого себя)
+		self::$_instance = new self;
 
-        self::$_instance = new self;
+		if (method_exists(self::$_instance, 'connect')) {
+			self::$_instance->connect();
+		}
 
-        if(method_exists(self::$_instance, 'connect')) { self::$_instance->connect(); }
-
-        return self::$_instance;
-    }
-
+		return self::$_instance;
+	}
 }

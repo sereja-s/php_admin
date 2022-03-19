@@ -2,21 +2,20 @@
 
 namespace core\base\settings;
 
+// класс настроек плагинов
 class ShopSettings
 {
-    use BaseSettings;
+	use BaseSettings;
 
-    private $routes = [
-        'plugins' => [
-            'dir' => false,
-            'routes' => [
+	private $routes = [
+		'plugins' => [
+			'dir' => false,
+			'routes' => []
+		]
+	];
 
-            ]
-        ]
-    ];
-
-    private $templateArr = [
-        'text' => ['price', 'short', 'name'],
-        'textarea' => ['goods_content']
-    ];
+	private $templateArr = [
+		'text' => ['price', 'short', 'name'],
+		'textarea' => ['goods_content']
+	];
 }
