@@ -13834,3 +13834,35 @@ Fault: 19-03-2022 19:57:07 - Class core\user\controller\Favicon.icoController do
 file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
 In line 49
 
+Fault: 20-03-2022 11:44:47 - Не верное имя файла для подключения: core/user/controller/PhoneController
+file D:\OpenServer\domains\web-im.my\public_html\core\base\settings\internal_settings.php
+In line 88
+
+Fault: 20-03-2022 11:44:48 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 50
+
+Fault: 20-03-2022 11:44:58 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 50
+
+Fault: 20-03-2022 12:01:34 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 50
+
+Fault: 20-03-2022 12:28:01 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 50
+
+Fault: 20-03-2022 13:31:41 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 50
+
+Fault: 20-03-2022 14:37:36 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 50
+
+Fault: 20-03-2022 19:52:48 - Class core\user\controller\Favicon.icoController does not exist
+file D:\OpenServer\domains\web-im.my\public_html\core\base\controller\BaseController.php
+In line 50
+

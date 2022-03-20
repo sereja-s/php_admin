@@ -25,11 +25,13 @@ trait BaseSettings
 			return self::$_instance;
 		}
 
-		// обратимся к методу этого класса SingletonInstance() затем к свойству baseSettings объекта класса и сохраним в нём ссылку на объект класса Settings вызвав его метод instance()
+		// обратимся к методу этого класса SingletonInstance() затем к свойству baseSettings объекта класса 
+		// и сохраним в нём ссылку на объект класса Settings вызвав его метод instance()
 		self::SingletonInstance()->baseSettings = Settings::instance();
 
-		// определим (создадим) переменную $baseProperties в которую сохраним результат работы функции, которая будет клеять свойства: clueProperties(get_class()-в параметры передаём имя текущего класса); к которой мы обратились используя статическое свойство $_instance и затем свойство baseSettings (в котором хранится объект нашего класса)
-		// функция (метод) clueProperties() описана в файле Settings.php
+		// определим (создадим) переменную $baseProperties в которую сохраним результат работы функции,
+		// которая будет клеять свойства: clueProperties(get_class()-в параметры передаём имя текущего класса); к которой мы обратились // используя статическое свойство $_instance и затем свойство baseSettings (в котором хранится объект нашего класса)
+		// (функция (метод) clueProperties() описана в файле Settings.php)
 		$baseProperties = self::$_instance->baseSettings->clueProperties(get_class());
 		// у нашего свойства self::$_instance мы должны вызвать метод setProperties() и передать туда $baseProperties
 		self::$_instance->setProperties($baseProperties);
@@ -38,7 +40,8 @@ trait BaseSettings
 		return self::$_instance;
 	}
 
-	// создадим метод чтобы получить доступ к необходимым свойствам (запишет нам то что пришло в массив $baseProperties ) и создать их внутри объекта нашего класса
+	// создадим метод чтобы получить доступ к необходимым свойствам (запишет нам то что пришло в массив $baseProperties ) 
+	// и создать их внутри объекта нашего класса
 	// на вход приходит массив свойств
 	protected function setProperties($properties)
 	{

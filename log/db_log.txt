@@ -1604,3 +1604,27 @@ Fault: 19-03-2022 19:57:05 - Ошибка подключение к базе д�
 file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
 In line 50
 
+Fault: 20-03-2022 11:44:58 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 20-03-2022 12:01:33 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 20-03-2022 12:27:59 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 20-03-2022 13:31:38 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 20-03-2022 14:37:34 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
+Fault: 20-03-2022 19:52:47 - Ошибка подключение к базе данных: 1049 Unknown database 'web-im'
+file D:\OpenServer\domains\web-im.my\public_html\core\base\model\BaseModel.php
+In line 50
+
