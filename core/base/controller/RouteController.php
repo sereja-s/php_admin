@@ -70,8 +70,18 @@ class RouteController extends BaseController
 			// если запрос в админку
 			if ($url[0] && $url[0] === $this->routes['admin']['alias']) {
 
+				// функция php: array_shift() Извлекает первое значение массива array и возвращает его, 
+				// сокращая размер (здесь- $url) на один элемент
 				array_shift($url);
 
+
+				// Проверим: не лежит ли в нулевом элементе массива (адресной строки) обращение к плагину
+				// и существует ли директория (папка) для плагина (функция php: is_dir())
+
+				// на вход ф-ии is_dir() подаётся полный путь к директории (здесь- DOCUMENT_ROOT- ячейка суперглобального массива $_SERVER и является корневой папкой проекта)
+				// далее обращаемся к константе PATH (корень нашего сайта) 
+				// далее указываем путь к директории в которой лежат плагины: $this->routes['plugins']['path']
+				// далее надо узнать: есть ли директория с плагином $url[0] (конкатенируем имя плагина т.е. $url[0])
 				if ($url[0] && is_dir($_SERVER['DOCUMENT_ROOT'] . PATH . $this->routes['plugins']['path'] . $url[0])) {
 					$plugin = array_shift($url);
 					$pluginSettings = $this->routes['settings']['path'] . ucfirst($plugin . 'Settings');
@@ -89,8 +99,14 @@ class RouteController extends BaseController
 					$hrUrl = $this->routes['plugins']['hrUrl'];
 					$route = 'plugins';
 				} else {
+					// если к плагину обращения не было, значит мы попали в административную панель, то
+					// в свойство $this->controller запишем путь к папке контроллеров административной панели
 					$this->controller = $this->routes['admin']['path'];
+
+					// проверим работаем ли мы с ЧПУ или нет
 					$hrUrl = $this->routes['admin']['hrUrl'];
+
+					// сформируем ячейку маршрута, чтобы мы могли работать с массивом настроек для админки
 					$route = 'admin';
 				}
 			} else {
