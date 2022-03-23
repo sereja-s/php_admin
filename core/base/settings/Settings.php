@@ -38,7 +38,9 @@ class Settings
 		'user' => [
 			'path' => 'core/user/controller/',
 			'hrUrl' => true, // для пользовательской части включили человеко-понятные адреса ссылок
-			'routes' => []
+			'routes' => [
+				'catalog' => 'site/hello/by'
+			]
 		],
 		// для раздела по умолчанию
 		'default' => [
