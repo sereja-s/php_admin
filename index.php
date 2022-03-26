@@ -25,7 +25,8 @@ try {
 	// условие: в скобках, в $e должен прийти объект класса RouteException (т.е. $e -объект класса RouteException)
 } catch (RouteException $e) {
 	// тогда выполнится код внутри блока catch
-	// метод getMessage() находится в родительском классе Exception и получает сообзение об ошибке, которое было выброшено через throw (здесь- в файле internal_settings.php)
+	// метод getMessage() находится в родительском классе Exception и получает сообзение об ошибке,
+	// которое было выброшено через throw (здесь- в файле internal_settings.php)
 	exit($e->getMessage());
 	// перехватываем исключение класса DbException
 } catch (DbException $e) {
