@@ -21,6 +21,8 @@ trait BaseSettings
 
 	static public function instance()
 	{
+
+		// instanceof используется для определения того, является ли переменная PHP экземпляром объекта определенного класса
 		if (self::$_instance instanceof self) {
 			return self::$_instance;
 		}
