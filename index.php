@@ -22,6 +22,8 @@ use core\base\exceptions\DbException;
 try {
 	// вызовем статический метод routeDirection() у класса BaseRoute (что бы им пользоваться, не нужно создавать объект класса При этом мы работаем внутри класса)
 	BaseRoute::routeDirection();
+
+	// перехватываем исключение класса RouteException
 	// условие: в скобках, в $e должен прийти объект класса RouteException (т.е. $e -объект класса RouteException)
 } catch (RouteException $e) {
 	// тогда выполнится код внутри блока catch

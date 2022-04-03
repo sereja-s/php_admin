@@ -41,357 +41,392 @@ use core\base\model\BaseModelMethods;
 
 abstract class BaseModel extends BaseModelMethods
 {
-    protected $db;
-
-    protected function connect() {
-        $this->db = @new \mysqli(HOST, USER, PASS, DB_NAME);
+	protected $db;
+
+	protected function connect()
+	{
+
+		//	ИНИЦИАЛИЗАЦИЯ ПОДКЛЮЧЕНИЯ ПРИ ПОМОЩИ ПОДКЛЮЧЕНИЯ БИБЛИОТЕКИ mysqli
+		// обращаемся к свойству db этого класса и в него сохраняем объект подключения библиотеки mysqli (установим заглушку текущих ошибок- @)
+		// класс mysqli (находится в глобальном пространстве имён) на вход принимает: которые хранятся в константах: 
+		// HOST (имя хоста), USER (имя пользователя), PASS (пароль), DB_NAME (имя базы данных)
+		$this->db = @new \mysqli(HOST, USER, PASS, DB_NAME);
+
+		// проверка:если у объекта класса mysqli ($this->db) в его свойстве connect_error (хранит в себе текст ошибки подключения) что то есть 
+		if ($this->db->connect_error) {
+			// то выбросим (сгенерируем исключение) текст, указание кода ошибки (при подключении) в свойстве connect_errno и сообщение об ошибке (при подключении) в свойстве connect_error
+			throw new DbException('Ошибка подключения к базе данных: '
+				. $this->db->connect_errno . ' ' . $this->db->connect_error);
+		}
+
+		// если соединение с БД удалось, установим кодировку соединения (испольуем метод библиотеки mysqli (query()), 
+		// которому на вход подаётся запрос на устаноку соединения(SET NAMES UTF8))
+		$this->db->query("SET NAMES UTF8");
+	}
+
+	/**
+	 * @param $query
+	 * @param string $crud = r - SELECT / c - INSERT / u - UPDATE / d - DELETE
+	 * @param false $return_id
+	 * @return array|bool|mixed
+	 * @throws DbException
+	 */
+
+	// Создадим метод query() с одноимённым названием (как и метод в классе (библиотеке) mysqli, использованный ранее)
+	// сделаем его финальным (не дадим возможности переопределять его в дочерних классах)
+	// на вход передадим: переменную с запросом ($query), метод которым будем этот запрос осуществлять (переменная $crud со значением по умолчанию: r (read- чтение)), идентификатор вставки $return_id со значением false
+	final public function query($query, $crud = 'r', $return_id = false)
+	{
+		//Сделаем запрос к базе данных:
+		// в переменную $result сохраним результат работы метода query() класса mysqli, обратившись к нему через объект этого 
+		// класса, который хранится в свойстве $this->db (на вход подаётся переменная $query)
+		//Т.е. в переменную $result приходит объект, содержащий в себе выборку из базы данных
+		$result = $this->db->query($query);
+
+		// обработаем запрос
+		// проерка: если у объекта класса mysqli, который хранится в свойстве $this->db, в свойстве affected_rows (эффективные 
+		// ряды затронутые выборкой) хранится значение -1
+		if ($this->db->affected_rows === -1) {
+			// то БД вернёт нам ошибку (выбросит исключение): текст, сам запрос, код ошибки (в запросе) в св-ве  errno объекта
+			// $this->db, сообщение об ошибке (в запросе) в св-ве error объекта $this->db
+			throw new DbException('Ошибка в SQL запросе: '
+				. $query . ' - ' . $this->db->errno . ' ' . $this->db->error);
+		}
+
+		// при помощи оператора множественного выбора switch проверим что находится в переменной $crud (проверяется равенство указанного на входе значения (здесь- $crud), значениям в каждом кейсе) 
+		// каждый следующий кейс проверяется, если не выполнен(не было равенства) предыдущий
+		switch ($crud) {
+				// проверим кейс: r (чтение)
+			case 'r':
+				// если в св-во num_rows нашего объекта $result (содержащего в себе выборку из базы данных) что то пришло из БД
+				if ($result->num_rows) {
+
+					// то в переменной $res объявляем массив
+					$res = [];
+					// проходимся в цикле for по данному массиву
+					for ($i = 0; $i < $result->num_rows; $i++) {
+
+						// массив $res[] заполняем тем, что вытащит метод fetch_assoc() объекта $result (т.е. в понимаемом виде вернёт
+						// массив каждого ряда выбоорки, который хранился в объекте $result)
+						$res[] = $result->fetch_assoc();
+					}
+					return $res;
+				}
+				return false;
+				break;
+
+				// проверим кейс: с (создание)
+			case 'c':
+				// если переменная $return_id = true
+				if ($return_id) {
+					return $this->db->insert_id;
+				}
+				return true;
+				break;
+				// во всех остальных случаях, выполнится код по умолчанию
+			default:
+				return true;
+				break;
+		}
+	}
+
+	/**
+	 * @param $table
+	 * @param array $set
+	 */
+
+	final public function get($table, $set = [])
+	{
+
+		$fields = $this->createFields($set, $table);
+
+		$order = $this->createOrder($set, $table);
+
+		$where = $this->createWhere($set, $table);
 
-        if($this->db->connect_error) {
-            throw new DbException('Ошибка подключение к базе данных: '
-                . $this->db->connect_errno . ' ' . $this->db->connect_error);
-        }
+		if (!$where) {
+			$new_where = true;
+		} else {
+			$new_where = false;
+		}
 
-        $this->db->query("SET NAMES UTF8");
-    }
+		$join_arr = $this->createJoin($set, $table, $new_where);
 
-    /**
-     * @param $query
-     * @param string $crud = r - SELECT / c - INSERT / u - UPDATE / d - DELETE
-     * @param false $return_id
-     * @return array|bool|mixed
-     * @throws DbException
-     */
+		$fields .= $join_arr['fields'];
+		$join = $join_arr['join'];
+		$where .= $join_arr['where'];
 
-    final public function query($query, $crud = 'r', $return_id = false) {
+		$fields = rtrim($fields, ',');
 
-        $result = $this->db->query($query);
+		$limit = $set['limit'] ? 'LIMIT ' . $set['limit'] : '';
 
-        if($this->db->affected_rows === -1) {
-            throw new DbException('Ошибка в SQL запросе: '
-                . $query . ' - ' . $this->db->errno . ' ' . $this->db->error);
-        }
+		$query = "SELECT $fields FROM $table $join $where $order $limit";
 
-        switch ($crud) {
-            case 'r':
-                if($result->num_rows) {
-                    $res = [];
-                    for($i = 0; $i < $result->num_rows; $i++) {
-                        $res[] = $result->fetch_assoc();
-                    }
-                    return $res;
-                }
-                return false;
-                break;
+		if (!empty($set['return_query'])) {
+			return $query;
+		}
 
-            case 'c':
-                if($return_id) {
-                    return $this->db->insert_id;
-                }
-                return true;
-                break;
-            default:
-                return true;
-                break;
-        }
-    }
+		$res = $this->query($query);
 
-    /**
-     * @param $table
-     * @param array $set
-     */
+		if (isset($set['join_structure']) && $set['join_structure'] && $res) {
+			$res = $this->joinStructure($res, $table);
+		}
 
-    final public function get($table, $set = []) {
+		return $res;
+	}
 
-        $fields = $this->createFields($set, $table);
+	final public function add($table, $set = [])
+	{
+		$set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : $_POST;
+		$set['files'] = (is_array($set['files']) && !empty($set['files'])) ? $set['files'] : false;
 
-        $order = $this->createOrder($set, $table);
+		if (!$set['fields'] && !$set['files']) {
+			return false;
+		}
 
-        $where = $this->createWhere($set, $table);
+		$set['return_id'] = $set['return_id'] ? true : false;
+		$set['except'] = (is_array($set['except']) && !empty($set['except'])) ? $set['except'] : false;
 
-        if(!$where) {
-            $new_where = true;
-        } else {
-            $new_where = false;
-        }
+		$insert_arr = $this->createInsert($set['fields'], $set['files'], $set['except']);
 
-        $join_arr = $this->createJoin($set, $table, $new_where);
+		$query = "INSERT INTO $table {$insert_arr['fields']} VALUES {$insert_arr['values']}";
 
-        $fields .= $join_arr['fields'];
-        $join = $join_arr['join'];
-        $where .= $join_arr['where'];
+		return $this->query($query, 'c', $set['return_id']);
+	}
 
-        $fields = rtrim($fields, ',');
+	final public function edit($table, $set = [])
+	{
+		$set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : $_POST;
+		$set['files'] = (is_array($set['files']) && !empty($set['files'])) ? $set['files'] : false;
 
-        $limit = $set['limit'] ? 'LIMIT ' . $set['limit'] : '';
+		if (!$set['fields'] && !$set['files']) {
+			return false;
+		}
 
-        $query = "SELECT $fields FROM $table $join $where $order $limit";
+		$set['except'] = (is_array($set['except']) && !empty($set['except'])) ? $set['except'] : false;
 
-        if(!empty($set['return_query'])) {
-            return $query;
-        }
+		if (!$set['all_rows']) {
+			if ($set['where']) {
+				$where = $this->createWhere($set);
+			} else {
+				$columns = $this->showColumns($table);
 
-        $res = $this->query($query);
+				if (!$columns) {
+					return false;
+				}
 
-        if(isset($set['join_structure']) && $set['join_structure'] && $res) {
-            $res = $this->joinStructure($res, $table);
-        }
+				if ($columns['id_row'] && $set['fields'][$columns['id_row']]) {
+					$where = 'WHERE ' . $columns['id_row'] . '=' . $set['fields'][$columns['id_row']];
+					unset($set['fields'][$columns['id_row']]);
+				}
+			}
+		}
 
-        return $res;
-    }
+		$update = $this->createUpdate($set['fields'], $set['files'], $set['except']);
 
-    final public function add($table, $set = []) {
-        $set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : $_POST;
-        $set['files'] = (is_array($set['files']) && !empty($set['files'])) ? $set['files'] : false;
+		$query = "UPDATE $table SET $update $where";
 
-        if(!$set['fields'] && !$set['files']) {
-            return false;
-        }
+		return $this->query($query, 'u');
+	}
 
-        $set['return_id'] = $set['return_id'] ? true : false;
-        $set['except'] = (is_array($set['except']) && !empty($set['except'])) ? $set['except'] : false;
+	public function delete($table, $set = [])
+	{
+		$table = trim($table);
+		$where = $this->createWhere($set, $table);
 
-        $insert_arr = $this->createInsert($set['fields'], $set['files'], $set['except']);
+		$columns = $this->showColumns($table);
 
-        $query = "INSERT INTO $table {$insert_arr['fields']} VALUES {$insert_arr['values']}";
+		if (!$columns) {
+			return false;
+		}
 
-        return $this->query($query, 'c', $set['return_id']);
+		if (is_array($set['fields']) && !empty($set['fields'])) {
+			if ($columns['id_row']) {
+				$key = array_search($columns['id_row'], $set['fields']);
 
-    }
+				if ($key !== false) {
+					unset($set['fields'][$key]);
+				}
+			}
 
-    final public function edit($table, $set = []) {
-        $set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : $_POST;
-        $set['files'] = (is_array($set['files']) && !empty($set['files'])) ? $set['files'] : false;
+			$fields = [];
 
-        if(!$set['fields'] && !$set['files']) {
-            return false;
-        }
+			foreach ($set['fields'] as $field) {
+				$fields[$field] = $columns[$field]['Default'];
+			}
 
-        $set['except'] = (is_array($set['except']) && !empty($set['except'])) ? $set['except'] : false;
+			$update = $this->createUpdate($fields, false, false);
 
-        if(!$set['all_rows']) {
-            if($set['where']) {
-                $where = $this->createWhere($set);
-            } else {
-                $columns = $this->showColumns($table);
+			$query = "UPDATE $table SET $update $where";
+		} else {
+			$join_arr = $this->createJoin($set, $table);
+			$join = $join_arr['join'];
+			$join_tables = $join_arr['tables'];
 
-                if(!$columns) { return false; }
+			$query = 'DELETE ' . $table . $join_tables . ' FROM ' . $table . ' ' . $join . ' ' . $where;
+		}
 
-                if($columns['id_row'] && $set['fields'][$columns['id_row']]) {
-                    $where = 'WHERE ' . $columns['id_row'] . '=' . $set['fields'][$columns['id_row']];
-                    unset($set['fields'][$columns['id_row']]);
-                }
-            }
-        }
+		return $this->query($query, 'u');
+	}
 
-        $update = $this->createUpdate($set['fields'], $set['files'], $set['except']);
+	public function buildUnion($table, $set)
+	{
+		if (array_key_exists('fields', $set) && $set['fields'] === null) {
+			return $this;
+		}
 
-        $query = "UPDATE $table SET $update $where";
+		if (!array_key_exists('fields', $set) || empty($set['fields'])) {
+			$set['fields'] = [];
 
-        return $this->query($query, 'u');
-    }
+			$columns = $this->showColumns($table);
 
-    public function delete($table, $set = []) {
-        $table = trim($table);
-        $where = $this->createWhere($set, $table);
+			unset($columns['id_row'], $columns['multi_id_row']);
 
-        $columns = $this->showColumns($table);
+			foreach ($columns as $row => $item) {
+				$set['fields'][] = $row;
+			}
+		}
 
-        if(!$columns) {
-            return false;
-        }
+		$this->union[$table] = $set;
+		$this->union[$table]['return_query'] = true;
+		return $this;
+	}
 
-        if(is_array($set['fields']) && !empty($set['fields'])) {
-            if($columns['id_row']) {
-                $key = array_search($columns['id_row'], $set['fields']);
+	public function getUnion($set = [])
+	{
+		if (!$this->union) {
+			return false;
+		}
 
-                if($key !== false) {
-                    unset($set['fields'][$key]);
-                }
-            }
+		$unionType = ' UNION ' . (!empty($set['type']) ? strtoupper($set['type']) . ' ' : '');
 
-            $fields = [];
+		$maxCount = 0;
+		$maxTableCount = '';
 
-            foreach ($set['fields'] as $field) {
-                $fields[$field] = $columns[$field]['Default'];
-            }
+		foreach ($this->union as $key => $item) {
+			$count = count($item['fields']);
+			$joinFields = '';
 
-            $update = $this->createUpdate($fields, false, false);
+			if (!empty($item['join'])) {
+				foreach ($item['join'] as $table => $data) {
+					if (array_key_exists('fields', $data) && $data['fields']) {
+						$count += count($data['fields']);
+						$joinFields = $table;
+					} elseif (!array_key_exists('fields', $data) || (!$joinFields['data'] || $data['fields'] === null)) {
+						$columns = $this->showColumns($table);
+						unset($columns['id_row'], $columns['multi_id_row']);
 
-            $query = "UPDATE $table SET $update $where";
-        } else {
-            $join_arr = $this->createJoin($set, $table);
-            $join = $join_arr['join'];
-            $join_tables = $join_arr['tables'];
+						$count += count($columns);
 
-            $query = 'DELETE ' . $table . $join_tables . ' FROM ' . $table . ' ' . $join . ' ' . $where;
+						foreach ($columns as $field => $value) {
+							$this->union[$key]['join'][$table]['fields'][] = $field;
+						}
 
-        }
+						$joinFields = $table;
+					}
+				}
+			} else {
+				$this->union[$key]['no_concat'] = true;
+			}
 
-        return $this->query($query, 'u');
-    }
+			if ($count > $maxCount || ($count === $maxCount && $joinFields)) {
+				$maxCount = $count;
+				$maxTableCount = $key;
+			}
 
-    public function buildUnion($table, $set) {
-        if(array_key_exists('fields', $set) && $set['fields'] === null) {
-            return $this;
-        }
+			$this->union[$key]['lastJoinTable'] = $joinFields;
+			$this->union[$key]['countFields'] = $count;
+		}
 
-        if(!array_key_exists('fields', $set) || empty($set['fields'])) {
-            $set['fields'] = [];
+		$query = '';
 
-            $columns = $this->showColumns($table);
+		if ($maxCount && $maxTableCount) {
+			$query .= '(' . $this->get($maxTableCount, $this->union[$maxTableCount]) . ')';
+			unset($this->union[$maxTableCount]);
+		}
 
-            unset($columns['id_row'], $columns['multi_id_row']);
+		foreach ($this->union as $key => $item) {
+			if (isset($item['countFields']) && $item['countFields'] < $maxCount) {
+				for ($i = 0; $i < $maxCount - $item['countFields']; $i++) {
+					if ($item['lastJoinTable']) {
+						$item['join'][$item['lastJoinTable']]['fields'][] = null;
+					} else {
+						$item['fields'][] = null;
+					}
+				}
+			}
 
-            foreach ($columns as $row => $item) {
-                $set['fields'][] = $row;
-            }
-        }
+			$query && $query .= $unionType;
+			$query .= '(' . $this->get($key, $item) . ')';
+		}
 
-        $this->union[$table] = $set;
-        $this->union[$table]['return_query'] = true;
-        return $this;
-    }
+		$order = $this->createOrder($set);
 
-    public function getUnion($set = []) {
-        if(!$this->union) {
-            return false;
-        }
+		$limit = !empty($set['limit']) ? 'LIMIT ' . $set['limit'] : '';
 
-        $unionType = ' UNION ' . (!empty($set['type']) ? strtoupper($set['type']) . ' ' : '');
+		if (method_exists($this, 'createPagination')) {
+			$this->createPagination($set, "($query)", $limit);
+		}
 
-        $maxCount = 0;
-        $maxTableCount = '';
+		$query .= " $order $limit";
 
-        foreach ($this->union as $key => $item) {
-            $count = count($item['fields']);
-            $joinFields = '';
+		$this->union = [];
 
-            if(!empty($item['join'])) {
-                foreach ($item['join'] as $table => $data) {
-                    if(array_key_exists('fields', $data) && $data['fields']) {
-                        $count += count($data['fields']);
-                        $joinFields = $table;
-                    }elseif (!array_key_exists('fields', $data) || (!$joinFields['data'] || $data['fields'] === null)){
-                        $columns = $this->showColumns($table);
-                        unset($columns['id_row'], $columns['multi_id_row']);
+		return $this->query(trim($query));
+	}
 
-                        $count += count($columns);
+	final public function showColumns($table)
+	{
+		if (!isset($this->tableRows[$table]) || !$this->tableRows[$table]) {
+			$checkTable = $this->createTableAlias($table);
 
-                        foreach ($columns as $field => $value) {
-                            $this->union[$key]['join'][$table]['fields'][] = $field;
-                        }
+			if ($this->tableRows[$checkTable['table']]) {
+				return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
+			}
 
-                        $joinFields = $table;
-                    }
-                }
-            }else{
-                $this->union[$key]['no_concat'] = true;
-            }
+			$query = "SHOW COLUMNS FROM {$checkTable['table']}";
+			$res = $this->query($query);
 
-            if($count > $maxCount || ($count === $maxCount && $joinFields)) {
-                $maxCount = $count;
-                $maxTableCount = $key;
-            }
+			$this->tableRows[$checkTable['table']] = [];
 
-            $this->union[$key]['lastJoinTable'] = $joinFields;
-            $this->union[$key]['countFields'] = $count;
-        }
+			if ($res) {
+				foreach ($res as $row) {
+					$this->tableRows[$checkTable['table']][$row['Field']] = $row;
+					if ($row['Key'] === 'PRI') {
+						if (!isset($this->tableRows[$checkTable['table']]['id_row'])) {
+							$this->tableRows[$checkTable['table']]['id_row'] = $row['Field'];
+						} else {
+							if (!isset($this->tableRows[$checkTable['table']]['multi_id_row'])) {
+								$this->tableRows[$checkTable['table']]['multi_id_row'][] = $this->tableRows[$checkTable['table']]['id_row'];
+								$this->tableRows[$checkTable['table']]['multi_id_row'][] = $row['Field'];
+							}
+						}
+					}
+				}
+			}
+		}
 
-        $query = '';
+		if (isset($checkTable) && $checkTable['table'] !== $checkTable['alias']) {
+			return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
+		}
 
-        if($maxCount && $maxTableCount) {
-            $query .= '(' . $this->get($maxTableCount, $this->union[$maxTableCount]) . ')';
-            unset($this->union[$maxTableCount]);
-        }
+		return $this->tableRows[$table];
+	}
 
-        foreach ($this->union as $key => $item) {
-            if(isset($item['countFields']) && $item['countFields'] < $maxCount) {
-                for($i = 0; $i < $maxCount - $item['countFields']; $i++) {
-                    if($item['lastJoinTable']) {
-                        $item['join'][$item['lastJoinTable']]['fields'][] = null;
-                    }else{
-                        $item['fields'][] = null;
-                    }
-                }
-            }
+	final public function showTables()
+	{
+		$query = 'SHOW TABLES';
 
-            $query && $query .= $unionType;
-            $query .= '(' . $this->get($key, $item) . ')';
-        }
+		$tables = $this->query($query);
 
-        $order = $this->createOrder($set);
+		$table_arr = [];
 
-        $limit = !empty($set['limit']) ? 'LIMIT ' . $set['limit'] : '';
+		if ($tables) {
+			foreach ($tables as $table) {
+				$table_arr[] = reset($table);
+			}
+		}
 
-        if(method_exists($this, 'createPagination')) {
-            $this->createPagination($set, "($query)", $limit);
-        }
-
-        $query .= " $order $limit";
-
-        $this->union = [];
-
-        return $this->query(trim($query));
-    }
-
-    final public function showColumns($table){
-        if(!isset($this->tableRows[$table]) || !$this->tableRows[$table]) {
-            $checkTable = $this->createTableAlias($table);
-
-            if($this->tableRows[$checkTable['table']]) {
-                return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
-            }
-
-            $query = "SHOW COLUMNS FROM {$checkTable['table']}";
-            $res = $this->query($query);
-
-            $this->tableRows[$checkTable['table']] = [];
-
-            if($res) {
-                foreach ($res as $row) {
-                    $this->tableRows[$checkTable['table']][$row['Field']] = $row;
-                    if($row['Key'] === 'PRI') {
-                        if(!isset($this->tableRows[$checkTable['table']]['id_row'])) {
-                            $this->tableRows[$checkTable['table']]['id_row'] = $row['Field'];
-                        }else{
-                            if(!isset($this->tableRows[$checkTable['table']]['multi_id_row'])) {
-                                $this->tableRows[$checkTable['table']]['multi_id_row'][] = $this->tableRows[$checkTable['table']]['id_row'];
-                                $this->tableRows[$checkTable['table']]['multi_id_row'][] = $row['Field'];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if(isset($checkTable) && $checkTable['table'] !== $checkTable['alias']) {
-            return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
-        }
-
-        return $this->tableRows[$table];
-    }
-
-    final public function showTables() {
-        $query = 'SHOW TABLES';
-
-        $tables = $this->query($query);
-
-        $table_arr = [];
-
-        if($tables) {
-            foreach ($tables as $table) {
-                $table_arr[] = reset($table);
-            }
-        }
-
-        return $table_arr;
-    }
+		return $table_arr;
+	}
 }
-
-
-
-
-
-
-
-

@@ -4,7 +4,7 @@ php_value upload_max_filesize 100M
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !favicon.icon
+RewriteCond %{REQUEST_FILENAME} !favicon.ico
 
 RewriteCond %{REQUEST_URI} !^.*\.(jpg|css|js|gif|png)$ [NC]
 RewriteRule ^(.*) index.php [L]

@@ -16,7 +16,7 @@ class DbException extends \Exception  {
 
         $this->messages = include 'messages.php';
 
-        $error = $this->getMessage() ? $this->getMessage() : $this->messages($this->getCode());
+        $error = $this->getMessage() ? $this->getMessage() : $this->messages[$this->getCode()];
 
         $error .= "\r\n" . 'file ' . $this->getFile() . "\r\n" . 'In line ' . $this->getLine() . "\r\n";
 
@@ -28,5 +28,3 @@ class DbException extends \Exception  {
     }
 
 }
-
-?>
