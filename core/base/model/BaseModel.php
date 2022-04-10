@@ -131,18 +131,49 @@ abstract class BaseModel extends BaseModelMethods
 	}
 
 	/**
-	 * @param $table
-	 * @param array $set
+	 * @param $table // пременная (таблица)
+	 * @param array $set // пременная (массив данных (настроек)) Далее пример массива $set:
+	 *           'fields' => ['id', 'name'],
+	 *           'where' =>  ['id'=>'Girl', 'name'=>'Veronika', 'surname'=>'Temkina'],
+	 *           'operand' =>['=', '<>'],
+	 *           'condition'=>['ADN'],
+	 *           'order'=>['fio','name'],
+	 *           'order_direction'=>['ASC','DESC'],
+	 *           'limit'=>'1'
+	 *           'join'=> [
+	 *           	'table'=>'join_table1',
+	 *           	'fields' =>['id as j_id', 'name as j_name'],
+	 *           	'type'=>'left',
+	 *           	'where'=>['name'=>'Oksi'],
+	 *           	'operand' =>['='],
+	 *           	'condition'=>['OR'],
+	 *           	'on'=>['id', 'parent_id']
+	 *           	'group_condition' => 'AND',
+	 *           	],
+	 *             'join_table2'=>[
+	 *             'table'=>'join_table2',
+	 *             'fields' =>['id as j_id2', 'name as j_name2'],
+	 *             'type'=>'left',
+	 *             'where'=>['name'=>'Oksi'],
+	 *             'operand' =>['='],
+	 *             'condition'=>['AND'],
+	 *             'on'=>[
+	 *                   'table'=>'teachers',
+	 *                   'fields'=>['id', 'parent_id']
+	 *                   ]
+	 *                ],
 	 */
 
-	final public function get($table, $set = [])
+
+	// метод get (read)- получить (прочитать)
+	final public function get($table, $set = []) // массиву дали дефолтное значение
 	{
 
-		$fields = $this->createFields($set, $table);
+		$fields = $this->createFields($set, $table); // переменная для поля, которые хотим получить
 
-		$order = $this->createOrder($set, $table);
+		$order = $this->createOrder($set, $table); // переменная для хранения результата работы метода сортировки
 
-		$where = $this->createWhere($set, $table);
+		$where = $this->createWhere($set, $table); // переменная для базового запроса
 
 		if (!$where) {
 			$new_where = true;
@@ -150,22 +181,32 @@ abstract class BaseModel extends BaseModelMethods
 			$new_where = false;
 		}
 
+		// сохраним в переменную $join_arr массив, в который придёт запрос,сформированный по принципу JOIN
 		$join_arr = $this->createJoin($set, $table, $new_where);
 
+		// в переменную $fields добавим то, что придёт в массив $join_arr (в его ячейку fields)
 		$fields .= $join_arr['fields'];
+		// в переменную $join сохраним то, что придёт в массив $join_arr (в его ячейку join)
 		$join = $join_arr['join'];
+		// в переменную $where добавим то, что придёт в массив $join_arr (в его ячейку where)
 		$where .= $join_arr['where'];
 
+		// обработаем то, что хранится в переменной $fields и обреэем последнюю запятую
 		$fields = rtrim($fields, ',');
 
+		// если в массив set (его ячейку limit) что то пришло, то в переменную $limit запишем 'LIMIT ' . $set['limit'], 
+		// иначе запишем пустую строку
 		$limit = $set['limit'] ? 'LIMIT ' . $set['limit'] : '';
 
+		// формируем запрос в переменной $query: Выбрать поля $fields из переменной $table, далее указываем переменные, которые 
+		// придут если они есть $join $where $order $limit
 		$query = "SELECT $fields FROM $table $join $where $order $limit";
 
 		if (!empty($set['return_query'])) {
 			return $query;
 		}
 
+		// вернём результат работы метода query() в переменную $res
 		$res = $this->query($query);
 
 		if (isset($set['join_structure']) && $set['join_structure'] && $res) {

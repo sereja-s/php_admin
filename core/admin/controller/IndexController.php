@@ -16,3 +16,10 @@ class IndexController extends BaseController
 		$this->redirect($redirect);
 	}
 }
+
+// Используемые методы (CRUD): 
+
+// add (create)- добавить (создать)
+// edit (update)- редактировать (обновить)
+// get (read)- получить (прочитать)
+// delete- удалить
