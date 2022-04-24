@@ -50,10 +50,12 @@ class Settings
 		]
 	];
 
+	// свойство: расширение (путь к папке где хранятся расширения) 
 	private $expansion = 'core/admin/expansion/';
 
 	private $messages = 'core/base/messages/';
 
+	// таблица по умолчанию
 	private $defaultTable = 'goods';
 
 	private $formTemplates = PATH . 'core/admin/view/include/form_templates/';

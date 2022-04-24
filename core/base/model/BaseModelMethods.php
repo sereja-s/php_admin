@@ -2,6 +2,8 @@
 
 namespace core\base\model;
 
+
+
 abstract class BaseModelMethods
 {
 	protected $sqlFunc = ['NOW()'];
@@ -129,6 +131,7 @@ abstract class BaseModelMethods
 
 				if (in_array($order, $this->sqlFunc)) {
 					$order_by .= $order . ',';
+					// is_int() — Проверяет, является ли переменная целым числом
 				} elseif (is_int($order)) {
 					$order_by .= $order . ' ' . $order_direction . ',';
 				} else {
@@ -221,8 +224,8 @@ abstract class BaseModelMethods
 						// далее в цикле (foreach) переберём массив в переменной $temp_item и будем добавлять необходимые нам значения
 						foreach ($temp_item as $v) {
 							// на каждой итерации к переменной $in_str добавим злемент $v и запятую  в '' (одинарных кавычках) 
-							// при этом ф-ии php: addslashes() —  Экранирует строку с помощью слешей (Возвращает строку с обратным слешем
-							// перед символами, которые нужно экранировать), 
+							// при этом ф-ии php: addslashes() —  Экранирует строку с помощью слешей (Возвращает строку с обратным 
+							// слешем перед символами, которые нужно экранировать), 
 							// trim() —  Удаляет пробелы из начала и конца строки (что бы пробелы тоже не попадали в ячейки массива)
 							$in_str .= "'" . addslashes(trim($v)) . "',";
 						}
@@ -290,62 +293,99 @@ abstract class BaseModelMethods
 		$join = '';
 		$where = '';
 
+		// если в массиве $set его ячейка join не пустая (что то пришло)
 		if ($set['join']) {
 			$join_table = $table;
 
 			foreach ($set['join'] as $key => $item) {
+
+				// проверим является ли числом ключ $key (чсловым массивом)
 				if (is_int($key)) {
+					// если не существует (или пустая) в массиве $item его ячейка table
 					if (!$item['table']) {
+						// переводим цикл на следующую итерацию
 						continue;
+						// иначе
 					} else {
+						// в $key сохраним ячейку table массива $item
 						$key = $item['table'];
 					}
 				}
 
 				$concatTable = $this->createTableAlias($key)['alias'];
 
+				// если в переменной $join что то есть
 				if ($join) {
+					// то конкатенируем к ней пробел
 					$join .= ' ';
 				}
 
+				// isset() — Определяет, была ли установлена переменная значением, отличным от null
+				// ячейка on в массиве $item- показывает по какому признаку объединять таблицы
 				if (isset($item['on']) && $item['on']) {
+
+					// обявим пустой массив в переменной $join_fields
 					$join_fields = [];
 
+					// isset() — Определяет, была ли установлена переменная значением, отличным от null
+					// проверим есть ли поле (ячейка) fields (в массиве $item, его ячейке on) и является ли это массивом и посчитаем
+					// элементы этого массива (равно ли их количество 2-ум)
 					if (isset($item['on']['fields']) && is_array($item['on']['fields']) && count($item['on']['fields']) === 2) {
+						// в переменную $join_fields положим то что пришло в массиве $item['on']['fields']
 						$join_fields = $item['on']['fields'];
+						// посчитаем поля массива в ячейке on (равно ли их количество двум)
 					} elseif (count($item['on']) === 2) {
+						// в переменную $join_fields положим то что пришло в массиве $item['on']
 						$join_fields = $item['on'];
 					} else {
+						// иначе переводим цикл на следующую итерацию
 						continue;
 					}
 
+					// определим тип присоединения
+					// если тип JOIN не пришёл
 					if (!$item['type']) {
+						// то по умолчанию: к преременной $join конкатенируем (присоединяем) LEFT JOIN
 						$join .= 'LEFT JOIN ';
 					} else {
+						// иначе к преременной $join добавим строку приведённую к верхнему регистру (ф-ия: strtoupper()), далее через // пробел конкатенируем слово JOIN и снова поставим пробел 
+						// trim()— Удаляет пробелы (или другие символы) из начала и конца строки
 						$join .= trim(strtoupper($item['type'])) . ' JOIN ';
 					}
 
+					// Мы должны указать какую таблицу присоединяем
+					// сначала к переменной $join добавляем ключ $key, далее добавляем строку ON (метод присоединения) с пробелами в начале и в конце
 					$join .= $key . ' ON ';
 
+					// если существует переменная $item с массивом, в нём- ячека on с массивом, а в нём ячейка: table
 					if ($item['on']['table']) {
+						// сохраняем эту переменную
 						$join_temp_table = $item['on']['table'];
 					} else {
+						// иначе присоединяем предыдущую таблицу
 						$join_temp_table = $join_table;
 					}
 
 					$join .= $this->createTableAlias($join_temp_table)['alias'];
 
+					// добавим поле таблицы, которую мы пристыковываем
 					$join .= '.' . $join_fields[0] . '=' . $concatTable . '.' . $join_fields[1];
 
+					// ханесём в переменную $join_table текущую таблицу (в переменной $key), что бы следующая итерация цикла могла работать с предыдущей таблицей (в итерации- текущая)
 					$join_table = $key;
 
+					// если пришла новая инструкция where
 					if ($new_where) {
+						// проверка: существует ли что-нибудь (дополнительное условие) в ячейке where, массива в переменной $item
 						if ($item['where']) {
 							$new_where = false;
 						}
 
+						// в переменную $group_condition запишем строку (инструкция) WHERE
 						$group_condition = 'WHERE';
 					} else {
+						// сохраним результат проврки в переменную $group_condition: если пришёл $item['group_condition'], то 
+						// сохраним его (предварительно преобразовав в заглавные буквы), иначе сохраним слово: AND
 						$group_condition = $item['group_condition'] ? strtoupper($item['group_condition']) : 'AND';
 					}
 
@@ -355,9 +395,14 @@ abstract class BaseModelMethods
 			}
 		}
 
+		// ф-ия зhp: compact() — создание массива, содержащего переменные и их значения
+		// Для каждого из них compact() ищет переменную с таким именем в текущей таблице символов и добавляет ее в выходной 
+		//массив таким образом, что имя переменной становится ключом, а содержимое переменной становится значением для этого ключа
 		return compact('fields', 'join', 'where');
 	}
 
+	// метод createInsert() будет создавать массив вставки
+	// переменная $except позволяет сбрасывать поле (для указания какие поля исключить и запрос не будет их отрабатывать)
 	protected function createInsert($fields, $files, $except)
 	{
 
@@ -420,17 +465,25 @@ abstract class BaseModelMethods
 
 			if ($fields) {
 				foreach ($fields as $row => $value) {
+
+					// если в $except что то пришло (указания на исключение полей) и
+					// ф-ия php: in_array() — проверяет, существует ли значение $row в массиве $except (т.е. указание: это ряд не добавлять)
 					if ($except && in_array($row, $except)) {
+						// переходим на следующую итерацию цикла
 						continue;
 					}
 
+					// добавим поле $row в ячейку fields (в массиве $insert_arr) и в конце запятую
 					$insert_arr['fields'] .= $row . ',';
 
+					// ф-ия php: in_array() — проверяет, существует ли значение $value в массиве, который хранится в свойстве: $sqlFunc 
 					if (in_array($value, $this->sqlFunc)) {
 						$insert_arr['values'] .= $value . ',';
 					} elseif ($value == 'NULL' || $value === NULL) {
 						$insert_arr['values'] .= "NULL" . ',';
 					} else {
+
+						// обработаем $values одинарными кавычками, а также зкранируем слешами (addslashes($value)) и запятая в конце
 						$insert_arr['values'] .= "'" . addslashes($value) . "',";
 					}
 				}
@@ -440,9 +493,17 @@ abstract class BaseModelMethods
 				foreach ($files as $row => $file) {
 					$insert_arr['fields'] .= $row . ',';
 
+					// проверим является ли массивом то что пришло в переменную $file
 					if (is_array($file)) {
+
+						// ф-я php: json_encode()- Возвращает строку, содержащую JSON-представление предоставленной платформы: $files
+						// (формирует JSON-строку т.е. здесь- представляет массив (поданный на вход) в строковом виде, чтобы 
+						// сохранить его в базе данных)
+						// затем обработаем результат работы ф-ии json_encode() одинарными кавычками, а также зкранируем слешами 
+						// (addslashes(json_encode($files)) и запятая в конце
 						$insert_arr['values'] .= "'" . addslashes(json_encode($files)) . "',";
 					} else {
+						// иначе обработаем $file одинарными кавычками, а также зкранируем слешами (addslashes($file)) и запятая в конце
 						$insert_arr['values'] .= "'" . addslashes($file) . "',";
 					}
 				}
@@ -452,26 +513,44 @@ abstract class BaseModelMethods
 		$insert_arr['fields'] = rtrim($insert_arr['fields'], ',') . ')';
 		$insert_arr['values'] = rtrim($insert_arr['values'], ',');
 
+		// возвращаем массив (и затем он попадёт в final public function add() в BaseModel.php)
 		return $insert_arr;
 	}
 
 	protected  function createUpdate($fields, $files, $except)
 	{
+		// изначально переменную $update определим как пустую строку
 		$update = '';
 
 		if ($fields) {
 			foreach ($fields as $row => $value) {
+
+				// если в $except что то пришло (указания на исключение полей) и
+				// ф-ия php: in_array() — проверяет, существует ли значение $row в массиве $except (т.е. указание: это ряд не добавлять)
 				if ($except && in_array($row, $except)) {
+
+					// переходим на следующую итерацию цикла
 					continue;
 				}
 
+				// к переменной $update добавляем поле $row и конкатенируем к нему знак равенства
 				$update .= $row . '=';
 
+				// ф-ия php: in_array() — проверяет, существует ли значение $value в массиве, который хранится в свойстве: $sqlFunc 
 				if (in_array($value, $this->sqlFunc)) {
+
+					// то к переменной $update добавляем значение переменной $value и конкатенируем к нему запятую
 					$update .= $value . ',';
+
+					// если значение в переменной $value строго равно NULL или 'NULL'
 				} elseif ($value === NULL || $value === 'NULL') {
+
+					// то к переменной $update добавим слово NULL в двойных кавычках (что и будет означать нулевое значение) и потом конкатенируем запятую
 					$update .= "NULL" . ',';
+
+					// иначе
 				} else {
+					// обработаем $values одинарными кавычками, а также зкранируем слешами (addslashes($value)) и запятая в конце
 					$update .= "'" . addslashes($value) . "',";
 				}
 			}
@@ -482,14 +561,23 @@ abstract class BaseModelMethods
 			foreach ($files as $row => $file) {
 				$update .= $row . '=';
 
+				// проверим является ли массивом то что пришло в переменную $file
 				if (is_array($file)) {
+
+					// ф-я php: json_encode()- Возвращает строку, содержащую JSON-представление предоставленной платформы: $files
+					// (формирует JSON-строку т.е. здесь- представляет массив (поданный на вход) в строковом виде, чтобы 
+					// сохранить его в базе данных)
+					// затем обработаем результат работы ф-ии json_encode() одинарными кавычками, а также зкранируем слешами 
+					// (addslashes(json_encode($files)) и запятая в конце
 					$update .= "'" . addslashes(json_encode($file)) . "',";
 				} else {
+					// иначе обработаем $file одинарными кавычками, а также зкранируем слешами (addslashes($file)) и запятая в конце
 					$update .= "'" . addslashes($file) . "',";
 				}
 			}
 		}
 
+		// ф-ия php: rtrim — удаление пробелов (или других символов) из конца строки (здесь- обрежем запятую в конце строки  в переменной $update)
 		return rtrim($update, ',');
 	}
 
