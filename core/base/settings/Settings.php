@@ -84,7 +84,9 @@ class Settings
 		'gallery_img' => ['gallery_img', 'new_gallery_img']
 	];
 
+	// св-во, позволяющее переводить поля административной панели из файла настроек
 	private $translate = [
+		// каждое поле тоже представляет собой массив, в котором можно указать два элемента (название элемента, комментарий)
 		'name' => ['Название', 'Не более 100 символов'],
 		'keywords' => ['Ключевые слова', 'Не более 70 символов'],
 		'content' => ['Описание'],
@@ -107,6 +109,7 @@ class Settings
 		'show_top_menu' => ['НЕТ', 'ДА', 'default' => 'ДА']
 	];
 
+	// св-во, в котором будет храниться информация о корневых таблицах
 	private $rootItems = [
 		'name' => 'Корневая',
 		'tables' => ['articles', 'filters', 'catalog']
@@ -116,6 +119,7 @@ class Settings
 		'goods_filters' => ['goods', 'filters'] // 'type' => 'child' || 'root'
 	];
 
+	// св-во, в котором будут храниться блоки
 	private $blockNeedle = [
 		'vg-rows' => [],
 		'vg-img' => ['img', 'main_img'],

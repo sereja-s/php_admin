@@ -17,7 +17,7 @@ abstract class BaseAdmin extends BaseController
 	// свойство показывает какую таблицу данных подключить
 	protected $table;
 	protected $columns;
-	// свойство для хранения основных данных в админке
+	// свойство для хранения основных (внешних) данных в админке
 	protected $foreignData;
 
 	protected $adminPath;
@@ -71,6 +71,7 @@ abstract class BaseAdmin extends BaseController
 			// то обратимся к классу Settings и вывзовем его статический метод get(), передав на вход название свойства: projectTables Результат сохраним в свойстве: menu
 			$this->menu = Settings::get('projectTables');
 		}
+
 		if (!$this->adminPath) {
 			$this->adminPath = PATH . Settings::get('routes')['admin']['alias'] . '/';
 		}
@@ -98,6 +99,9 @@ abstract class BaseAdmin extends BaseController
 
 			//if(!$this->template) { $this->template = ADMIN_TEMPLATE . 'show'; }
 
+			// обращаемся к св-ву: content и сохраняем результат работы метода: render
+			// (т.е. формируем контент)
+			// метод: render() по умолчанию подключит метод того класса, который его вызвал (здесь класс: ShowController, т.е. подгрузится шаблон админки: show.php)
 			$this->content = $this->render($this->template, $vars);
 		}
 
@@ -145,10 +149,11 @@ abstract class BaseAdmin extends BaseController
 				// то в свойство table запишем массив ключей, которые вернёт ф-ия php: array_keys() из поданного ей на вход массива
 				// (здесь- вернуть нужно только нулевой элемент массива ключей)
 				$this->table = array_keys($this->parameters)[0];
-
 				// иначе
 			} else {
+				// если не пришёл объект настроек плагина
 				if (!$settings) {
+					// в переменную запишем результат работы ф-ии: instance(), которая вернёт объект этого класса
 					$settings = Settings::instance();
 				}
 
@@ -169,7 +174,7 @@ abstract class BaseAdmin extends BaseController
 		}
 	}
 
-	// метод для рабоы с расширениями (на вход подаём массив аргументов (как пустой массив): $args = [] и свойство settings со значением по умолчанию: false)
+	// метод для рабоы с расширениями (на вход подаём массив аргументов (как пустой массив): $args = [] и свойство settings (возможные модификации для проекта) со значением по умолчанию: false)
 	protected function expansion($args = [], $settings = false)
 	{
 		// в массив: $filename сохраним результат работы ф-ии php: explode(), которая разделит строку (имя, поданной на вход 
@@ -185,12 +190,16 @@ abstract class BaseAdmin extends BaseController
 			$className .= ucfirst($item);
 		}
 
+		// если настройки: $settings не пришли
 		if (!$settings) {
 			// в переменной: $path сохраним результат работы статического метода: get(), класса: Settings (т.е. получим свойство: expansion, название которого поданно на вход)
 			$path = Settings::get('expansion');
+
+			//ф-ия php: is_object() — определяет, является ли переменная(поданная на вход) объектом
 		} else if (is_object($settings)) {
-			$path = $settings::get('expansion');
+			$path = $settings::get('expansion'); // здесь- $settings является объектом
 		} else {
+			// иначе в переменную запишем строку: $settings
 			$path = $settings;
 		}
 
@@ -209,16 +218,27 @@ abstract class BaseAdmin extends BaseController
 			// будет единственный экземпляр некоторого класса), используя метод: instance() Результат работы сохраним в переменной: $exp
 			$exp = $class::instance();
 
+			//запускаем цикл по текущему объекту: $this
 			foreach ($this as $name => $value) {
+				// динамически создадим свойства у объкта класса
+
+				// обратимся к ссылке на объект, которая хранится в переменной: $exp
+				// в перемнную: $name придёт строка и св-во назавётся так же как строка, которая хранится в переменной: $name
+				// (т.е. в $exp->$name мы сохранили ссылку на каждое из свойств, которые сейчас хранятся в $this (в текущем объекте))
 				$exp->$name = &$this->$name;
 			}
 
 			// объект хранится в переменной: $exp, у него вызовем метод: expansion() (он описан в классе: TeachersExpansion)
 			// на вход пердадим массив аргументов: $args
+			// (т.е. вернём ссылку на объект класса (здесь- TeachersExpansion))
 			return $exp->expansion($args);
 		} else {
+
+			// подключаем файл
 			$file = $_SERVER['DOCUMENT_ROOT'] . PATH . $path . $this->table . '.php';
 
+			// ф-ия php: extract() — импорт переменных в текущую таблицу символов из массива: $args, поданного на вход
+			// (т.е. создаём переменные из массива, поданного на вход)
 			extract($args);
 
 			if (is_readable($file)) {
@@ -228,28 +248,52 @@ abstract class BaseAdmin extends BaseController
 		return false;
 	}
 
+	// метод, который будет формировать наши данные (раскидывать их по блокам)
+	// (создание выходных данных)
 	protected function createOutputData($settings = false)
 	{
 		if (!$settings) {
 			$settings = Settings::instance();
 		}
 
+		// получим блоки, исходя из того, что в $settings находится некий объект настроек
 		$blocks = $settings::get('blockNeedle');
+		// получим из настроек свойство: translate и сохраним (этот массив с переводом) в обявленном в этом классе св-ве: translate
 		$this->translate = $settings::get('translate');
 
+		// в св-ве: $blocks хранится массив из трёх блоков и обходить его будем через несколько циков Сформируем свойства в 
+		// цикле, таким образом, чтобы в его нулевой элемент свалились все поля, которые пришли из базы данных
+
+		// если массив с блоками не пришёл или пришёл не массив
 		if (!$blocks || !is_array($blocks)) {
+
+			// пробежимся по массиву в св-ве: columns, в котором сейчас находятся поля таблицы (названия полей с их 
+			// характеристиками)
 			foreach ($this->columns as $name => $item) {
+
+				// если то, что пришло в переменную: name строго равно: id_row
 				if ($name === 'id_row') {
+					// переходим на другую итерацию цикла (ни чего нам с этим полем делать не нужно, эта строка будет нам нужна дальше в шаблонах)
 					continue;
 				}
+
+				// если в массиве с переводом нет ячейки с именем, которое содержится в переменной: $name
 				if (!$this->translate[$name]) {
+					// добавим name в массив: translate[] (и будем выводить название поля как наазвание таблицы)
+					// (обращаемся к $this->translate, его ячейке [$name], далее обращаемся к её первой(здесь- единственной) ячейке, т.е. нулевой) и записываем: $name
 					$this->translate[$name][] = $name;
 				}
+
+				// Сформируем св-во, которое будет осуществлять распределение, подключение шаблонов
+				// в св-ве: blocks в нулевом элементе, сформируется массив, куда последовательно попадёт, то что хранится в переменной: $name
 				$this->blocks[0][] = $name;
 			}
 			return;
 		}
 
+		// определим из массива в свойстве: $blocks, блок по умолчанию () У нас это тот, который указан первым в массиве (в 
+		// нулевой ячейке): т.е. ключ: vg-rows 
+		// определим его по умолчанию, используя ф-ию php: array_keys(), которая возвращает все ключи (в виде массива) массива поданного на вход: $blocks и далее обращаемся к его нулевому элементу		
 		$default = array_keys($blocks)[0];
 
 		foreach ($this->columns as $name => $item) {
@@ -257,20 +301,37 @@ abstract class BaseAdmin extends BaseController
 				continue;
 			}
 
+			// далее нужно проверить: произошла ли вставка
+			// сначала объявим некий флаг в переменной: insert и установим начальное значение: false
 			$insert = false;
 
+			// пробежимся по блокам
 			foreach ($blocks as $block => $value) {
+
+				// проверим: существует ли в св-ве: $this->blocks ключ, который идёт по порядку: $block (что бы соблюдался порядок вывода)
+				// если не существует
 				if (!array_key_exists($block, $this->blocks)) {
+					// будем создавать такой элемент массива
+					// сохраним в массиве (в $this->blocks) его ячейке: $block, пустой массив
 					$this->blocks[$block] = [];
 				}
+
+				// проверим существует ли $name (переменная определена) в массиве: $value
 				if (in_array($name, $value)) {
+					// в ячейку: $block, в массиве (в $this->blocks) последовательно добавим переменную $name
 					$this->blocks[$block][] = $name;
+					//т.к. вставка произошла, поставим флаг в переменной: $insert в значение: true
 					$insert = true;
+					// далее обрываем цикл
 					break;
 				}
 			}
 
+			// проверим произошла ли вставка
+			// если вставка не произошла
 			if (!$insert) {
+
+				// положем поле $name в блок по умолчанию (в ячейку: $default, в массиве (в $this->blocks) последовательно добавим переменную $name)
 				$this->blocks[$default][] = $name;
 			}
 			if (!$this->translate[$name]) {
@@ -643,6 +704,8 @@ abstract class BaseAdmin extends BaseController
 			$order_name = $name = 'name';
 		} else {
 			foreach ($columns as $key => $value) {
+
+				// (в $key ищем слово: name)
 				if (strpos($key, 'name') !== false) {
 					$order_name = $key;
 					$name = $key . ' as name';
@@ -933,21 +996,31 @@ abstract class BaseAdmin extends BaseController
 
 	protected function createForeignProperty($arr, $rootItems)
 	{
+
+		// проверим существует ли значение св-ва: table в массиве: rootItems (в ячейке: tables)
 		if (in_array($this->table, $rootItems['tables'])) {
+			// в ячейке: COLUMN_NAME хранится имя колонки нашей текущей таблицы, которая ссылается на родительскую
 			$this->foreignData[$arr['COLUMN_NAME']][0]['id'] = 'NULL';
 			$this->foreignData[$arr['COLUMN_NAME']][0]['name'] = $rootItems['name'];
 		}
 
+		// REFERENCED_TABLE_NAME (имя таблицы на которую ссылаемся)
 		$orderData = $this->createOrderData($arr['REFERENCED_TABLE_NAME']);
 
 		if ($this->data) {
+
+			// если ссылка идёт на самих себя
 			if ($arr['REFERENCED_TABLE_NAME'] === $this->table) {
+
+				//то сформируем условия: $where и $operand[]
 				$where[$this->columns['id_row']] = $this->data[$this->columns['id_row']];
 				$operand[] = '<>';
 			}
 		}
 
 		$foreign = $this->model->get($arr['REFERENCED_TABLE_NAME'], [
+
+			// сформируем массив полей (нам нужно то поле , на которое мы ссылаемся)
 			'fields' => [
 				$arr['REFERENCED_COLUMN_NAME'] . ' as id',
 				$orderData['name'],
@@ -969,6 +1042,7 @@ abstract class BaseAdmin extends BaseController
 		}
 	}
 
+	// метод для получения внешних данных
 	protected function createForeignData($settings = false)
 	{
 		if (!$settings) {
@@ -979,7 +1053,9 @@ abstract class BaseAdmin extends BaseController
 
 		$keys = $this->model->showForeignKeys($this->table);
 
+		// если ключи пришли
 		if ($keys) {
+			// запскаем по ним цикл
 			foreach ($keys as $item) {
 				$this->createForeignProperty($item, $rootItems);
 			}
