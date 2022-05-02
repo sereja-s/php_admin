@@ -28,7 +28,7 @@ class Model extends BaseModel
 		// выбираем в информационной БД: information_schema следующие поля:
 		// COLUMN_NAME (имя колонки (поле), которая ссылается на внешнюю таблицу)
 		// REFERENCED_TABLE_NAME (имя таблицы на которую ссылаемся)
-		// REFERENCED_COLUMN_NAME (поле, на которое ссылается)
+		// REFERENCED_COLUMN_NAME (имя колонки (поле), на которое ссылается)
 		$query = "SELECT COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE 
                   WHERE TABLE_SCHEMA = '$db' AND TABLE_NAME = '$table' AND
                   CONSTRAINT_NAME <> 'PRIMARY' AND REFERENCED_TABLE_NAME is not null $where";

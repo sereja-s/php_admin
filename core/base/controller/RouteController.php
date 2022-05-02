@@ -21,7 +21,9 @@ class RouteController extends BaseController
 		// в этой ячейке хранится: / и весь дальнеший адрес
 		$adress_str = $_SERVER['REQUEST_URI'];
 
+		// если в суперглобальном массиве: $_SERVER и его ячейке: QUERY_STRING что-нибудь есть (не пустая)
 		if ($_SERVER['QUERY_STRING']) {
+			// обрезаем строку: $adress_str с нулевого элемента по (находим первое вхождение в строке (в $adress_str) подстроки (в // $_SERVER['QUERY_STRING']) элемент, минус 1 элемент (знак- ?) и результат сохраняем в переменной: $adress_str
 			$adress_str = substr($adress_str, 0, strpos($adress_str, $_SERVER['QUERY_STRING']) - 1);
 		}
 

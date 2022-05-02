@@ -104,6 +104,7 @@ class Settings
 
 	private $fileTemplates = ['img', 'gallery_img'];
 
+	// св-во, в котором будут храниться значения для input type radio (кнопок переключателей (да, нет и т.д.))
 	private $radio = [
 		'visible' => ['НЕТ', 'ДА', 'default' => 'ДА'],
 		'show_top_menu' => ['НЕТ', 'ДА', 'default' => 'ДА']

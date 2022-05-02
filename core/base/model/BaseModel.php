@@ -102,6 +102,7 @@ abstract class BaseModel extends BaseModelMethods
 	 * @param $table // пременная (таблица)
 	 * @param array $set // переменная (массив данных (настроек)) Далее пример массива $set:
 	 *           'fields' => ['id', 'name'],
+	 * 			 'no_concat' => false/true Если True не присоединяем имя таблицы к полям и Where
 	 *           'where' =>  ['fio'=>'Smirnova', 'name'=>'Masha', 'surname'=>'Sergeevna'],
 	 *           'operand' =>['=', '<>'],
 	 *           'condition'=>['ADN'],
@@ -215,7 +216,6 @@ abstract class BaseModel extends BaseModelMethods
 	// на вход подаём переменные: $table- куда мы будем добавлять, $set = []- массив
 	final public function add($table, $set = [])
 	{
-
 		// если это массив и не пуст, то сохраним его в результат, иначе сохраним суперглобальный массив $_POST
 		$set['fields'] = (is_array($set['fields']) && !empty($set['fields'])) ? $set['fields'] : $_POST;
 		// если это массив и не пуст, то сохраним его в результат, иначе вернём false

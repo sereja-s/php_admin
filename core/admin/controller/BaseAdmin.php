@@ -342,17 +342,22 @@ abstract class BaseAdmin extends BaseController
 		return;
 	}
 
+	// метод формирования ключей и значений для input type radio (кнопок переключателей (да, нет и т.д.))
 	protected function createRadio($settings = false)
 	{
 		if (!$settings) {
 			$settings = Settings::instance();
 		}
 
+		// получим св-во: radio из настроек
 		$radio = $settings::get('radio');
 
 		if ($radio) {
 			foreach ($this->columns as $name => $item) {
+
+				// проверим существует ли в св-ве: radio, которое пришло, то поле , которое нам необхдимо шаблониизировать (здесь- visible) если такое поле есть (и в него что то пришло)
 				if ($radio[$name]) {
+					// то сохраним его в массиве: foreignData его ячейке: name
 					$this->foreignData[$name] = $radio[$name];
 				}
 			}
@@ -994,17 +999,18 @@ abstract class BaseAdmin extends BaseController
 		}
 	}
 
+	// метод для получения свойств внешних данных
 	protected function createForeignProperty($arr, $rootItems)
 	{
 
 		// проверим существует ли значение св-ва: table в массиве: rootItems (в ячейке: tables)
 		if (in_array($this->table, $rootItems['tables'])) {
-			// в ячейке: COLUMN_NAME хранится имя колонки нашей текущей таблицы, которая ссылается на родительскую
+			// в ячейке: COLUMN_NAME массива: $arr, хранится имя колонки, в кот. хранится имя текущей таблицы, которая ссылается на родительскую
 			$this->foreignData[$arr['COLUMN_NAME']][0]['id'] = 'NULL';
 			$this->foreignData[$arr['COLUMN_NAME']][0]['name'] = $rootItems['name'];
 		}
 
-		// REFERENCED_TABLE_NAME (имя таблицы на которую ссылаемся)
+		// в ячейке: REFERENCED_TABLE_NAME массива: $arr, хранится имя таблицы на которую ссылаемся
 		$orderData = $this->createOrderData($arr['REFERENCED_TABLE_NAME']);
 
 		if ($this->data) {
@@ -1022,6 +1028,7 @@ abstract class BaseAdmin extends BaseController
 
 			// сформируем массив полей (нам нужно то поле , на которое мы ссылаемся)
 			'fields' => [
+				// в ячейке: REFERENCED_COLUMN_NAME массива: $arr, хранится имя колонки (поле) на которое ссылаемся
 				$arr['REFERENCED_COLUMN_NAME'] . ' as id',
 				$orderData['name'],
 				$orderData['parent_id']
@@ -1049,6 +1056,7 @@ abstract class BaseAdmin extends BaseController
 			$settings = Settings::instance();
 		}
 
+		// св-во, в котором будет храниться информация о корневых таблицах, полученная из файла настроек
 		$rootItems = $settings::get('rootItems');
 
 		$keys = $this->model->showForeignKeys($this->table);
@@ -1060,8 +1068,14 @@ abstract class BaseAdmin extends BaseController
 				$this->createForeignProperty($item, $rootItems);
 			}
 		} elseif ($this->columns['parent_id']) {
+
+			// Формируем элементы массива:
+
+			// имя колонки (поле), которая ссылается на внешнюю таблицу
 			$arr['COLUMN_NAME'] = 'parent_id';
+			// колонка,на которую ссылаемся (колонка с первичным ключём)
 			$arr['REFERENCED_COLUMN_NAME'] = $this->columns['id_row'];
+			// имя таблицы на которую ссылаемся
 			$arr['REFERENCED_TABLE_NAME'] = $this->table;
 
 			$this->createForeignProperty($arr, $rootItems);
@@ -1070,39 +1084,59 @@ abstract class BaseAdmin extends BaseController
 		return;
 	}
 
+	// метод для формирования первичных данных для сортировки информации в таблицах базы данных
 	protected function createMenuPosition($settings = false)
 	{
 
+		// если ячейка: menu_position (в массиве: columns) существует (и в неё что то пришло)
 		if ($this->columns['menu_position']) {
+			// если настройки ещё не получены
 			if (!$settings) {
+				// то получим настройки
 				$settings = Settings::instance();
 			}
 
+			// получим из файла настроек св-во: rootItems
 			$rootItems = $settings::get('rootItems');
 
 			if ($this->columns['parent_id']) {
+
+				// если в массиве: rootItems (его ячейке: tables есть то,что хранится в свойстве: table (название таблицы))
 				if (in_array($this->table, $rootItems['tables'])) {
+					// в переменную положим строку
 					$where = 'parent_id IS NULL OR parent_id = 0';
+					// иначе
 				} else {
+					// запросим внешние ключи
+					// (в параметры ф-ии передаём: название таюлицы и ключ (в виде строки)), в конце указываем, что в $parent нам
+					// вся выборка не нужна (нужно вернуть нулевой элемент (здесь он или будет или не будет))
 					$parent = $this->model->showForeignKeys($this->table, 'parent_id')[0];
 
+					// если родитель пришёл
 					if ($parent) {
+						// если таблица указана в ключе (ссылается сама на себя)
 						if ($this->table === $parent['REFERENCED_TABLE_NAME']) {
 							$where = 'parent_id IS NULL OR parent_id = 0';
 						} else {
 							$columns = $this->model->showColumns($parent['REFERENCED_TABLE_NAME']);
 
 							if ($columns['parent_id']) {
+								// в элемент массива: order сохраним строку: parent_id
 								$order[] = 'parent_id';
 							} else {
+								// сортировать нужно по тем полям, на которые идёт ссылка
+								// в элемент массива: order получим то поле, которое является идентификатором
 								$order[] = $parent['REFERENCED_COLUMN_NAME'];
 							}
 
 							$id = $this->model->get($parent['REFERENCED_TABLE_NAME'], [
+								// укажем какие поля из поданного на вход функции: get() массива: parent (его ячейки: 
+								// REFERENCED_TABLE_NAME) должны получить
 								'fields' => [$parent['REFERENCED_COLUMN_NAME']],
 								'order' => $order,
 								'limit' => '1'
-							])[0][$parent['REFERENCED_COLUMN_NAME']];
+							])[0][$parent['REFERENCED_COLUMN_NAME']]; // укажем, что вернуть надо нулевой элемент той выборки, 
+							// которая пришла (и то поле, которое мы запрашиваем)
 
 							if ($id) {
 								$where = ['parent_id' => $id];
@@ -1115,11 +1149,12 @@ abstract class BaseAdmin extends BaseController
 			}
 
 			$menu_pos = $this->model->get($this->table, [
-				'fields' => ['COUNT(*) as count'],
+				// укажем какие поля из поданной на вход функции: get() таблицы (в св-ве: table) должны получить
+				'fields' => ['COUNT(*) as count'], // здесь в значении поля: fields указываем СУБД: посчитай всё и предоставь эту 
+				// выборку с псевдонимом: count
 				'where' => $where,
-				'no_concat' => true
-			])[0]['count'] + (int)!$this->data;
-
+				'no_concat' => true // т.е. не пристыковывать имя таблицы
+			])[0]['count'] + (int)!$this->data; // укажем, что вернуть надо нулевой элемент той выборки, которая пришла (и в поле count) + увеличиваем $menu_pos на 1 (т.е. означает: добавили данные)
 			for ($i = 1; $i <= $menu_pos; $i++) {
 				$this->foreignData['menu_position'][$i - 1]['id'] = $i;
 				$this->foreignData['menu_position'][$i - 1]['name'] = $i;
