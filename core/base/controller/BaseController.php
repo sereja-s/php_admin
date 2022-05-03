@@ -34,6 +34,7 @@ abstract class BaseController
 	protected $scripts;
 
 	protected $userId;
+	// свойство, в котором будут находиться данные, которые пришли из БД (если будет подключаться шаблон редактирования)
 	protected $data;
 
 	protected $ajaxData;

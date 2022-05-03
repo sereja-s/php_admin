@@ -9,6 +9,7 @@ const MS_MODE = false;
 const TEMPLATE = 'templates/default/';
 // константа для хранения пути к административной панели сайта
 const ADMIN_TEMPLATE = 'core/admin/view/';
+// константа, указывающая директорию где у нас будут храниться загружаемые файлы
 const UPLOAD_DIR = 'userfiles/';
 const DEFAULT_IMAGE_DIRECTORY = 'default_images';
 

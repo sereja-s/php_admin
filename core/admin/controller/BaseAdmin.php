@@ -38,6 +38,7 @@ abstract class BaseAdmin extends BaseController
 
 	protected $templateArr;
 	protected $formTemplates;
+	// свойство (флаг) для запрета (разрешения) на удаление данных из таблиц БД
 	protected $noDelete;
 
 	protected function inputData()
@@ -76,9 +77,12 @@ abstract class BaseAdmin extends BaseController
 			$this->adminPath = PATH . Settings::get('routes')['admin']['alias'] . '/';
 		}
 
+		// если свойство: templateArr ещё не заполнено
 		if (!$this->templateArr) {
+			// получаем это свойство и сохраняем в одноимённой переменной
 			$this->templateArr = Settings::get('templateArr');
 		}
+		// аналогично проверяем и получаем свойство: formTemplates
 		if (!$this->formTemplates) {
 			$this->formTemplates = Settings::get('formTemplates');
 		}

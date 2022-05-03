@@ -8,6 +8,7 @@ use core\base\settings\Settings;
 trait BaseSettings
 {
 	use Singleton {
+		// зададим псевдоним методу: instance трейта: Singleton и далее обращаться к этому методу по его псевлониму
 		instance as SingletonInstance;
 	}
 
@@ -27,12 +28,14 @@ trait BaseSettings
 			return self::$_instance;
 		}
 
-		// обратимся к методу этого класса SingletonInstance() затем к свойству baseSettings объекта класса 
+		// Обратимся к трейту Singleton, чтобы он вернул объект нашего класса,для этого обратимся к методу этого класса по 
+		// псевдониму: SingletonInstance(), затем к свойству baseSettings объекта класса 
 		// и сохраним в нём ссылку на объект класса Settings вызвав его метод instance()
 		self::SingletonInstance()->baseSettings = Settings::instance();
 
 		// определим (создадим) переменную $baseProperties в которую сохраним результат работы функции,
-		// которая будет клеять свойства: clueProperties(get_class()-в параметры передаём имя текущего класса); к которой мы обратились // используя статическое свойство $_instance и затем свойство baseSettings (в котором хранится объект нашего класса)
+		// которая будет клеять свойства: clueProperties(get_class()-в параметры передаём имя текущего класса); к которой мы 
+		// обратились используя статическое свойство $_instance и затем свойство baseSettings (в котором хранится объект нашего класса)
 		// (функция (метод) clueProperties() описана в файле Settings.php)
 		$baseProperties = self::$_instance->baseSettings->clueProperties(get_class());
 		// у нашего свойства self::$_instance мы должны вызвать метод setProperties() и передать туда $baseProperties
