@@ -127,6 +127,7 @@ class Settings
 		'vg-content' => ['content']
 	];
 
+	// свойство, в котором будет храниться массив полей, которые мы будем валидировать
 	private $validation = [
 		'name' => ['empty' => true, 'trim' => true],
 		'price' => ['int' => true],

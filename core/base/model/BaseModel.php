@@ -540,6 +540,7 @@ abstract class BaseModel extends BaseModelMethods
 		return $this->tableRows[$table];
 	}
 
+	// метод который будет возвращать все таблицы из БД
 	final public function showTables()
 	{
 		$query = 'SHOW TABLES';

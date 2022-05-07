@@ -4,61 +4,89 @@ namespace libraries;
 
 class TextModify
 {
-    protected $translitArr = [
-        'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e',
-        'ё' => 'yo', 'ж' => 'zh', 'з' => 'z', 'и' => 'i', 'й' => 'y', 'к' => 'k',
-        'л' => 'l', 'м' => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r',
-        'с' => 's', 'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'ts',
-        'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sch', 'ъ' => 'y', 'ы' => 'y',
-        'ь' => 'y', 'э' => 'e', 'ю' => 'yu', 'я' => 'ya', ' ' => '-',
-    ];
+	protected $translitArr = [
+		'а' => 'a', 'б' => 'b', 'в' => 'v', 'г' => 'g', 'д' => 'd', 'е' => 'e',
+		'ё' => 'yo', 'ж' => 'zh', 'з' => 'z', 'и' => 'i', 'й' => 'y', 'к' => 'k',
+		'л' => 'l', 'м' => 'm', 'н' => 'n', 'о' => 'o', 'п' => 'p', 'р' => 'r',
+		'с' => 's', 'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'ts',
+		'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sch', 'ъ' => 'y', 'ы' => 'y',
+		'ь' => 'y', 'э' => 'e', 'ю' => 'yu', 'я' => 'ya', ' ' => '-',
+	];
 
-    protected $lowelLetter = ['а', 'е', 'и', 'о', 'у', 'э'];
+	protected $lowelLetter = ['а', 'е', 'и', 'о', 'у', 'э'];
 
-    public function translit($str) {
-        $str = mb_strtolower($str);
-        $temp_arr = [];
+	public function translit($str)
+	{
+		// приведём строку к нижнему регистру
+		$str = mb_strtolower($str);
+		$temp_arr = [];
 
-        for($i = 0; $i < mb_strlen($str); $i++) {
-            $temp_arr[] = mb_substr($str, $i, 1);
-        }
+		// mb_strlen() — Получение длины строки
+		for ($i = 0; $i < mb_strlen($str); $i++) {
+			// в массив запишем результат работы ф-ии: mb_substr() — Получить часть строки 
+			// $str- Строка, из которой извлекается подстрока
+			// возвращаемая строка будет начинаться с позиции: $i
+			// 1- Максимальное количество символов для использования
+			$temp_arr[] = mb_substr($str, $i, 1);
+		}
 
-        $link = '';
+		$link = '';
 
-        if($temp_arr) {
-            foreach ($temp_arr as $key => $char) {
-                if(array_key_exists($char, $this->translitArr)) {
-                    switch($char) {
-                        case 'ъ':
-                            if($temp_arr[$key+1] == 'е') $link .= 'y';
-                            break;
-                        case 'ы':
-                            if($temp_arr[$key+1] == 'й') $link .= 'i';
-                                else $link .= $this->translitArr[$char];
-                            break;
-                        case 'ь':
-                            if($temp_arr[$key+1] !== count($temp_arr) && in_array($temp_arr[$key+1], $this->lowelLetter)) {
-                                $link .= $this->translitArr[$char];
-                            }
-                            break;
-                        default:
-                            $link .= $this->translitArr[$char];
-                            break;
+		if ($temp_arr) {
+			foreach ($temp_arr as $key => $char) {
 
-                    }
-                }else{
-                    $link .= $char;
-                }
-            }
-        }
+				// array_key_exists() — проверяет, существует ли в массиве заданный ключ или индекс
+				// $char- Значение для проверки, $this->translitArr- Массив с ключами для проверки
+				if (array_key_exists($char, $this->translitArr)) {
+					// запускаем оператор множественного выбора по значениям: $char
+					switch ($char) {
+						case 'ъ':
+							// если значение в $temp_arr[$key + 1] (т.е. символ следующий за $key) равно е, то к переменной: $link добавим символ: y
+							if ($temp_arr[$key + 1] == 'е') $link .= 'y';
+							break;
+						case 'ы':
+							if ($temp_arr[$key + 1] == 'й') $link .= 'i';
+							else $link .= $this->translitArr[$char];
+							break;
+						case 'ь':
+							// если значение в $temp_arr[$key + 1] (т.е. символ следующий за $key) не последний символ массива и 
+							// при этом находится в массиве, который находитс в свойстве: $lowelLetter
+							if ($temp_arr[$key + 1] !== count($temp_arr) && in_array($temp_arr[$key + 1], $this->lowelLetter)) {
+								// то добавим к переменной: $link соответствующий символ из translitArr[$char], т.е. для ь- это у
+								$link .= $this->translitArr[$char];
+							}
+							break;
 
-        if($link) {
-            $link = preg_replace('/[^a-z0-9_-]/iu', '', $link);
-            $link = preg_replace('/-{2,}/iu', '-', $link);
-            $link = preg_replace('/_{2,}/iu', '_', $link);
-            $link = preg_replace('/(^[-_]+)|([-_]+$)/iu', '', $link);
-        }
+							// в остальных случаях
+						default:
+							$link .= $this->translitArr[$char];
+							break;
+					}
+				} else {
+					$link .= $char;
+				}
+			}
+		}
 
-        return $link;
-    }
+		if ($link) {
+
+			// в переменную: $link сохраним результат работы ф-ии: preg_replace() — поиск и замена регулярных выражений На вход 
+			// подаётся: 1-й параметр: Шаблон для поиска (паттерн). Это может быть как строка, так и массив со строками 
+			// (указываются между слешами: в '//iu' (здесь флаги означают: i- не может быть заглавных букв, u- работа с мульти 
+			// байтовыми кодировками(юникодом)))
+			// Запись регулярного выражения [^a-z0-9_-] означает, что все символы, которые не совпадают с перечисленными 
+			// (сгруппированными (в [])) после знака ^ должны быть заменены на пустой символ (передан 2-ым параметром)  
+			// Замену производим в переменной: $link (3-ий параметр)
+			$link = preg_replace('/[^a-z0-9_-]/iu', '', $link);
+			// условие: если знак - встречается в строке: $link, 2-а и более раз, то заменим его на один знак -
+			$link = preg_replace('/-{2,}/iu', '-', $link);
+			// тоже для нижнего подчёркивания
+			$link = preg_replace('/_{2,}/iu', '_', $link);
+			// условие: если с начала строки идёт сколько угодно раз знаки: - или _ и тоже самое для конца строки, то заменяем их 
+			// на пустой символ
+			$link = preg_replace('/(^[-_]+)|([-_]+$)/iu', '', $link);
+		}
+
+		return $link;
+	}
 }
