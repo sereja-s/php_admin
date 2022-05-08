@@ -1243,25 +1243,36 @@ abstract class BaseAdmin extends BaseController
 		return;
 	}
 
+	// метод для хранения старых ссылок
 	protected function checkOldAlias($id)
 	{
 		$tables = $this->model->showTables();
 
+		// проверим есть ли в массиве: $tables таблица: old_alias
 		if (in_array('old_alias', $tables)) {
+
+			// сохраним текущую ссылку в таблице для хранения старых ссылок
+			// в переменную: $old_alias получаем данные, с помощью метода модели: get() из текущей таблицы: table (подаётся на вход 1-ым параметром), какие данные (поля) необходимо получить и условие указываем 2-ым параметром
+			// (вернуть нужно только нулевой элемент массива (его ячейку: ['alias']))
 			$old_alias = $this->model->get($this->table, [
 				'fields' => ['alias'],
 				'where' => [$this->columns['id_row'] => $id]
 			])[0]['alias'];
 
 			if ($old_alias && $old_alias !== $_POST['alias']) {
+
+				// сделаем запрос к БД на удаление: old_alias и укажем условия для удаления и к какой таблице применить
+				// удаление делается на случай если такой $old_alias уже был в соответствующей таблице
 				$this->model->delete('old_alias', [
 					'where' => ['alias' => $old_alias, 'table_name' => $this->table]
 				]);
 
+				// такой же запрос на удаление делаем для того, что хранится в массиве: $_POST (его ячейке: ['alias'])
 				$this->model->delete('old_alias', [
 					'where' => ['alias' => $_POST['alias'], 'table_name' => $this->table]
 				]);
 
+				// добавим то что хранится в переменной: $old_alias в текущую таблицу: $this->table с указанием идентификатора: id // (может использоваться для уникальности идентификатора ссылки)
 				$this->model->add('old_alias', [
 					'fields' => ['alias' => $old_alias, 'table_name' => $this->table, 'table_id' => $id]
 				]);
