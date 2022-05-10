@@ -16,7 +16,7 @@ const DEFAULT_IMAGE_DIRECTORY = 'default_images';
 // константа для хранения версии куки файлов
 const COOKIE_VERSION = '1.0.0';
 // константа для хранения ключа шифрования для куки файлов
-const CRYPT_KEY = 'nZr4u7w!z%C*F-JaThWmZq4t7w9z$C&FbPeShVmYq3t6w9y$G-KaPdSgVkYp3s6v%C*F-JaNdRgUkXp2w9z$C&F)J@NcRfUj3t6v9y$B&E)H@McQkYp3s5v8y/B?E(H+';
+const CRYPT_KEY = '';
 // константа для хранения времени в мин. (ограничение бездействия администратора), по истечении которого его выкинет из админки (разлогинит)
 const COOKIE_TIME = 60;
 // константа для хранения времени в мин. на которое заблокирует пользователя при попытке подобрать пароль к сайту
