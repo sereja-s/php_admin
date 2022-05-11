@@ -246,13 +246,21 @@ abstract class BaseController
 		}
 	}
 
+	// метод который отвечает за проверку авторизации (на вход принимает флаг: $type (значение по умолчанию: false) Показывает: 
+	// admin или нет)
 	protected function checkAuth($type = false)
 	{
+		// метод: checkUser()- делает проверку пользователя
+		// если в свойство: $userId ничего не пришло
 		if (!($this->userId = UserModel::instance()->checkUser(false, $type))) {
+			// то если это admin делаем редирект на корень сайта
 			$type && $this->redirect(PATH);
 		}
 
+		// сформируем модель пользователя (понадобится в пользовательской части)
+		// property_exists() — проверяет, имеет ли объект (или класс): $this свойство: userModel
 		if (property_exists($this, 'userModel')) {
+			// в свойство: userModel вернётся объект класса: UserModel
 			$this->userModel = UserModel::instance();
 		}
 	}

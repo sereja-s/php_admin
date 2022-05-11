@@ -8,36 +8,52 @@ use core\base\exceptions\AuthException;
 
 class UserModel extends BaseModel
 {
-    use Singleton;
-    use BaseMethods;
+	use Singleton;
+	use BaseMethods;
 
-    private $cookieName = 'identifier';
-    private $cookieAdminName = 'WQEngineCache';
+	// имя куки для пользовательской части
+	private $cookieName = 'identifier';
+	private $cookieAdminName = 'WQEngineCache';
 
-    private $userData = [];
-    private $error;
-    private $userTable = 'visitors';
-    private $adminTable = 'users';
-    private $blockedTable = 'blocked_access';
+	// пользовательские данные
+	private $userData = [];
+	// ошибки
+	private $error;
+	// таблица БД (данные пользователей сайта)
+	private $userTable = 'visitors';
+	// таблица БД (данные администрации сайта)
+	private $adminTable = 'users';
+	// таблица БД (отвечает за некорректные попытки входа пользователей)
+	private $blockedTable = 'blocked_access';
 
-    public function getAdminTable() {
-        return $this->adminTable;
-    }
 
-    public function getBlockedTable() {
-        return $this->blockedTable;
-    }
+	// метод возвращает название таблицы из свойства: adminTable
+	public function getAdminTable()
+	{
+		return $this->adminTable;
+	}
 
-    public function getLastError() {
-        return $this->error;
-    }
+	// метод возвращает название таблицы из свойства: $blockedTable
+	public function getBlockedTable()
+	{
+		return $this->blockedTable;
+	}
 
-    public function setAdmin() {
-        $this->cookieName = $this->cookieAdminName;
-        $this->userTable = $this->adminTable;
+	public function getLastError()
+	{
+		return $this->error;
+	}
 
-        if(!in_array($this->userTable, $this->showTables())) {
-            $query = 'create table ' . $this->userTable . '
+	// метод создания и заполнения таблицы из $userTable и создания таблицы из $blockedTable (если таких таблиц в БД не создано)
+	public function setAdmin()
+	{
+		$this->cookieName = $this->cookieAdminName;
+		$this->userTable = $this->adminTable;
+
+		// если таблицы из $userTable в БД нет
+		if (!in_array($this->userTable, $this->showTables())) {
+			//делаем запрос вв БД на её создание
+			$query = 'create table ' . $this->userTable . '
                 (
                     id int auto_increment primary key,
                     name varchar(255) null,
@@ -48,128 +64,168 @@ class UserModel extends BaseModel
                 charset = utf8 
             ';
 
-            if(!$this->query($query, 'u')) {
-                exit('Ошибка создания таблицы ' . $this->userTable);
-            }
+			if (!$this->query($query, 'u')) {
+				exit('Ошибка создания таблицы ' . $this->userTable);
+			}
 
-            $this->add($this->userTable, [
-                'fields' => [
-                    'name' => 'admin',
-                    'login' => 'admin',
-                    'password' => md5(123)
-                ]
-            ]);
-        }
+			// добавим запись в таблицу БД (из $userTable) авторизации админа
 
-        if(!in_array($this->blockedTable, $this->showTables())) {
-            $query = 'create table ' . $this->blockedTable . '
+			$this->add($this->userTable, [
+				'fields' => [
+					'name' => 'admin',
+					'login' => 'admin',
+					'password' => md5(123)
+				]
+			]);
+		}
+
+		// если нет таблицы блокирующей пользователя (из $blockedTable)
+		if (!in_array($this->blockedTable, $this->showTables())) {
+			// сделаем запрос в БД для ей создания
+			$query = 'create table ' . $this->blockedTable . '
                 (
                     id int auto_increment primary key,
                     login varchar(255) null,
                     ip varchar(32) null,
                     trying tinyint(1) null,
-                    tima datetime null
+                    timе datetime null
                 )
                 charset = utf8 
             ';
 
-            if(!$this->query($query, 'u')) {
-                exit('Ошибка создания таблицы ' . $this->blockedTable);
-            }
-        }
-    }
+			if (!$this->query($query, 'u')) {
+				exit('Ошибка создания таблицы ' . $this->blockedTable);
+			}
+		}
+	}
 
-    public function checkUser($id = false, $admin = false) {
-        $admin && $this->userTable !== $this->adminTable && $this->setAdmin();
+	// Метод проверки пользователя (на вход: 1- идентификатор пользователя, 2- флаг администратора)
+	public function checkUser($id = false, $admin = false)
+	{
+		// если что то пришло в $admin и метод: setAdmin() ещё не был вызван, вызовем его
+		$admin && $this->userTable !== $this->adminTable && $this->setAdmin();
 
-        $method = 'unPackage';
+		// устанавливаем метод выполнения по умолчанию (будет разбирать куку)
+		$method = 'unPackage';
 
-        if($id) {
-            $this->userData['id'] = $id;
-            $method = 'set';
-        }
+		// если пришёл: $id
+		if ($id) {
+			// в ячейку: userData['id'] сохраним $id
+			$this->userData['id'] = $id;
+			// переопределим метод
+			$method = 'set';
+		}
 
-        try{
-            $this->$method();
-        } catch (AuthException $e) {
-            $this->error = $e->getMessage();
+		// описываем конструкцию: try-catch
+		try {
+			// вызовем метод из переменной: $method
+			$this->$method();
+		} catch (AuthException $e) {
+			// если будут выброшены ошибки, сохраним результат работы метода: getMessage() в свойстве: $error;
+			$this->error = $e->getMessage();
 
-            !empty($e->getCode()) && $this->writeLog($this->error, 'log_user.txt');
+			// если в переменной: $e не пусто, то будем логировать ошибку в файле: log_user.txt
+			!empty($e->getCode()) && $this->writeLog($this->error, 'log_user.txt');
 
-            return false;
-        }
+			return false;
+		}
 
-        return $this->userData;
-    }
+		return $this->userData;
+	}
 
-    private function set() {
-        $cookieString = $this->package();
+	// метод, устанавливающий куку
+	private function set()
+	{
+		// в переменную: $cookieString сохраним результат работв метода: package()
+		$cookieString = $this->package();
 
-        if($cookieString) {
-            setcookie($this->cookieName, $cookieString, time() + 60 * 60 * 24 * 365 * 10, PATH);
-            return true;
-        }
+		// если что то пришло в переменную: $cookieString
+		if ($cookieString) {
 
-        throw new AuthException('Ошибка формирования cookie', 1);
-    }
+			// то устанавливаем куку (на вход: 1- имя куки, 2- значение куки, 3- время на которое устанавливаем куку (здесь- 10 
+			// лет)), 4- то на что кука будет распространяться
+			setcookie($this->cookieName, $cookieString, time() + 60 * 60 * 24 * 365 * 10, PATH);
+			return true;
+		}
+		// иначе выбросим исключение
+		throw new AuthException('Ошибка формирования cookie', 1);
+	}
 
-    private function package() {
-        if(!empty($this->userData['id'])) {
-            $data['id'] = $this->userData['id'];
-            $data['version'] = COOKIE_VERSION;
-            $data['cookieTime'] = date('Y-m-d H:i:s');
+	// метод собирающий куку
+	private function package()
+	{
+		// проверим что ячейка: userData['id'] не пустая
+		if (!empty($this->userData['id'])) {
+			$data['id'] = $this->userData['id'];
+			$data['version'] = COOKIE_VERSION;
+			// дата постановки куки
+			$data['cookieTime'] = date('Y-m-d H:i:s');
 
-            return Crypt::instance()->encrypt(json_encode($data));
-        }
+			return Crypt::instance()->encrypt(json_encode($data));
+		}
 
-        throw new AuthException('Не корректный идентификатор пользователя ' . $this->userData['id'], 1);
-    }
+		throw new AuthException('Не корректный идентификатор пользователя ' . $this->userData['id'], 1);
+	}
 
-    private function unPackage() {
-        if(empty($_COOKIE[$this->cookieName])) {
-            throw new AuthException('Отсутствует cookie пользователя');
-        }
+	// метод разбирающий куку
+	private function unPackage()
+	{
+		if (empty($_COOKIE[$this->cookieName])) {
+			throw new AuthException('Отсутствует cookie пользователя');
+		}
 
-        $data = json_decode(Crypt::instance()->decrypt($_COOKIE[$this->cookieName]), true);
+		// декодируем имя куки
+		$data = json_decode(Crypt::instance()->decrypt($_COOKIE[$this->cookieName]), true);
 
-        if(empty($data['id']) || empty($data['version']) || empty($data['cookieTime'])) {
-            $this->logout();
-            throw new AuthException('Не корректные данные в cookie пользователя', 1);
-        }
+		if (empty($data['id']) || empty($data['version']) || empty($data['cookieTime'])) {
+			$this->logout();
+			throw new AuthException('Не корректные данные в cookie пользователя', 1);
+		}
 
-        $this->validate($data);
+		// вызовем метод валидации
+		$this->validate($data);
 
-        $this->userData = $this->get($this->userTable, [
-            'where' => ['id' => $data['id']]
-        ]);
+		// получим данные пользователя 
+		$this->userData = $this->get($this->userTable, [
+			'where' => ['id' => $data['id']]
+		]);
 
-        if(!$this->userData) {
-            $this->logout();
-            throw new AuthException('Не найжены данные в таблице ' . $this->userTable . ' по идентификатору ' . $data['id'], 1);
-        }
+		if (!$this->userData) {
+			$this->logout();
+			throw new AuthException('Не найжены данные в таблице ' . $this->userTable . ' по идентификатору ' . $data['id'], 1);
+		}
 
-        $this->userData = $this->userData[0];
+		// получим данные пользователя (что бы они сразу лежали массивом)
+		$this->userData = $this->userData[0];
 
-        return true;
+		return true;
+	}
 
-    }
+	// метод валидации (проверяет две составляющих: версия куки и время куки)
+	private function validate($data)
+	{
+		// если константа: COOKIE_VERSION установлена (не пусто)
+		if (!empty(COOKIE_VERSION)) {
+			// если дата в ячейке: $data['version'] не равна константе: COOKIE_VERSION
+			if ($data['version'] !== COOKIE_VERSION) {
+				$this->logout();
+				// выбросим исключение
+				throw new AuthException('Не корректная версия cookie');
+			}
+		}
 
-    private function validate($data) {
-        if(!empty(COOKIE_VERSION)) {
-            if($data['version'] !== COOKIE_VERSION) {
-                $this->logout();
-                throw new AuthException('Не корректная версия cookie');
-            }
-        }
+		// если константа: COOKIE_TIME установлена (не пусто) 
+		if (!empty(COOKIE_TIME)) {
+			// проверка: если объект класса DateTime (из текущей метки времени) больше объекта класса DateTime (метки времени из ячейки: $data['cookieTime']) При этом модифицируем в ф-ии: modify()
+			if ((new \DateTime()) > (new \DateTime($data['cookieTime']))->modify(COOKIE_TIME . ' minutes')) {
+				throw new AuthException('Превышено время бездействия пользователя');
+			}
+		}
+	}
 
-        if(!empty(COOKIE_TIME)) {
-            if((new \DateTime()) > (new \DateTime($data['cookieTime']))->modify(COOKIE_TIME . ' minutes')) {
-                throw new AuthException('Превышено время бездействия пользователя');
-            }
-        }
-    }
-
-    public function logout() {
-        setcookie($this->cookieName, '', 1, PATH);
-    }
+	// метод который будет выкидывать куку пользователя
+	public function logout()
+	{
+		setcookie($this->cookieName, '', 1, PATH);
+	}
 }
