@@ -4,23 +4,31 @@ namespace core\base\controller;
 
 use core\base\settings\Settings;
 
+// класс распределит запросы учитывая административная это панель или пользовательская часть сайта 
 class BaseAjax extends BaseController
 {
+	// метод определит какой контроллер подключать
 	public function route()
 	{
 		$route = Settings::get('routes');
 		$controller = $route['user']['path'] . 'AjaxController';
+		// данные могут прийти из js могут прийти ПОСТом или ГЕТом
+		// сделаем проверку каким способои данные пришли
 		$data = $this->isPost() ? $_POST : $_GET;
 
-		// сделаем оверку и сгенерируем уникальный токен (применим на странице: login.php для защиты от роботизированного подбора пароля)
+		// сделаем проверку и сгенерируем уникальный токен (применим на странице: login.php для защиты от роботизированного подбора пароля)
 		if (!empty($data['ajax']) && $data['ajax'] === 'token') {
 			return $this->generateToken();
 		}
 
 		$httpReferer = str_replace('/', '\/', $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . PATH . $route['admin']['alias']);
 
+		// если существует ячейка: $data['ADMIN_MODE']
 		if (isset($data['ADMIN_MODE']) || preg_match('/^' . $httpReferer . '(\/?|$)/', $_SERVER['HTTP_REFERER'])) {
+			// разрегистрируем (удалим) ячейку: $data['ADMIN_MODE'] У нас она просто флаг
 			unset($data['ADMIN_MODE']);
+
+			// и переопределяем переменную: $controller
 			$controller = $route['admin']['path'] . 'AjaxController';
 		}
 

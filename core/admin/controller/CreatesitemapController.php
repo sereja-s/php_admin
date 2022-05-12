@@ -435,13 +435,19 @@ class CreatesitemapController extends BaseAdmin
 		$dom = new \domDocument('1.0', 'utf-8');
 		$dom->formatOutput = true;
 
+		// создаём корневой элемент (на вход ф-ии подаём название элемента)
 		$root = $dom->createElement('urlset');
+		// установим атрибуты корневого элемента (на вход ф-ии подаём название атрибута и его значение)
 		$root->setAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 		$root->setAttribute('xmlns:xls', 'http://w3.org/2001/XMLSchema-instance');
 		$root->setAttribute('xsi:schemaLocation', 'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap/xsd');
 
+		// вставим созданный элемент в dom-документ
 		$dom->appendChild($root);
 
+		// implexml_import_dom()- Эта функция принимает текущий корневой элемент объекта DOM и превращает его в 
+		// текущий корневой элемент объекта SimpleXML. Этот новый объект затем можно использовать в качестве 
+		// собственного элемента SimpleXML (сможем вставлять в него теги)
 		$sxe = simplexml_import_dom($dom);
 
 		if ($this->all_links) {
@@ -449,10 +455,14 @@ class CreatesitemapController extends BaseAdmin
 			$lastMod = $date->format('Y-m-d') . 'T' . $date->format('H:i:s+01:00');
 
 			foreach ($this->all_links as $item) {
+
+				// обрезав строку ссылки (из $item ) получим часть без домена и концевых слешей и сохраним в переменной: $elem
 				$elem = trim(mb_substr($item, mb_strlen(SITE_URL)), '/');
+				// поделим строку в переменной: $elem на массив строк по слешам
 				$elem = explode('/', $elem);
 
 				$count = '0.' . (count($elem) - 1);
+				// здесь переменную: $count необходимо привести к плавающей точке
 				$priority = 1 - (float)$count;
 
 				if ($priority == 1) {
@@ -467,6 +477,7 @@ class CreatesitemapController extends BaseAdmin
 			}
 		}
 
+		// указываем путь куда нужно сохранить созданную карту сайта
 		$dom->save($_SERVER['DOCUMENT_ROOT'] . PATH . 'sitemap.xml');
 	}
 }

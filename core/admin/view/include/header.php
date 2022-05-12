@@ -8,6 +8,7 @@
 	<meta type="description" content="...">
 	<title>Document</title>
 
+
 	<?php $this->getStyles() ?>
 
 </head>

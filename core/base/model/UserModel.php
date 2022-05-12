@@ -87,8 +87,8 @@ class UserModel extends BaseModel
                     id int auto_increment primary key,
                     login varchar(255) null,
                     ip varchar(32) null,
-                    trying tinyint(1) null,
-                    timе datetime null
+                    trying tinyint(2) null,
+                    time datetime null
                 )
                 charset = utf8 
             ';

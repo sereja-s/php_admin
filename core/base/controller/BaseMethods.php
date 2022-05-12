@@ -81,6 +81,7 @@ trait BaseMethods
 		exit;
 	}
 
+	// вывод стилей
 	protected function getStyles()
 	{
 		if ($this->styles) {
@@ -90,6 +91,7 @@ trait BaseMethods
 		}
 	}
 
+	// вывод скриптов
 	protected function getScripts()
 	{
 		if ($this->scripts) {
