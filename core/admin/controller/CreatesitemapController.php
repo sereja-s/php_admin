@@ -59,14 +59,18 @@ class CreatesitemapController extends BaseAdmin
 		// в переменой сохраним результат работы объекта модели его метда: get()-т.е. все то что хранится в БД (в таблице: 
 		// parsing_data) Вернём нулевой элемент
 		$reserve = $this->model->get('parsing_data')[0];
+
 		$table_rows = [];
 
 		foreach ($reserve as $name => $item) {
+			// сформируем массив с ключами
 			$table_rows[$name] = '';
 
 			if ($item) {
 				$this->$name = json_decode($item);
-			} elseif ($name === 'all_links' || $name === 'temp_links') {
+			}
+			// сделаем проверку
+			elseif ($name === 'all_links' || $name === 'temp_links') {
 				$this->$name = [SITE_URL];
 			}
 		}
@@ -109,6 +113,7 @@ class CreatesitemapController extends BaseAdmin
 
 					// если в $links что то есть (осталось)
 					if ($links) {
+						// в цикле пройдёмся по массиву с ключами (в $table_rows)
 						foreach ($table_rows as $name => $item) {
 							if ($name === 'temp_links') {
 
@@ -125,6 +130,7 @@ class CreatesitemapController extends BaseAdmin
 
 						// вызываем метод: edit() На вход: 1- что редактируем (название таблицы) 2- массив (поля для редактирования)
 						$this->model->edit('parsing_data', [
+							// передаём готовый массив (из $table_rows)
 							'fields' => $table_rows
 						]);
 					}
@@ -151,6 +157,7 @@ class CreatesitemapController extends BaseAdmin
 			$table_rows[$name] = '';
 		}
 
+		// здесь обнуляем запись в БД
 		$this->model->edit('parsing_data', [
 			'fields' => $table_rows
 		]);
@@ -266,13 +273,19 @@ class CreatesitemapController extends BaseAdmin
 			curl_close($curl[$i]);
 
 			// preg_match()- Поиск соответствия регулярному выражению
+			// проверка по регулярному выражению на тип контента
+			// если ошибка
 			if (!preg_match('/Content-Type:\s+text\/html/ui', $result[$i])) {
+				// то кладём: $url в массив: bad_links[]
 				$this->bad_links[] = $url;
 				$this->cancel(0, 'Incorrect content type ' . $url);
 				continue;
 			}
 
+			// проверка по регулярному выражению на код ответа сервера
+			// если ошибка
 			if (!preg_match('/HTTP\/\d\.?\d?\s+20\d/ui', $result[$i])) {
+				// то кладём: $url в массив: bad_links[]
 				$this->bad_links[] = $url;
 				$this->cancel(0, 'Incorrect server code ' . $url);
 				continue;
@@ -375,13 +388,13 @@ class CreatesitemapController extends BaseAdmin
 		return true;
 	}
 
-	// метод который проверит существует ли таблица для парсинга
+	// метод который проверит существует ли таблица для парсинга (если такой таблицы нет, то создаёт её)
 	protected function checkParsingTable()
 	{
 		// Здесь доступно свойство: $this->model, вызовем метод: showTables() и результат созраним в переменной: $tables
 		$tables = $this->model->showTables();
 
-		// если в массиве (в $tables) нет элемента: parsing_data
+		// если в массиве таблиц (в $tables) нет элемента: parsing_data
 		if (!in_array('parsing_data', $tables)) {
 			// создадим запрос
 			$query = 'CREATE TABLE parsing_data (all_links longtext, temp_links longtext, bad_links longtext)';
