@@ -135,8 +135,8 @@ abstract class BaseModel extends BaseModelMethods
 	 */
 
 
-	// метод get (read)- получить (прочитать)
-	final public function get($table, $set = []) // массиву дали дефолтное значение
+	// метод get (read)- получить (прочитать)	
+	final public function get($table, $set = [])
 	{
 
 		$fields = $this->createFields($set, $table); // переменная для поля, которые хотим получить
@@ -181,6 +181,8 @@ abstract class BaseModel extends BaseModelMethods
 		// вернём результат работы метода query() в переменную $res
 		$res = $this->query($query);
 
+		// проверим существует ли у нас флаг (join_structure) по которому мы будем определять: надо ли нам 
+		// структурировать данные
 		if (isset($set['join_structure']) && $set['join_structure'] && $res) {
 			$res = $this->joinStructure($res, $table);
 		}
@@ -491,6 +493,8 @@ abstract class BaseModel extends BaseModelMethods
 	// метод будет давать информацию о колонках с полями БД
 	final public function showColumns($table)
 	{
+
+		// если ячейка: tableRows[$table] не существует или пустая
 		if (!isset($this->tableRows[$table]) || !$this->tableRows[$table]) {
 			$checkTable = $this->createTableAlias($table);
 
@@ -498,7 +502,7 @@ abstract class BaseModel extends BaseModelMethods
 				return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
 			}
 
-			// в переменную $query сохраним результат раоты запроса
+			// в переменную $query сохраним результат работы запроса
 			$query = "SHOW COLUMNS FROM {$checkTable['table']}";
 			// в переменную $res придёт результат работы метода query(), на вход ему передаём переменную $query
 			$res = $this->query($query);

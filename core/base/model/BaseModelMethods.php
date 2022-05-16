@@ -28,46 +28,72 @@ abstract class BaseModelMethods
 
 		// в переменную $fields сохраним пустую строку
 		$fields = '';
+		// объявим флаг и поставим ему значение по умолчаанию
 		$join_structure = false;
 
+		// если у нас пришёл: $join или значение в ячейке: $set['join_structure'] установлено отличным от null
+		// и $set['join_structure'] возвращает true и что то пришло в $table
 		if (($join || isset($set['join_structure']) && $set['join_structure']) && $table) {
+			// поставим флаг структуризации джоинов в значение: true
 			$join_structure = true;
 			$this->showColumns($table);
 
 			if (isset($this->tableRows[$table]['multi_id_row'])) {
+				// обнуляем поле
 				$set['fields'] = [];
 			}
 		}
 
+		// сделаем проверку:
 		if (!isset($set['fields']) || !is_array($set['fields']) || !$set['fields']) {
+			// если ничего не пришло в $join (т.е. или отсутствует ячейка: join_structure и 3-им параметром в метод: 
+			// createFields() придёт: $join = false, или когда метод: createFields() вызывается из основного метода 
+			// модели: get() В этом случае нам не нужно объявлять псевдонимы, т.к. это выборка для основных полей (идёт // с основными именами))
 			if (!$join) {
 				$fields = $concat_table . '*,';
+				// иначе надо собирать только поля с псевдонимами
 			} else {
 				foreach ($this->tableRows[$alias_table] as $key => $item) {
+					// если ключ не равен служебным полям: id_row и не равен полям: multi_id_row
 					if ($key !== 'id_row' && $key !== 'multi_id_row') {
+						// в пустую строку: $fields добавим:
 						$fields .= $concat_table . $key . ' as TABLE' . $alias_table . 'TABLE_' . $key . ',';
 					}
 				}
 			}
 		} else {
+			// сделаем флаг и установим значение по умолчанию: false
 			$id_field = false;
 
-			// проходим по массиву $set (его ячейкам fields) как $field 
+			// проходим по массиву $set (его ячейке fields) как $field 
 			// На каждой итерации значение текущего элемента массива $set['fields'] присваивается переменной $field
 			foreach ($set['fields'] as $field) {
+				// если флаг: $join_structure стоит в true (т.е. нам необходимо структурировать данные) и никакое из полей не является первичным ключём (т.е. !$id_field), и ячейка: tableRows[$alias_table] равна $field
 				if ($join_structure && !$id_field && $this->tableRows[$alias_table] === $field) {
+					// поставим флаг в true (теперь знаем, что первичный ключ добавлен в наш запрос)
 					$id_field = true;
 				}
 
+				// делаем проверку что в переменную что то пришло или то что пришло равно: null
 				if ($field || $field === null) {
 					if ($field === null) {
 						$fields .= "NULL,";
 						continue;
 					}
 
+					// если нам необходимо присоединять (join) таблицы и структурировать
 					if ($join && $join_structure) {
+						// проверим на соответствие регулярному выраению (найдём определён ли псевдоним уже в $field)
+						// если переменная: $field пришла уже с псевдонимом
 						if (preg_match('/^(.+)?\s+as\s+(.+)/i', $field, $matches)) {
+							// значит нам не надо одно и тоже поле два раза выбирать
+							// если $matches подаётся на вход (3-ий параметр), то он заполняется результатами поиска. 
+							// (будет содержать текст, который соответствовал полному шаблону Или будет иметь текст, 
+							// который соответствовал первому захваченному подшаблону в скобках, и так далее) 
+							// здесь- т.к. в регулярке две переменных в круглых скобках, в matches[1] будет храниться 
+							// нормальное название поля (1-ая переменная), а в $matches[2]- его псевдоним (2-ая переменная)
 							$fields .= $concat_table . $matches[1] . ' as TABLE' . $alias_table . 'TABLE_' . $matches[2] . ',';
+							// иначе (т.е. если не соответствует регулярному выражению)
 						} else {
 							$fields .= $concat_table . $field . ' as TABLE' . $alias_table . 'TABLE_' . $field . ',';
 						}
@@ -77,10 +103,13 @@ abstract class BaseModelMethods
 				}
 			}
 
+			// если в ячейке: $set['fields'] не было поля из $id_field и нам необходимо осуществлять структуризацию джоина (т.е. $join_structure = true)
 			if (!$id_field && $join_structure) {
+				// в $join что то пришло (т.е. метод: createFields() вызвали из метода: createJoin())
 				if ($join) {
 					$fields .= $concat_table . $this->tableRows[$alias_table]['id_row']
 						. ' as TABLE' . $alias_table . 'TABLE_' . $this->tableRows[$alias_table]['id_row'] . ',';
+					// иначе (т.е. метод: createFields() вызвали из основного метода модели: get())
 				} else {
 					$fields .= $concat_table . $this->tableRows[$alias_table]['id_row'] . ',';
 				}
@@ -391,6 +420,7 @@ abstract class BaseModelMethods
 					}
 
 					$fields .= $this->createFields($item, $key, $set['join_structure']);
+
 					$where .= $this->createWhere($item, $key, $group_condition);
 				}
 			}
@@ -639,40 +669,69 @@ abstract class BaseModelMethods
 		return rtrim($update, ',');
 	}
 
+	// метод который будет структурировать данные в выборке из БД
 	protected function joinStructure($res, $table)
 	{
+		// объявим путой по умолчанию массив
 		$join_arr = [];
 		$id_row = $this->tableRows[$this->createTableAlias($table)['alias']]['id_row'];
 
 		foreach ($res as $value) {
 			if ($value) {
+				// если не существует ячейка: $join_arr[$value[$id_row]]
 				if (!isset($join_arr[$value[$id_row]])) {
+					// то создадим её и объявим, что это массив
 					$join_arr[$value[$id_row]] = [];
 				}
 
+				// запускаем цикл по $value, в котором хранятся поля которые пришли из БД
 				foreach ($value as $key => $item) {
+
+					// если в $key находим шаблон (регулярное выражение) 
+					// в ф-ию: preg_match() 3-им параметром передаём массив вхождений: $matches
+					// (если такая ячейка есть, значит это сджойненная таблица)
 					if (preg_match('/TABLE(.+)?TABLE/u', $key, $matches)) {
+						// то получим нормализованное имя таблицы, которое будет равняться ячейке массива: $matches[1] в 
+						// которую прийдёт: 1-ая переменная: .+ (т.е. то что в шаблоне заключено в круглые скобки) 
+						// (а в ячейку: $matches[0] придёт вхождение всей подстроки, соответствующей указанному шаблону, а // именно TABLE(.+)?TABLE)
 						$table_name_normal = $matches[1];
 
+						// если в таблице которую мы джойним ($table_name_normal) нет мультиключей, т.е. составных (multi_id_row),а  пришёл нормальный первичный ключ (id_row)
 						if (!isset($this->tableRows[$table_name_normal]['multi_id_row'])) {
+							// получим значение первичного ключа сджойненной таблицы в переменную $join_id_row
+							// запись обращения к ячейки с первичным ключём образована исходя из того как формировались 
+							// поля для выборки из таблицы в методе: createFields() Там между 2-я словами: TABLE хранится 
+							// имя таблицы, а дальше после нижнего подчёркивания хранится 
+							// идентификатор (первичный ключ): $this->tableRows [$table_name_normal]['id_row']]
+							// (поэтому мы можем обратиться к имени таблицы, а затем к значению, которое лежит в поле с 
+							// первичным ключём)
 							$join_id_row = $value[$matches[0] . '_' . $this->tableRows[$table_name_normal]['id_row']];
+							// иначе (т.е. мультиключи есть)
 						} else {
+							// в переменную положим пустую строку
 							$join_id_row = '';
 
 							foreach ($this->tableRows[$table_name_normal]['multi_id_row'] as $multi) {
+								// наберём первичный ключ сджойненной таблицы как составную строку
 								$join_id_row .= $value[$matches[0] . '_' . $multi];
 							}
 						}
 
+						// получим чистый ряд (точное название поля, которое хранится после нижнего подчёркивания)
+						// ищем шаблон: TABLE(.+)TABLE_, заменяем на пустую строку, ищем в переменной: $key
 						$row = preg_replace('/TABLE(.+)TABLE_/u', '', $key);
 
+						// проверим: если у нас первичный ключ сджойненной таблицы (в $join_id_row) есть и не существует 
+						// такое поле в результирующем массиве (что бы его не продублировать)
 						if ($join_id_row && !isset($join_arr[$value[$id_row]]['join'][$table_name_normal][$join_id_row][$row])) {
+							// создадим  ячейку результирующего массива и в неё сохраним значение из $item
 							$join_arr[$value[$id_row]]['join'][$table_name_normal][$join_id_row][$row] = $item;
 						}
 
 						continue;
 					}
 
+					// если мы работаем с несджойненной (не присоединённой) таблицей
 					$join_arr[$value[$id_row]][$key] = $item;
 				}
 			}
