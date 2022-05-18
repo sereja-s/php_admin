@@ -12,6 +12,7 @@ abstract class BaseModelMethods
 
 	protected function createFields($set, $table = false, $join = false)
 	{
+		// array_key_exists() — проверяет, существует ли в массиве заданный ключ или индекс
 		if (array_key_exists('fields', $set) && $set['fields'] === null) {
 			return '';
 		}
@@ -116,18 +117,25 @@ abstract class BaseModelMethods
 			}
 		}
 
+		// вернётся строка с полями, в которой будут пристыкованы названия таблиц с псевдонимами 
 		return $fields;
 	}
 
 	protected function createOrder($set, $table = false)
 	{
 		$table = ($table && (!isset($set['no_concat']) || !$set['no_concat']))
+			// вызовем метод: createTableAlias(), ему на вход передадим переменную: $table и вернём то что будет 
+			// находиться в ячейке: ['alias'] результирующего массива и конкатенируем точку Результат сохраним в 
+			// переменной: $table (если условие выполнится) Иначе переменная: $table будет пустой
 			? $this->createTableAlias($table)['alias'] . '.' : '';
 
 		// сформируем пкстую строковую переменную $order_by
 		$order_by = '';
 
+		// если $set['order'] существует и в нём есть значение
 		if (isset($set['order']) && $set['order']) {
+			// если order придёт как строка, тогда сделаем явное приведение типов и строка попадёт в нулевой элемент 
+			// массива и вернётся в $set['order']
 			$set['order'] = (array)$set['order'];
 
 			$set['order_direction'] = (isset($set['order_direction']) && $set['order_direction'])
@@ -158,6 +166,7 @@ abstract class BaseModelMethods
 					$order_direction = strtoupper($set['order_direction'][$direct_count - 1]);
 				}
 
+				// если переменная: $order есть в св-ве: $sqlFunc (sql-функции)
 				if (in_array($order, $this->sqlFunc)) {
 					$order_by .= $order . ',';
 					// is_int() — Проверяет, является ли переменная целым числом
@@ -740,14 +749,20 @@ abstract class BaseModelMethods
 		return $join_arr;
 	}
 
+	// метод, для создания алиасов таблиц
 	protected function createTableAlias($table)
 	{
 		$arr = [];
 
+		// в регулярном выражении ищем пробел один или более раз
+		// если есть пробел в таблице ( в $table)
 		if (preg_match('/\s+/i', $table)) {
+			// Ищем символ пробела в переменной: $table, встречающегося 2-а или более раз и заменяем его на один пробел и сохраняем в переменной: $table
 			$table = preg_replace('/\s{2,}/i', ' ', $table);
+			// разбиваем строку (из $table) на массив строк по заданному разделителю (пробелу) и сохраняем в переменной: $table_name
 			$table_name = explode(' ', $table);
 
+			// trim()— удаление пробелов (или других символов, если они указаны 2-ым параметром) из начала и конца строки
 			$arr['table'] = trim($table_name[0]);
 			$arr['alias'] = trim($table_name[1]);
 		} else {

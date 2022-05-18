@@ -498,11 +498,16 @@ abstract class BaseModel extends BaseModelMethods
 		if (!isset($this->tableRows[$table]) || !$this->tableRows[$table]) {
 			$checkTable = $this->createTableAlias($table);
 
+			// если что то пришло в ячейку: 
 			if ($this->tableRows[$checkTable['table']]) {
+				// то в в массиве: tableRows, создадим ячейку массива с псевдонимом таблицы, которая будет равна ячейке 
+				// массива с названием таблицы ( без псевдонима)
 				return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
 			}
 
 			// в переменную $query сохраним результат работы запроса
+			// чтобы массив в запросе (внутри двойных кавычек) преобразовать в строку, мы должны заключить его в 
+			// фигурные скобки
 			$query = "SHOW COLUMNS FROM {$checkTable['table']}";
 			// в переменную $res придёт результат работы метода query(), на вход ему передаём переменную $query
 			$res = $this->query($query);
