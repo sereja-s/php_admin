@@ -775,6 +775,7 @@ abstract class BaseAdmin extends BaseController
 
 	protected function createOrderData($table)
 	{
+
 		$columns = $this->model->showColumns($table);
 
 		if (!$columns) {
@@ -801,8 +802,10 @@ abstract class BaseAdmin extends BaseController
 		}
 
 		$parent_id = '';
+		// объявим массив для сортировки
 		$order = [];
 
+		// если есть родитель, то надо делать сортировки по родителю
 		if ($columns['parent_id']) {
 			$order[] = $parent_id = 'parent_id';
 		}
@@ -813,115 +816,175 @@ abstract class BaseAdmin extends BaseController
 			$order[] = $order_name;
 		}
 
+		// функция: compact()- принимает имена переменных и возвращает асоцативный массив, в котором ячейками являются имена текущих переменных
 		return compact('name', 'parent_id', 'order', 'columns');
 	}
 
+	// метод, который будет создавать связи многие ко многим
 	protected function createManyToMany($settings = false)
 	{
 		if (!$settings) {
+			// в переменную: $settings сохраним или свойство: $this->settings (если оно есть и заполнено) или результат работы метода: instance()
 			$settings = $this->settings ?: Settings::instance();
 		}
 
+		// получим свойства
 		$manyToMany = $settings::get('manyToMany');
 		$blocks = $settings::get('blockNeedle');
 
+		// если что то есть в массиве
 		if ($manyToMany) {
+			// обходим его в цикле
 			foreach ($manyToMany as $mTable => $tables) {
+				// сохраним в переменной результаты поиска по массиву
+				// переменная: $targetKey может быть 0 или 1 
 				$targetKey = array_search($this->table, $tables);
 
 				if ($targetKey !== false) {
+					// сохраним в переменной: $otherKey ноль (0), если переменная: $targetKey равна единице (1)
+					// иначе в $otherKey положим 1-цу
 					$otherKey = $targetKey ? 0 : 1;
 
+					// сохраним в переменной содержимое ячейки: checkboxlist массива шаблонов: templateArr (из Settings.php)
 					$checkBoxList = $settings::get('templateArr')['checkboxlist'];
 
 					if (!$checkBoxList || !in_array($tables[$otherKey], $checkBoxList)) {
 						continue;
 					}
 
+					// если ячейки: $tables[$otherKey] в массиве (в св-ве: $translate) нет
 					if (!$this->translate[$tables[$otherKey]]) {
+						// если в полученных проектных таблицах есть ячейка: $tables[$otherKey]
 						if ($settings::get('projectTables')[$tables[$otherKey]]) {
+							// то заполним св-во: $translate (его ячейку: $tables[$otherKey])
+							// сохраним в нём массив из полученного св-ва: projectTables его ячеек: $tables[$otherKey] и далее ['name'])
 							$this->translate[$tables[$otherKey]] = [$settings::get('projectTables')[$tables[$otherKey]]['name']];
 						}
 					}
 
+					// в переменной: $orderData сохраним результат работы метода: createOrderData() (на вход ему 
+					// передаём: другую таблицу с которой делаем связь ( из ячейки: $tables[$otherKey]))
 					$orderData = $this->createOrderData($tables[$otherKey]);
 
 					$insert = false;
 
+					// если что то есть в переменной: $blocks
 					if ($blocks) {
 						foreach ($blocks as $key => $item) {
+							// если в массиве из $item есть $tables[$otherKey]
+							// (т.е если мы объявили $tables[$otherKey] для шаблонизации)
 							if (in_array($tables[$otherKey], $item)) {
+								// исходя из св-ва: $this->blocks (его ячейки: [$key] в его элементе ) сформируется наш шаблон
 								$this->blocks[$key][] = $tables[$otherKey];
 								$insert = true;
+								// завершим работу цикла
 								break;
 							}
 						}
 					}
 
 					if (!$insert) {
+						// получим первую ячейку св-ва: $this->blocks и к нему  мы добавим элемент: $tables[$otherKey]
 						$this->blocks[array_keys($this->blocks)[0]][] = $tables[$otherKey];
 					}
 
 					$foreign = [];
 
+					// если заполнено св-во: $data (мы работаем в режиме редактирования) В него попадают все данные БД
 					if ($this->data) {
+						// в переменную: $res сохраним результат работы метода: get() нашей модели На вход ему 
+						// передаём:1- откуда данные должны получить (наша таблица связи: $mTable, 2- какие данные нужно 
+						// получить (только данные связанные с другой таблицей (поля и условия (инструкции))))
 						$res = $this->model->get($mTable, [
+							// в $tables[$otherKey]- название таблицы, в $orderData['columns']['id_row']]- то что является полем id
 							'fields' => [$tables[$otherKey] . '_' . $orderData['columns']['id_row']],
+							// в $this->table- название таблицы, в $this->columns['id_row']- первичный ключ текущей 
+							// таблицы с которой работаем 
 							'where' => [$this->table . '_' . $this->columns['id_row'] => $this->data[$this->columns['id_row']]]
 						]);
 
 						if ($res) {
 							foreach ($res as $item) {
+								// сформируем массив связей, которые есть с текущей таблицей
+								// в каждом $item лежит название, которое пришло в 'fields' выше
+								// т.е. в $foreign[] будут идентификаторы всех полей, которые есть в таблице связанной
 								$foreign[] = $item[$tables[$otherKey] . '_' . $orderData['columns']['id_row']];
 							}
 						}
 					}
 
+					// если в существует ячейка: $tables['type'] и в ней что то лежит отличное от null
 					if (isset($tables['type'])) {
+						// в переменную мы должны получить данные из другой (внешней) таблицы
 						$data = $this->model->get($tables[$otherKey], [
 							'fields' => [
-								$orderData['columns']['id_row'] . ' as id',
+								$orderData['columns']['id_row'] . ' as id', // поле получаем как id
 								$orderData['name'],
 								$orderData['parent_id']
 							],
-							'order' => $orderData['order']
+							'order' => $orderData['order'] // отсортируем всё по тому, что лежит в ячейке
 						]);
 
 						if ($data) {
 							$this->foreignData[$tables[$otherKey]][$tables[$otherKey]]['name'] = 'Выбрать';
 
 							foreach ($data as $item) {
+								// Проверим что мы хотим получать детей (child) или родителей (root)
+
+								// если содержимое в ячейке: $tables['type'] строго равено строке: root и существует 
+								// ячейка: $orderData['parent_id']
 								if ($tables['type'] === 'root' && $orderData['parent_id']) {
+									// если выполнится условие, то этот элемент является названием группы
 									if ($item[$orderData['parent_id']] === null) {
+										// то в свойство, которое уже есть ($foreignData), в его ячейку: $tables[$otherKey]
+										// далее для удобства вывода шаблона продублируем эту ячейку ещё раз
+										// затем в ней создадим ячейку: ['sub'] и в её элемент (последовательно) положим: 
+										// $item (то что там лежит) Т.е. все родители будут помещены в ячейку: ['sub']
 										$this->foreignData[$tables[$otherKey]][$tables[$otherKey]]['sub'][] = $item;
 									}
+									// если содержимое в ячейке: $tables['type'] строго равено строке: child и существует 
+									// ячейка: $orderData['parent_id']
 								} elseif ($tables['type'] === 'child' && $orderData['parent_id']) {
+									// если выполнится условие, то этот элемент на кого то ссылается								
 									if ($item[$orderData['parent_id']] !== null) {
+										// и мы хотим видеть только детей
 										$this->foreignData[$tables[$otherKey]][$tables[$otherKey]]['sub'][] = $item;
 									}
+									// иначе (если в поле type занесено, что то произвольное), все категории (родительские и дочерние) будут сохранены в одном месте
 								} else {
+
 									$this->foreignData[$tables[$otherKey]][$tables[$otherKey]]['sub'][] = $item;
 								}
 
+								// далее занесём элементы (если у нас есть $data, а значит все нужные идентификаторы уже 
+								// лежат в массиве: $foreign)
+								// найдём $item['id'] в массиве (они там есть т.к. мы их ранее выбирали as id)
 								if (in_array($item['id'], $foreign)) {
+
 									$this->data[$tables[$otherKey]][$tables[$otherKey]][] = $item['id'];
 								}
 							}
 						}
+						// если ячейки: $tables['type'] нет, а ячейка: $orderData['parent_id'] есть
 					} elseif ($orderData['parent_id']) {
+
 						$parent = $tables[$otherKey];
 
+						// (если $keys вернёт false, значит $parent ссылается на самого себя и мы внешний ключ ссылки на 
+						// самого себя не делаем)
 						$keys = $this->model->showForeignKeys($tables[$otherKey]);
 
 						if ($keys) {
 							foreach ($keys as $item) {
 								if ($item['COLUMN_NAME'] === 'parent_id') {
+									// то в родительскую категория сохраним имя таблицы с которой произведена связь
 									$parent = $item['REFERENCED_TABLE_NAME'];
 									break;
 								}
 							}
 						}
 
+						// если parent_id находится в этой же таблице 
 						if ($parent === $tables[$otherKey]) {
 							$data = $this->model->get($tables[$otherKey], [
 								'fields' => [
@@ -933,28 +996,59 @@ abstract class BaseAdmin extends BaseController
 							]);
 
 							if ($data) {
+								// т.к. система вложенностей родительских категорий может быть различной
+								// запустим цикл с проверкой:
+								// в переменную: $key будет попадать то что возвращает ф-ия: key()
+								// ф-ия: key() вернёт ключ массива, поданного на вход (при этом указатель данного массива не сдвигает)
+								// (цикл отрабатывает пока в переменную: $key не придёт null)
 								while (($key = key($data)) !== null) {
+
+									// если нет ячейки: $data[$key]['parent_id'], то это корневая (родительская) категория
 									if (!$data[$key]['parent_id']) {
+
+										// то мы положим её в массив: $foreignData, в качестве имени в соответствующую ячейку,
+										// которое потом будем показывать (здесь id нам не нужен, т.к. нам нужно значение, а не название)
 										$this->foreignData[$tables[$otherKey]][$data[$key]['id']]['name'] = $data[$key]['name'];
+										// разрегистрируем переменную
 										unset($data[$key]);
+										// сбросим указатель массива обратно на начало (чтобы каждый раз обходили его с нуля)
 										reset($data);
+										// переходим на следующую итерацию цикла
 										continue;
+										// иначе
 									} else {
+
+										// если родительский раздел уже создан (такая ячейка уже есть)
 										if ($this->foreignData[$tables[$otherKey]][$data[$key][$orderData['parent_id']]]) {
+											// обратимся к ячейке: ['sub'] того массива (его ячейки), указанного в условии
+											// и в неё (в ячейку с ключём, в её ячейку: ['id']) оложим: ячейку: $data[$key]
 											$this->foreignData[$tables[$otherKey]][$data[$key][$orderData['parent_id']]]['sub'][$data[$key]['id']] = $data[$key];
 
+											// проверим есть ли ячейка во внешних ключах
 											if (in_array($data[$key]['id'], $foreign)) {
 												$this->data[$tables[$otherKey]][$data[$key][$orderData['parent_id']]][] = $data[$key]['id'];
 											}
 
 											unset($data[$key]);
+
 											reset($data);
+
 											continue;
+
+											// иначе мы должны сгенерировать такую ячейку
 										} else {
+
+											// пройдёмся в цикле по массиву в ячейке: foreignData[$tables[$otherKey]], чтобы получить идентификаторы
 											foreach ($this->foreignData[$tables[$otherKey]] as $id => $item) {
+
+												// формируем переменную: $parent_id сохраняя в неё, то что есть 
+												// в ячейке: $data [$key] [$orderData['parent_id']]
 												$parent_id = $data[$key][$orderData['parent_id']];
 
+												// если у нас ячейка: $item['sub'] заполнена и не null, также 
+												// ячейка: $item['sub'][$parent_id] тоже не null
 												if (isset($item['sub']) && $item['sub'] && isset($item['sub'][$parent_id])) {
+
 													$this->foreignData[$tables[$otherKey]][$id]['sub'][$data[$key]['id']] = $data[$key];
 
 													if (in_array($data[$key]['id'], $foreign)) {
@@ -962,31 +1056,45 @@ abstract class BaseAdmin extends BaseController
 													}
 
 													unset($data[$key]);
+
 													reset($data);
+
+													// выйдем их цикла: foreach и перейдём на следующую итерацию цикла: while
 													continue 2;
 												}
 											}
 										}
 
+										// переместим указатель на каждой его итерации (если условия не выполнились, будем 
+										// смотреть дальше)
 										next($data);
 									}
 								}
 							}
+							// если parent_id назодится в другой таблице (в $parent)
 						} else {
+
 							$parentOrderData = $this->createOrderData($parent);
 
+							// получим имена (названия родительских категорий которые есть)
 							$data = $this->model->get($parent, [
-								'fields' => [$parentOrderData['name']],
+								'fields' => [$parentOrderData['name']], // нужные поля
+								// для формирования структурированного массива, в ячейку массива: 'join' кладём
 								'join' => [
+									// массив
 									$tables[$otherKey] => [
+										// укажем поля которые необходимо у массива получить
 										'fields' => [$orderData['columns']['id_row'] . ' as id', $orderData['name']],
+										// укажем по какому признаку мы стыкуем эти таблицы
 										'on' => [$parentOrderData['columns']['id_row'], $orderData['parent_id']]
 									]
 								],
+								// флаг структуризации (нам нужны подготовленные данные)
 								'join_structure' => true
 							]);
 
 							foreach ($data as $key => $item) {
+
 								if (isset($item['join'][$tables[$otherKey]]) && $item['join'][$tables[$otherKey]]) {
 									$this->foreignData[$tables[$otherKey]][$key]['name'] = $item['name'];
 									$this->foreignData[$tables[$otherKey]][$key]['sub'] = $item['join'][$tables[$otherKey]];
@@ -999,13 +1107,18 @@ abstract class BaseAdmin extends BaseController
 								}
 							}
 						}
+						// иначе если $orderData['parent_id'] тоже нет
 					} else {
+
+						// получим все данные из того, что есть
 						$data = $this->model->get($tables[$otherKey], [
 							'fields' => [$orderData['columns']['id_row'] . ' as id', $orderData['name'], $orderData['parent_id']],
 							'order' => $orderData['order']
 						]);
 
+						// если данные пришли
 						if ($data) {
+							// заполним ячейку: ['name'] массива в св-ве: $foreignData 
 							$this->foreignData[$tables[$otherKey]][$tables[$otherKey]]['name'] = 'Выбрать';
 
 							foreach ($data as $item) {
@@ -1027,13 +1140,17 @@ abstract class BaseAdmin extends BaseController
 		if (!$settings) {
 			$settings = $this->settings ?: Settings::instance();
 		}
+
 		$manyToMany = $settings::get('manyToMany');
 
 		if ($manyToMany) {
+
 			foreach ($manyToMany as $mTable => $tables) {
+
 				$targetKey = array_search($this->table, $tables);
 
 				if ($targetKey !== false) {
+
 					$otherKey = $targetKey ? 0 : 1;
 
 					$checkboxlist = $settings::get('templateArr')['checkboxlist'];
@@ -1042,24 +1159,34 @@ abstract class BaseAdmin extends BaseController
 						continue;
 					}
 
+					// обращаемся к объекту модели, к её методу, чтобы получить колонки таблицы, переданной на вход
+					// результат сохраняем в переменной: $columns
 					$columns = $this->model->showColumns($tables[$otherKey]);
 
 					$targetRow = $this->table . '_' . $this->columns['id_row'];
-
 					$otherRow = $tables[$otherKey] . '_' . $columns['id_row'];
 
+					// в начале, все данные из таблицы, которые связаны с этой выборкой, одним запрросом будем удалять
+					// а потом будем добавлять те чекбоксы, которые пришли из админпанели
 					$this->model->delete($mTable, [
 						'where' => [$targetRow => $_POST[$this->columns['id_row']]]
 					]);
 
+					// если с поста что то пришло
 					if ($_POST[$tables[$otherKey]]) {
 						$insertArr = [];
 						$i = 0;
 
+						// в цикле будем формировать массив для множественной вставки
 						foreach ($_POST[$tables[$otherKey]] as $value) {
+
 							foreach ($value as $item) {
+
+								// если в переменную что то пришло
 								if ($item) {
+									// в ячейку массива сохраним идентификатор текущей таблицы
 									$insertArr[$i][$targetRow] = $_POST[$this->columns['id_row']];
+									// в ячейку массива сохраним идентификатор связи
 									$insertArr[$i][$otherRow] = $item;
 
 									$i++;
@@ -1067,7 +1194,9 @@ abstract class BaseAdmin extends BaseController
 							}
 						}
 
+						// если в переменную что то пришло
 						if ($insertArr) {
+							// сделаем множественную вставку в таблицу (в $mTable) поля из массива (в $insertArr)
 							$this->model->add($mTable, [
 								'fields' => $insertArr
 							]);

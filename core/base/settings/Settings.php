@@ -117,6 +117,7 @@ class Settings
 	];
 
 	private $manyToMany = [
+		// массив содержит название таблиц, которые связаны
 		'goods_filters' => ['goods', 'filters'] // 'type' => 'child' || 'root'
 	];
 
