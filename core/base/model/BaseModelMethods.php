@@ -305,11 +305,15 @@ abstract class BaseModelMethods
 					// strpos()- Ищет позицию (порядковый номер) первого вхождения подстроки SELECT в строку $item
 					// если SELECT стоит на первой позиции т.е. в нулевом элементе
 					if (strpos($item, 'SELECT') === 0) {
+
 						$where .= $table . $key . $operand . '(' . $item . ") $condition";
 					} elseif ($item === null || $item === 'NULL') {
+
 						if ($operand === '=') {
+
 							$where .= $table . $key . ' IS NULL ' . $condition;
 						} else {
+
 							$where .= $table . $key . ' IS NOT NULL ' . $condition;
 						}
 					} else {

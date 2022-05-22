@@ -737,17 +737,23 @@ abstract class BaseAdmin extends BaseController
 		}
 	}
 
+	// метод формирования позиции вывода записей из базы данных
 	protected function updateMenuPosition($id = false)
 	{
 		if (isset($_POST['menu_position'])) {
+			// в переменную ставим иначально значение: false
+			// (переменная будет формироваться исходя из того: придёт ли $id)
 			$where = false;
 
 			if ($id && $this->columns['id_row']) {
+				// сформируем инструкцию в виде массива с ячейкой: ['id_row'] равной переменной: $id
 				$where = [$this->columns['id_row'] => $id];
 			}
 
+			//  проверим пришёл ли parent_id (есть родитель), относительно которого осуществляется глобальная сортировка
 			if (array_key_exists('parent_id', $_POST)) {
 				$this->model->updateMenuPosition($this->table, 'menu_position', $where, $_POST['menu_position'], ['where' => 'parent_id']);
+				// иначе
 			} else {
 				$this->model->updateMenuPosition($this->table, 'menu_position', $where, $_POST['menu_position']);
 			}
@@ -1135,6 +1141,7 @@ abstract class BaseAdmin extends BaseController
 		}
 	}
 
+	// метод для добавления связей многие ко многим в БД
 	protected function checkManyToMany($settings = false)
 	{
 		if (!$settings) {
@@ -1362,7 +1369,12 @@ abstract class BaseAdmin extends BaseController
 				// выборку с псевдонимом: count
 				'where' => $where,
 				'no_concat' => true // т.е. не пристыковывать имя таблицы
-			])[0]['count'] + (int)!$this->data; // укажем, что вернуть надо нулевой элемент той выборки, которая пришла (и в поле count) + увеличиваем $menu_pos на 1 (т.е. означает: добавили данные)
+			])[0]['count'] + (int)!$this->data; // укажем, что вернуть надо нулевой элемент той выборки, которая 
+			// пришла (его ячейку: count) + увеличиваем $menu_pos на 1 (т.е. означает: добавили данные (add))  
+			// Для редактирования (edit), $menu_pos не увеличиваем
+			// имеем: если $this->data пришла, то !$this->data даёт false, а значит (int)!$this->data = 0 (для edit),
+			// а если $this->data не пришла, то !$this->data даёт true, а значит (int)!$this->data = 1 (для add)
+
 			for ($i = 1; $i <= $menu_pos; $i++) {
 				$this->foreignData['menu_position'][$i - 1]['id'] = $i;
 				$this->foreignData['menu_position'][$i - 1]['name'] = $i;

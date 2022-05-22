@@ -7,7 +7,7 @@ namespace core\base\controller;
 
 trait Singleton
 {
-	static private $_instance; // ссылка  на объект класса, который хранится в данном свойстве
+	static private $_instance; // ссылка на объект класса, который хранится в данном свойстве
 
 	private function __construct()
 	{

@@ -5,49 +5,59 @@ namespace core\admin\controller;
 use core\base\exceptions\RouteException;
 use mysql_xdevapi\Exception;
 
+// Контроллер редактирования данных в административной панели
 class EditController extends BaseAdmin
 {
-    protected $action = 'edit';
+	// свойство необходимое для отправки форм
+	protected $action = 'edit';
 
-    protected function inputData(){
-        if(!$this->userId) { $this->execBase(); }
+	protected function inputData()
+	{
+		if (!$this->userId) {
+			$this->execBase();
+		}
 
-        $this->checkPost();
+		$this->checkPost();
 
-        $this->createTableData();
+		$this->createTableData();
 
-        $this->createData();
+		$this->createData();
 
-        $this->createForeignData();
+		$this->createForeignData();
 
-        $this->createMenuPosition();
+		$this->createMenuPosition();
 
-        $this->createRadio();
+		$this->createRadio();
 
-        $this->createOutputData();
+		$this->createOutputData();
 
-        $this->createManyToMany();
+		$this->createManyToMany();
 
-        $this->template = ADMIN_TEMPLATE . 'add';
+		$this->template = ADMIN_TEMPLATE . 'add';
 
-        return $this->expansion();
-    }
+		return $this->expansion();
+	}
 
-    protected function createData() {
-        $id = is_numeric($this->parameters[$this->table]) ?
-            $this->clearNum($this->parameters[$this->table]) :
-            $this->clearStr($this->parameters[$this->table]);
+	// метод который будет получать данные из БД
+	protected function createData()
+	{
+		// очистим и получим $id в переменную
+		// is_numeric()— определяет, является ли переменная числом или числовой строкой
+		$id = is_numeric($this->parameters[$this->table]) ?
+			$this->clearNum($this->parameters[$this->table]) :
+			$this->clearStr($this->parameters[$this->table]);
 
-        if(!$id) {
-            throw new RouteException('Не корректный идентификатор - ' . $id .
-                ' при редактировании таблицы - ' . $this->table);
-        }
+		if (!$id) {
+			throw new RouteException('Не корректный идентификатор - ' . $id .
+				' при редактировании таблицы - ' . $this->table);
+		}
 
-        $this->data = $this->model->get($this->table, [
-            'where' => [$this->columns['id_row'] => $id]
-        ]);
+		// получим данные
+		$this->data = $this->model->get($this->table, [
+			'where' => [$this->columns['id_row'] => $id]
+		]);
 
-        $this->data && $this->data = $this->data[0];
-    }
-
+		// положим данные в нулевую ячейку
+		$this->data && $this->data = $this->data[0];
+	}
 }

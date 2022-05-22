@@ -7,163 +7,195 @@ use core\base\settings\Settings;
 
 class DeleteController extends BaseAdmin
 {
-    protected function inputData() {
-        if (!$this->userId) {
-            $this->execBase();
-        }
+	protected function inputData()
+	{
+		if (!$this->userId) {
+			$this->execBase();
+		}
 
-        $this->createTableData();
+		// вызовем метод: createTableData() и получим св-во: $this->table
+		$this->createTableData();
 
-        if(!empty($this->parameters[$this->table])) {
-            $id = is_numeric($this->parameters[$this->table]) ?
-                $this->clearNum($this->parameters[$this->table]) :
-                $this->clearStr($this->parameters[$this->table]);
+		// проверим пришёл ли массив с параметрами и его ячейка: [$this->table] и не пусто ли там (иначе нечего удалять)
+		if (!empty($this->parameters[$this->table])) {
+			// очистим и получим $id в переменную
+			// is_numeric() — определяет, является ли переменная числом или числовой строкой
+			$id = is_numeric($this->parameters[$this->table]) ?
+				$this->clearNum($this->parameters[$this->table]) :
+				$this->clearStr($this->parameters[$this->table]);
 
-            if($id) {
-                $this->data = $this->model->get($this->table, [
-                    'where' => [$this->columns['id_row'] => $id]
-                ]);
+			if ($id) {
+				// получим данные из таблицы (по условию)
+				$this->data = $this->model->get($this->table, [
+					'where' => [$this->columns['id_row'] => $id]
+				]);
 
-                if($this->data) {
-                    $this->data = $this->data[0];
+				if ($this->data) {
 
-                    if(count($this->parameters) > 1) {
-                        $this->checkDeleteFile();
-                    }
+					// то начинаем процедуру удаления 
 
-                    $settings = $this->settings ?: Settings::instance();
+					$this->data = $this->data[0];
 
-                    $files = $settings::get('fileTemplates');
+					// если в свойстве: $this->parameters больше одной ячейки (элемента) массива
+					// count() — подсчитывает все элементы в массиве или в объекте
+					if (count($this->parameters) > 1) {
+						// значит нужно удалить только элемент, а не всю запись в БД
+						$this->checkDeleteFile();
+					}
 
-                    if($files) {
-                        foreach ($files as $file) {
-                            foreach ($settings::get('templateArr')[$file] as $item) {
-                                if(!empty($this->data[$item])) {
+					// получим свойство: $settings (если оно есть и заполнено) иначе создадим такой объект класса: Settings
+					$settings = $this->settings ?: Settings::instance();
 
-                                    $fileData = json_decode($this->data[$item], true) ?: $this->data[$item];
+					// в переменную получим свойство: fileTemplates
+					$files = $settings::get('fileTemplates');
 
-                                    if(is_array($fileData)) {
-                                        foreach ($fileData as $f) {
-                                            @unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $f);
-                                        }
-                                    }else{
-                                        @unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $fileData);
-                                    }
-                                }
-                            }
-                        }
-                    }
+					if ($files) {
 
-                    if(!empty($this->data['menu_position'])) {
+						foreach ($files as $file) {
 
-                        $where = [];
+							// в цикле пройдёмся по свойству: templateArr (его ячейке: $file) будем получать поля: $item
+							foreach ($settings::get('templateArr')[$file] as $item) {
 
-                        if(!empty($this->data['parent_id'])) {
-                            $pos = $this->model->get($this->table, [
-                                'fields' => ['COUNT(*) as count'],
-                                'where' => ['parent_id' => $this->data['parent_id']],
-                                'no_concat' => true
-                            ])[0]['count'];
+								// если не пусто в соответствующей ячейке (в $this->data[$item])
+								if (!empty($this->data[$item])) {
 
-                            $where = ['where' => 'parent_id'];
-                        }else{
-                            $pos = $this->model->get($this->table, [
-                                'fields' => ['COUNT(*) as count'],
-                                'no_concat' => true
-                            ])[0]['count'];
-                        }
+									// json_decode()- декодирует json-строку (галерея и список файлов хранятся json-строкой),
+									// а единичное изображение-обычной строкой
+									// указали 2-ым параметром: true, чтобы пришёл ассоциативный массив (если 1-ым параметром 
+									// передали json-строку) Если передали строку вернётся строка
+									$fileData = json_decode($this->data[$item], true) ?: $this->data[$item];
 
-                        $this->model->updateMenuPosition($this->table, 'menu_position', [$this->columns['id_row'] => $id], $pos, $where);
+									if (is_array($fileData)) {
 
-                    }
+										foreach ($fileData as $f) {
+											// символ @ глушит ошибки если ф-ия: unlink не найдёт файл
+											// unlink() — удаляет файл На вход: место хранения файла
+											@unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $f);
+										}
+									} else {
+										@unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $fileData);
+									}
+								}
+							}
+						}
+					}
 
-                    if($this->model->delete($this->table, ['where' => [$this->columns['id_row'] => $id]])) {
-                        $tables = $this->model->showTables();
+					// Далее при удалении необходимо перестроить все элементы в таблице БД
 
-                        if(in_array('old_alias', $tables)) {
-                            $this->model->delete('old_alias', [
-                                'where' => [
-                                    'table_name' => $this->table,
-                                    'table_id' => $id
-                                ]
-                            ]);
-                        }
+					if (!empty($this->data['menu_position'])) {
 
-                        $manyToMany = $settings::get('manyToMany');
+						$where = [];
 
-                        if($manyToMany) {
-                            foreach ($manyToMany as $mTable => $tables) {
-                                $targetKey = array_search($this->table, $tables);
+						if (!empty($this->data['parent_id'])) {
+							// посчитаем количество записей в таблице БД относительно parent_id
+							// вернём нулевой элемент (его ячейку: ['count'])
+							$pos = $this->model->get($this->table, [
+								'fields' => ['COUNT(*) as count'],
+								'where' => ['parent_id' => $this->data['parent_id']],
+								'no_concat' => true
+							])[0]['count'];
 
-                                if($targetKey !== false) {
-                                    $this->model->delete($mTable, [
-                                        'where' => [$tables[$targetKey] . '_' . $this->columns['id_row'] => $id]
-                                    ]);
-                                }
-                            }
-                        }
+							$where = ['where' => 'parent_id'];
 
-                        $_SESSION['res']['answer'] = '<div class="success">' . $this->messages['deleteSuccess'] . '</div>>';
+							// иначе (если ячейки: data['parent_id'] нет или пустая) условие: where не указываем
+						} else {
 
-                        $this->redirect($this->adminPath . 'show/' . $this->table);
-                    }
+							$pos = $this->model->get($this->table, [
+								'fields' => ['COUNT(*) as count'],
+								'no_concat' => true
+							])[0]['count'];
+						}
 
+						// Переопределим данные в таблице: до удаления данных, перставляем элемент на самую последнюю позицию
+						// (когда мы его удалим, его позиция уйдёт и все предыдущие позиции останутся (пересчитаются друг за другом))
 
-                }
+						// вызываем метод модели (на вход 1-таблица, 2-поле которое пересчитываем, 3-условие (если есть), 4-конечная позаиция 5- сформированая переменная (с parent_id))
+						$this->model->updateMenuPosition($this->table, 'menu_position', [$this->columns['id_row'] => $id], $pos, $where);
+					}
 
-            }
+					if ($this->model->delete($this->table, ['where' => [$this->columns['id_row'] => $id]])) {
+						$tables = $this->model->showTables();
 
-        }
+						if (in_array('old_alias', $tables)) {
+							$this->model->delete('old_alias', [
+								'where' => [
+									'table_name' => $this->table,
+									'table_id' => $id
+								]
+							]);
+						}
 
-        $_SESSION['res']['answer'] = '<div class="error">' . $this->messages['deleteFail'] . '</div>>';
-        $this->redirect();
+						$manyToMany = $settings::get('manyToMany');
 
-    }
+						if ($manyToMany) {
+							foreach ($manyToMany as $mTable => $tables) {
+								$targetKey = array_search($this->table, $tables);
 
-    protected function checkDeleteFile() {
-        unset($this->parameters[$this->table]);
+								if ($targetKey !== false) {
+									$this->model->delete($mTable, [
+										'where' => [$tables[$targetKey] . '_' . $this->columns['id_row'] => $id]
+									]);
+								}
+							}
+						}
 
-        $updateFlag = false;
+						$_SESSION['res']['answer'] = '<div class="success">' . $this->messages['deleteSuccess'] . '</div>>';
 
-        foreach ($this->parameters as $row => $item) {
-            $item = base64_decode($item);
+						$this->redirect($this->adminPath . 'show/' . $this->table);
+					}
+				}
+			}
+		}
 
-            if(!empty($this->data[$row])) {
-                $data = json_decode($this->data[$row], true);
+		$_SESSION['res']['answer'] = '<div class="error">' . $this->messages['deleteFail'] . '</div>>';
+		$this->redirect();
+	}
 
-                if($data) {
-                    foreach ($data as $key => $value) {
-                        if($item === $value) {
-                            $updateFlag = true;
+	protected function checkDeleteFile()
+	{
+		unset($this->parameters[$this->table]);
 
-                            @unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $item);
-                            unset($data[$key]);
+		$updateFlag = false;
 
-                            $this->data[$row] = $data ? json_encode($data) : 'NULL';
+		foreach ($this->parameters as $row => $item) {
+			$item = base64_decode($item);
 
-                            break;
-                        }
-                    }
-                }elseif($this->data[$row] === $item){
-                    $updateFlag = true;
+			if (!empty($this->data[$row])) {
+				$data = json_decode($this->data[$row], true);
 
-                    @unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $item);
+				if ($data) {
+					foreach ($data as $key => $value) {
+						if ($item === $value) {
+							$updateFlag = true;
 
-                    $this->data[$row] = 'NULL';
-                }
-            }
-        }
+							@unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $item);
+							unset($data[$key]);
 
-        if($updateFlag) {
-            $this->model->edit($this->table, [
-                'fields' => $this->data
-            ]);
+							$this->data[$row] = $data ? json_encode($data) : 'NULL';
 
-            $_SESSION['res']['answer'] = '<div class="success">' . $this->messages['editSuccess'] . '</div>>';
-        }else{
-            $_SESSION['res']['answer'] = '<div class="error">' . $this->messages['editFail'] . '</div>>';
-        }
+							break;
+						}
+					}
+				} elseif ($this->data[$row] === $item) {
+					$updateFlag = true;
 
-        $this->redirect();
-    }
+					@unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $item);
+
+					$this->data[$row] = 'NULL';
+				}
+			}
+		}
+
+		if ($updateFlag) {
+			$this->model->edit($this->table, [
+				'fields' => $this->data
+			]);
+
+			$_SESSION['res']['answer'] = '<div class="success">' . $this->messages['editSuccess'] . '</div>>';
+		} else {
+			$_SESSION['res']['answer'] = '<div class="error">' . $this->messages['editFail'] . '</div>>';
+		}
+
+		$this->redirect();
+	}
 }

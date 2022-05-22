@@ -7,7 +7,7 @@ use core\base\settings\Settings;
 // класс добавления данных
 class AddController extends BaseAdmin
 {
-	// для корректного формирования пути для добавления данных в шаблоне объявим свойство
+	// для корректного формирования пути для добавления данных в шаблоне объявим свойство (свойство необходимое для отправки форм)
 	protected $action = 'add';
 
 	protected function inputData()
