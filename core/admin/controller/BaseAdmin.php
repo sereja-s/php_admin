@@ -44,7 +44,11 @@ abstract class BaseAdmin extends BaseController
 	protected function inputData()
 	{
 
+		// проверка версии браузера
 		if (!MS_MODE) {
+
+			// информация о заголовках в которых хранится тип браузера передаётся в ячейке: $_SERVER['HTTP_USER_AGENT]
+			// ищем в этой ячейке: буквы (msie) или слово (trident), любяе символы 1-н или более раз, буквы (rv), могут быть // или не быть пробелы, двоеточие
 			if (preg_match('/msie|trident.+?rv\s*:/i', $_SERVER['HTTP_USER_AGENT'])) {
 				exit('Вы используете устаревшую версию браузера. Пожалуйста обновитесь до актуальной версии');
 			}
@@ -1421,6 +1425,7 @@ abstract class BaseAdmin extends BaseController
 		}
 	}
 
+	//  метод для проверки файлов
 	protected function checkFiles($id)
 	{
 		if ($id) {
@@ -1451,6 +1456,7 @@ abstract class BaseAdmin extends BaseController
 
 							if ($fileArr) {
 								foreach ($fileArr as $file) {
+									// добавляем файл
 									$this->fileArray[$key][] = $file;
 								}
 							}

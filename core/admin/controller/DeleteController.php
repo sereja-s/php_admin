@@ -39,6 +39,7 @@ class DeleteController extends BaseAdmin
 					// если в свойстве: $this->parameters больше одной ячейки (элемента) массива
 					// count() — подсчитывает все элементы в массиве или в объекте
 					if (count($this->parameters) > 1) {
+
 						// значит нужно удалить только элемент, а не всю запись в БД
 						$this->checkDeleteFile();
 					}
@@ -63,6 +64,7 @@ class DeleteController extends BaseAdmin
 									// а единичное изображение-обычной строкой
 									// указали 2-ым параметром: true, чтобы пришёл ассоциативный массив (если 1-ым параметром 
 									// передали json-строку) Если передали строку вернётся строка
+									// здесь- если придёт json-строка, то декодируем и сохраним её, иначе (если просто строка)сохраним, то что находится в ячейку: data[$item]
 									$fileData = json_decode($this->data[$item], true) ?: $this->data[$item];
 
 									if (is_array($fileData)) {
@@ -113,10 +115,18 @@ class DeleteController extends BaseAdmin
 						$this->model->updateMenuPosition($this->table, 'menu_position', [$this->columns['id_row'] => $id], $pos, $where);
 					}
 
+					// Проверим: если будет успешное удаление (вызываем метод удаления данных (на вход: 1- таблица из которой удаляем, 2- условие))
 					if ($this->model->delete($this->table, ['where' => [$this->columns['id_row'] => $id]])) {
+
+						// вычистим вспомогательные таблицы (связанные с удалёными данными):
+
+						// получим все таблицы, которые у нас есть
 						$tables = $this->model->showTables();
 
+						// проверим есть ли у нас таблица: old_alias в переменной: $tables
 						if (in_array('old_alias', $tables)) {
+
+							// если есть, то из неё необходимо удалить все записи с table_id
 							$this->model->delete('old_alias', [
 								'where' => [
 									'table_name' => $this->table,
@@ -125,13 +135,19 @@ class DeleteController extends BaseAdmin
 							]);
 						}
 
+						// получим в переменную одноимённое свойство: manyToMany
 						$manyToMany = $settings::get('manyToMany');
 
 						if ($manyToMany) {
 							foreach ($manyToMany as $mTable => $tables) {
+
+								// в переменную сохраним результат поиска таблицы (из $this->table) Ищем в переменной: $tables
+								// array_search() возвращает ключ того элемента массива, в котором найдено искомое значение иначе вернёт: false
 								$targetKey = array_search($this->table, $tables);
 
 								if ($targetKey !== false) {
+
+									// удаляем из переменной: $mTable всё что с $id
 									$this->model->delete($mTable, [
 										'where' => [$tables[$targetKey] . '_' . $this->columns['id_row'] => $id]
 									]);
@@ -151,24 +167,34 @@ class DeleteController extends BaseAdmin
 		$this->redirect();
 	}
 
+	// метод, проверяющий удаляемый файл
 	protected function checkDeleteFile()
 	{
 		unset($this->parameters[$this->table]);
 
+		// объявим флаг
 		$updateFlag = false;
 
 		foreach ($this->parameters as $row => $item) {
+
 			$item = base64_decode($item);
 
 			if (!empty($this->data[$row])) {
+
 				$data = json_decode($this->data[$row], true);
 
 				if ($data) {
+
 					foreach ($data as $key => $value) {
+
 						if ($item === $value) {
+
 							$updateFlag = true;
 
+							// удаляем файл
 							@unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $item);
+
+							// удаляем переменную
 							unset($data[$key]);
 
 							$this->data[$row] = $data ? json_encode($data) : 'NULL';
@@ -177,6 +203,7 @@ class DeleteController extends BaseAdmin
 						}
 					}
 				} elseif ($this->data[$row] === $item) {
+
 					$updateFlag = true;
 
 					@unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $item);
@@ -186,14 +213,18 @@ class DeleteController extends BaseAdmin
 			}
 		}
 
+		// если что то изменилось (флаг вернул: true)
 		if ($updateFlag) {
+
+			// обновим(редактируем) таблицу
 			$this->model->edit($this->table, [
 				'fields' => $this->data
 			]);
 
-			$_SESSION['res']['answer'] = '<div class="success">' . $this->messages['editSuccess'] . '</div>>';
+			$_SESSION['res']['answer'] = '<div class="success">' . $this->messages['editSuccess'] . '</div>';
 		} else {
-			$_SESSION['res']['answer'] = '<div class="error">' . $this->messages['editFail'] . '</div>>';
+
+			$_SESSION['res']['answer'] = '<div class="error">' . $this->messages['editFail'] . '</div>';
 		}
 
 		$this->redirect();
