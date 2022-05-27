@@ -21,13 +21,15 @@ function createSitemap() {
 
 createFile();
 
-// метод создания файла 
+// метод создания файла (добавление картинки (по одной и галереи))
 function createFile() {
 
+	// В св-ве: files будут находиться все файлы, которые мы добавили
 	// в переменную: files сохраним результат работы метода: querySelectorAll, объекта: document и выберем сюда 
 	// все: input[type=file] на странице форм
 	// (Метод querySelectorAll() Document возвращает статический (не динамический) NodeList , содержащий все найденные
 	// элементы документа, которые соответствуют указанному селектору Его свойство: length может быть равно нулю)
+
 	let files = document.querySelectorAll('input[type=file]');
 
 	let fileStore = [];
@@ -50,7 +52,8 @@ function createFile() {
 				// объявим переменную
 				let container;
 
-				// если атрибут (подпнный на вход) есть, то метод: hasAttribute() вернёт: true
+				// проверим имеет ли input (добавление картинок в галерею) множественное добавление (установлен ли атрибут: multiple)
+				// если атрибут (поданный на вход) есть, то метод: hasAttribute() вернёт: true
 				if (item.hasAttribute('multiple')) {
 
 					multiple = true;
@@ -62,30 +65,56 @@ function createFile() {
 						return false;
 					}
 
+					//  в переменную: container сохраняем результат работы метода: querySelectorAll (ищем элементы с классом: 
+					// empty_container) Это и есть пустые квадратики в галере админки для новых картинок
 					container = parentContainer.querySelectorAll('.empty_container');
 
+					// сделаем сравнение со свойством: files (это св-во указателя на item (this)) 
+					// если меньше
 					if (container.length < this.files.length) {
+
+						// то нам необходимо создать ещё необходимое количество квадратиков
 						for (let index = 0; index < this.files.length - container.length; index++) {
+
+							// создадим элемент: div
 							let el = document.createElement('div');
+							// добавляем необходимые классы для квадратиков
 							el.classList.add('vg-dotted-square', 'vg-center', 'empty_container');
+							// вставим элемент, что бы они выстроились под добавление данных
 							parentContainer.append(el);
 						}
 
+						// перезапишем св-во: container (чтобы метод увидел также все новые квадратики с классом: empty_container)
 						container = parentContainer.querySelectorAll('.empty_container');
 					}
 				}
 
+				// в переменную: fileName положим то что хранится в св-ве: name элемента (объекта): item (т.е. gallery_img как массив)
 				let fileName = item.name;
+
+				// нам будет нужно удалять элементы, которые уже загружены а админку, но ещё не добавлены в БД Для этого повесим на div (для пустых квадратиков) атрибуты, но сначала заменим символы [] (обозначение массива) в fileName на пустой символ
 				let attributeName = fileName.replace(/[\[\]]/g, '');
 
 				for (let i in this.files) {
+
+					// проверим является ли св-во: files, свойством данного элемента (объекта): (this)
 					if (this.files.hasOwnProperty(i)) {
 						if (multiple) {
+
+							// проверим есть ли ячейка массива: fileStore[fileName]
+							// если нет
 							if (typeof fileStore[fileName] === 'undefined') {
+								// то создадим её
 								fileStore[fileName] = [];
 							}
 
+							// в ячейку массива добавляем элементы (с помощью метода: push())
+							// метод: push() после добавления возвращает новое количество выборки массива в который он добавил элементы
+							// В переменную: elId  (наш элемент меньше чем длина массива на единицу)
+							// (так мы получим порядковый номер элемента, который добавился в массиве: fileStore[fileName])
 							let elId = fileStore[fileName].push(this.files[i]) - 1;
+							// создадим атрибут у контейнера (его i-того элемента) для того чтобы можно было удалять добавленные 
+							// элементы Метод: setAttribute() получает на вход: 1- название атрибута (с добавлением атрибута в виде переменной: ${attributeName}) в обратных кавычках, 2- значение атрибута: elId 
 							container[i].setAttribute(`data-deleteFileId-${attributeName}`, elId);
 							showImage(this.files[i], container[i], function () {
 								parentContainer.sortable({
@@ -93,10 +122,19 @@ function createFile() {
 								});
 							});
 
+							// вызовем метод отвечающий за удаление новых файлов (картинок)
+							// на вход: 1- значение атрибута, 2- элемент, который будем искать, 3-атрибут, 4- ячейку: container[i]
 							deleteNewFiles(elId, fileName, attributeName, container[i]);
+
+							// если нет атрибута множественного добавления
 						} else {
+
+							// в контейнер будем вставлять данные
+							// в переменную положим результат работы метода поиска: closest Ищем класс родителя элемента: img_container Далее вызываем метод: querySelector и выбираем класс: img_show
 							container = this.closest('.img_container').querySelector('.img_show');
 
+							// вызовем функцию, которая будет осуществлять показ 
+							// (на вход: 1- конкретный элемент массива: this.files, 2- контейнер)
 							showImage(this.files[i], container);
 						}
 					}
@@ -161,22 +199,45 @@ function createFile() {
 			}
 		}
 
+		// метод отвечающий за удаление новых файлов (картинок)
+		// на вход: 1- значение атрибута, 2- элемент, который будем искать, 3-атрибут, 4- ячейку: container
 		function deleteNewFiles(elId, fileName, attributeName, container) {
+
+			// на контейнер повесим событие: click
 			container.addEventListener('click', function () {
+				// метод: remove() удаляет элемент со всеми его обработчиками событий
 				this.remove();
+				// обращаемся к ячейке: fileStore[fileName][elId] и удаляем её с помощью инструкции: delete
+				// (при этом элемента в массиве не будет, но длина массива не изменится)
 				delete fileStore[fileName][elId];
 				//console.log(fileStore);
 			})
 		}
 
+		// метод, который будет осуществлять показ, при помощи объкта: FileReader
+		// (на вход: 1- конкретный элемент массива, 2- контейнер)
 		function showImage(item, container, calcback) {
+
+			// сохраним в переменную объект: FileReader
 			let reader = new FileReader();
+			// очистим контейнер (на случай если добавили, а потои решили передобавить файл (изображение))
 			container.innerHTML = '';
+			// у объекта: reader вызовем метод: readAsDataURL, который прочитает файл, который пришёл в качестве base64-строки
 			reader.readAsDataURL(item);
 
+			// обратимся к св-ву: onload, объекта: reader
+			// указатель на reader нам не нужен, поэтому это будет стрелочная функция (здесь будет объект e (событие, как
+			// произойдёт загрузка))
 			reader.onload = e => {
+				// когда FileReader прочитает наш элемент необходимо:
+
+				// вызовем св-во: innerHTML для контейнера и заполним тегом: img 
 				container.innerHTML = '<img class="img_item" src="">';
+				// дозваниваемся до тега: img и атрибут: src поставим в то значение, которе вернётся по onload
+				// метод: setAttribute() принимает на вход: 1- название атрибута, 2- значение (то что возвращает объект событие в его св-ве: target и в его св-ве: result)
 				container.querySelector('img').setAttribute('src', e.target.result);
+				// уберём класс у контейнера (обращаемся к объекту: classList, его методу: remove() На вход он принимает 
+				// строку с названием класса)
 				container.classList.remove('empty_container');
 
 				calcback && calcback();
