@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<meta type="keywords" content="...">
 	<meta type="description" content="...">
-	<title>Document</title>
+	<title>Админка</title>
 
 
 	<?php $this->getStyles() ?>

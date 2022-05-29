@@ -316,6 +316,7 @@ function createFile() {
 	}
 }
 
+
 changeMenuPosition();
 
 // метод асинхронного пересчета позиций вывода
@@ -396,9 +397,10 @@ function changeMenuPosition() {
 	}
 }
 
+
 blockParameters();
 
-// Метод реализующий аккордеон в блоках админки
+// метод реализующий аккордеон в блоках админки
 function blockParameters() {
 
 	// получим в переменную все контейнеры (для раскрывающихся списков)
@@ -459,35 +461,55 @@ function blockParameters() {
 	}
 }
 
+
 showHideMenuSearch();
 
+// метод для показа меню и поиска при нажатии на соответствующие кнопки
 function showHideMenuSearch() {
+
+	// для кнопки меню:
 	document.querySelector('#hideButton').addEventListener('click', () => {
+		// находим главный блок с классом: vg-carcass и у его объекта: classList вызваем метод: toggle (добавляет и убирает 
+		// класс поданный на вход при каждом клике)
 		document.querySelector('.vg-carcass').classList.toggle('vg-hide');
 	});
 
+	// для кнопки поиска:
 	let searchBtn = document.querySelector('#searchButton');
 	let searchInput = searchBtn.querySelector('input[type=text]');
 
 	searchBtn.addEventListener('click', () => {
+
+		// что бы блок поиска появился, добавим класс: vg-search-reverse
 		searchBtn.classList.add('vg-search-reverse');
+		// поставим курсор на поле ввода
 		searchInput.focus();
 	});
 
+	// организуем закрытие поиска при потере фокуса (щелчке на другом месте, переключении вкладок): вешаем событие: blur
 	searchInput.addEventListener('blur', e => {
 		if (e.relatedTarget && e.relatedTarget.tagName === 'A') {
 			return
 		}
 
+		// удалим класс: vg-search-reverse (поле поиска закроется)
 		searchBtn.classList.remove('vg-search-reverse');
 	});
 }
 
+// в переменную сохраним самовызывающуюся функцию, внутри которой будет реализовано замыкание (для работы с появляющимися 
+// подсказками при вводе строки в поле поиска)
+// эта функция будет возвращать другую функцию, которую мы будем вызывать по обращению к имени: searchResultHover
 let searchResultHover = (() => {
+
+	// инициализируем ряд переменных, которые будут замкнуты в участке кода до: return () => {} т.е. вызова самовызывающейся функции Эти переменные выполнятся один раз (при первом обращении к переменной: searchResultHover)
 	let searchRes = document.querySelector('.search_res');
 	let searchInput = document.querySelector('#searchButton input[type=text]');
+	// переменная- дефолтное значение Input поиска
 	let defaultInputValue = null;
 
+	// метод, который будет обрабатывать нажатие стрелочек (вниз-вверх) в подсказках при поиске
+	// на вход: объект события
 	function searchKeyDown(e) {
 		if (!(document.querySelector('#searchButton').classList.contains('vg-search-reverse')) ||
 			(e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) {
@@ -515,23 +537,40 @@ let searchResultHover = (() => {
 		}
 	}
 
+	// метод установки значения по умолчанию (в строке поиска)
 	function setDefaultValue() {
+		// в переменную: searchInput (в его переменную: value) положим значение по умолчанию (из переменной: defaultInputValue)
 		searchInput.value = defaultInputValue;
 	}
 
+	// опишем слушатели событий:
+	// переданные в качестве 2-го параметра функции, сработают только тогда, когда на элементе сработает обработчик событий
+
+	// Событие: mouseleave срабатывает, когда курсор манипулятора (обычно мыши) перемещается за границы элемента
 	searchRes.addEventListener('mouseleave', setDefaultValue);
+	// Событие: keydown срабатывает, когда клавиша была нажата
 	window.addEventListener('keydown', searchKeyDown);
 
+	// вернется самовызывающая функция (будет вызываться в качестве результата при каждом обращении к 
+	// переменной: searchResultHover)
 	return () => {
+
 		defaultInputValue = searchInput.value;
 
+		// если подсказки (ссылки) существуют в переменной: searchRes (его св-ве: children, его св-ве: length)
 		if (searchRes.children.length) {
+
+			// используем деструктивное присваивание (преобразуем значение из searchRes.children в массив) и сохраним в переменной: children
 			let children = [...searchRes.children];
 
 			children.forEach(item => {
+				// вешаем обработчик события на событие: mouseover (наведение указателя мыши)
 				item.addEventListener('mouseover', () => {
+					// уберём класс который подсвечивает подсказки (ссылки)
 					children.forEach(el => el.classList.remove('search_act'));
+					// для элемента: item добавим класс
 					item.classList.add('search_act');
+					// то что лежит в innerText для элемента: item положим в элемент: searchInput, его св-во: value
 					searchInput.value = item.innerText;
 				});
 			});
