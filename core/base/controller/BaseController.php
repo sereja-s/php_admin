@@ -38,6 +38,7 @@ abstract class BaseController
 	// свойство, в котором будут находиться данные, которые пришли из БД (если будет подключаться шаблон редактирования)
 	protected $data;
 
+	// свойство, в которое будем заносить данные при работе с ajax
 	protected $ajaxData;
 
 	public function route()

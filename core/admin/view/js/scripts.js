@@ -21,7 +21,7 @@ function createSitemap() {
 
 createFile();
 
-// метод создания файла (добавление картинки (по одной и галереи))
+// метод создания файла  (добавление картинки (по одной и галереи))
 function createFile() {
 
 	// В св-ве: files будут находиться все файлы, которые мы добавили
@@ -156,19 +156,31 @@ function createFile() {
 			form.onsubmit = function (e) {
 				createJsSortable(form);
 
+				// если массив не пуст
 				if (!isEmpty(fileStore)) {
 					e.preventDefault();
 
+					// создадим объект FormData (элемент js-формы) Получим форму в которой мы находимся: form (т.е. this)
 					let forData = new FormData(this);
 					//console.log(forData);
 
 					for (let i in fileStore) {
+
+						// если i- это его собственное свойство 
 						if (fileStore.hasOwnProperty(i)) {
+
+							// почистим св-во в форме (что бы на сервер не прилетали не корректные данные)
 							forData.delete(i);
 
+							// получим чистое имя свойства (от квадратных скобок в конце)
 							let rowName = i.replace(/[\[\]]/g, '');
 
+							// пройдёмся в цикле по i-му элементу массива
+							// (нам нужны: 1- переменная: item (сам элемент), 2-индекс этого элемента)
 							fileStore[i].forEach((item, index) => {
+								// обратимся к объекту и вызовем у него метод: append(), который добавляет в конец формы элементы
+								// на вход: 1- ключ, который создастся (запишем в обратные кавычки, чтобы указывать переменные),
+								// 2- значение, которое в него запишется
 								forData.append(`${rowName}[${index}]`, item);
 							})
 						}
@@ -176,21 +188,28 @@ function createFile() {
 
 					//console.log(forData.get('gallery_img[1]'));
 
+					// добавим в объект ключ: ajax, со значением: editData
 					forData.append('ajax', 'editData');
 
+					// сформируем данные для вызова
+					// обращаемся к объекту: Ajax и передадим ему св-ва, которые нам нужны (настройка объекта)
 					Ajax({
-						url: this.getAttribute('action'),
+						url: this.getAttribute('action'), // есть в нашей форме (в action)
 						type: 'post',
-						data: forData,
+						data: forData, // сформировали переменную: data, в которую отправим объект: forData
 						processData: false,
 						contentType: false
-					}).then(res => {
+					}).then(res => { // пришлём результат
 						try {
 							res = JSON.parse(res);
+
 							if (!res.success) {
 								throw new Error();
 							}
+
+							// перезагрузка страницы
 							location.reload();
+
 						} catch (e) {
 							alert('Произошла внутрення ошибка');
 						}
@@ -268,52 +287,77 @@ function createFile() {
 
 changeMenuPosition();
 
+// метод асинхронного пересчета позиций вывода
 function changeMenuPosition() {
+
 	let form = document.querySelector('#main-form');
 
 	if (form) {
+
 		let selectParent = form.querySelector('select[name=parent_id]');
 		let selectPosition = form.querySelector('select[name=menu_position]');
 
 		if (selectParent && selectPosition) {
+
+			// получим дефолтные (по умолчанию) значения переменных
 			let defaultParent = selectParent.value;
+			// символ + означает приведение значения к числу
 			let defaultPosition = +selectPosition.value;
 
+			// слушаем событие: change
 			selectParent.addEventListener('change', function () {
+				// объявим переменную- выбор по умолчанию и установим ей первоначальное значение
 				let defaultChoose = false;
 
 				if (this.value === defaultParent) {
+
 					defaultChoose = true;
 				}
 
+				// После того как получили все базовые значения, необходимо отправлять данные на сервер и с сервера данные получать
+
+				// вызываем метод: Ajax() На входе опишем объект (его св-ва)
 				Ajax({
 					data: {
-						table: form.querySelector('input[name=table]').value,
+						table: form.querySelector('input[name=table]').value, // поля, которые необходимо передать
 						'parent_id': this.value,
-						ajax: 'change_parent',
+						ajax: 'change_parent', // св-во, исходя из которого подключается метод в AjaxController
+						// проверим есть ли в форме идентификатор tableId
+						// если нет, то отправим на сервер в качестве значения iteration единицу, иначе отправим значение обратное от defaultChoose (приведённое к числу(симввол + впереди))
+						// т.е. если let defaultChoose = false, то итерировать нужно, иначе - нет (т.к. это выбор по умолчанию)
 						iteration: !form.querySelector('#tableId') ? 1 : +!defaultChoose
 					}
 				}).then(res => {
 					//console.log(res);
 
+					// приведём переменную к числу (а не строка)
 					res = +res;
 
 					if (!res) {
 						return errorAlert();
 					}
 
+					// в переменной создадим элемент с тегом: select
 					let newSelect = document.createElement('select');
+					// установим ему атрибут с именем: menu_position
 					newSelect.setAttribute('name', 'menu_position');
-					newSelect.classList.add('vg-input', 'vg-text', 'vg-full', 'vg-firm-color');
+					// для корректноо отображения, зададим ему те классы, которые у select есть в форме
+					newSelect.classList.add('vg-input', 'vg-text', 'vg-full', 'vg-firm-color1');
 
 					for (let i = 1; i <= res; i++) {
+
+						// если какое то значение было выбрано и оно лежит в defaultPosition, то при формировании нового select это надо учесть
 						let selected = defaultChoose && i === defaultPosition ? 'selected' : '';
 
+						// сделаем вставку в HTML
 						newSelect.insertAdjacentHTML('beforeend', `<option ${selected} value="${i}">${i}</option>`);
 					}
 
+					// вставим newSelect перед selectPosition
 					selectPosition.before(newSelect);
+					// теперь можно удалить selectPosition
 					selectPosition.remove();
+					// что бы отрабатывали все проверки, в переменную: selectPosition надо сохранить новую переменную: newSelect
 					selectPosition = newSelect;
 				})
 			});
@@ -323,30 +367,59 @@ function changeMenuPosition() {
 
 blockParameters();
 
+// Метод реализующий аккордеон в блоках админки
 function blockParameters() {
+
+	// получим в переменную все контейнеры (для раскрывающихся списков)
 	let wraps = document.querySelectorAll('.select_wrap');
 
+	// проверяем на длину данного массива
 	if (wraps.length) {
+
 		let selectAllIndexes = [];
 
+		// пройдёмся в цикле по всем найденным контейнерам и для элемента: item будем выполнять действия
 		wraps.forEach(item => {
+
+			// в переменную сохраним то, что лежит в св-ве: nextElementSibling (хранит первого следующего за ним 
+			// дочернего элемента, который является элементом, и null в противном случае) для нашего элемента
 			let next = item.nextElementSibling;
 
+			// если переменная заполнена и содержит, нужный нам класс: option_wrap (раскрывающийся список)
 			if (next && next.classList.contains('option_wrap')) {
+
+				// слушаем событие: click
 				item.addEventListener('click', e => {
+
+					// если объект, на который распространяется событие не содержит класса: select_all
 					if (!e.target.classList.contains('select_all')) {
 						//console.dir(next);
+
+						// будем реализовывать аккордион для блока
 						next.slideToggle();
+
+						//иначе
 					} else {
+
+						// получим индекс объекта, на который распространяется событие (e.target) относительно всей выборки: select_all
+						// [...] означает деструктивное присваивание (преобразование в массив)
+						// т.к. document.querySelectorAll() возвращает статический список нод (NodeList), в который входят все найденные в документе элементы, соответствующие указанным селекторам (не массив)
 						let index = [...document.querySelectorAll('.select_all')].indexOf(e.target);
 						//console.log(index);
 
+						// если условие выполнится (т.е. мы нажимаем по элементу первый раз)
 						if (typeof selectAllIndexes[index] === 'undefined') {
+							// активируем ячейку и ставим в значение: false
 							selectAllIndexes[index] = false;
 						}
 
+						// переставим значение в обратное
 						selectAllIndexes[index] = !selectAllIndexes[index];
 
+						// у элемента: next обратимся к методу: querySelectorAll, выберем все: input с type=checkbox
+						// вызываем метод: forEach В нём будет некий элемент, у этого элемента есть св-во: checked, которое
+						// отвечает за заполненность чек-бокса (стоит ли галочка или др.символ), поставим его в значение из
+						// ячейки: selectAllIndexes[index]
 						next.querySelectorAll('input[type=checkbox]').forEach(el => el.checked = selectAllIndexes[index]);
 					}
 				})

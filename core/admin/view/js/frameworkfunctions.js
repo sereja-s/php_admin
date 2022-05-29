@@ -1,3 +1,4 @@
+// Объект: Ajax, котрый осуществляет отправку данных на сервер
 const Ajax = (set) => {
 	if (typeof set === 'undefined') {
 		set = {};
@@ -20,11 +21,17 @@ const Ajax = (set) => {
 	let body = '';
 
 	if (typeof set.data !== 'undefined' && set.data) {
+
 		if (typeof set.processData !== 'undefined' && !set.processData) {
+
 			body = set.data;
+
 		} else {
+
 			for (let i in set.data) {
+
 				if (set.data.hasOwnProperty(i)) {
+
 					body += '&' + i + '=' + set.data[i];
 				}
 			}
@@ -60,6 +67,7 @@ const Ajax = (set) => {
 			}
 		}
 
+		// проверим условие
 		if (!contentType && (typeof set.contentType === 'undefined' || set.contentType)) {
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 		}
@@ -89,10 +97,12 @@ const Ajax = (set) => {
 }
 
 function isEmpty(arr) {
+	// если цикл начнёт выполняться, значит массив не пуст
 	for (let i in arr) {
+		// то вернём:
 		return false;
 	}
-
+	// иначе:
 	return true;
 }
 
@@ -102,11 +112,20 @@ function errorAlert() {
 	return false;
 }
 
+// на объекте: Element опишем метод: slideToggle для реализации аккордиона (что бы иметь возможность применять его к 
+// любому элементу)
+
+// обращаемся к св-ву: prototype, объекта: Element и у него описываем св-во: slideToggle в котором будет храниться функция
+// на вход: 1- время анимации, 2- параметр: callback
 Element.prototype.slideToggle = function (time, callback) {
+
 	let _time = typeof time === 'number' ? time : 400;
 	callback = typeof time === 'function' ? time : callback;
 
+	// Функция getComputedStyle (у объекта: window) позволяет получить значение любого CSS свойства элемента, даже из CSS файла
 	if (getComputedStyle(this)['display'] === 'none') {
+
+		// элемент надо открыть
 		this.style.transition = null;
 		this.style.overflow = 'hidden';
 		this.style.maxHeight = 0;
@@ -117,9 +136,12 @@ Element.prototype.slideToggle = function (time, callback) {
 
 		this.style.transition = _time + 'ms';
 		this.style.maxHeight = this.scrollHeight + 'px';
+
 		setTimeout(() => {
 			callback && callback();
 		}, _time);
+
+		// иначе элемент закроем
 	} else {
 		this.style.transition = _time + 'ms';
 		this.style.maxHeight = 0;

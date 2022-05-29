@@ -26,8 +26,10 @@ class FileEdit
 				$file_arr = [];
 
 				foreach ($file['name'] as $i => $value) {
+
 					// проверим не пустой ли пришёл $file['name'] его [$i]- элемент
 					if (!empty($file['name'][$i])) {
+
 						// начинаем формировать нужный нам массив: $file_arr
 						$file_arr['name'] = $file['name'][$i];
 						$file_arr['type'] = $file['type'][$i];

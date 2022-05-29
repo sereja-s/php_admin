@@ -10,9 +10,11 @@ class AjaxController extends BaseAdmin
 	{
 
 		if (isset($this->ajaxData['ajax'])) {
+
 			$this->execBase();
 
 			foreach ($this->ajaxData as $key => $item) {
+
 				$this->ajaxData[$key] = $this->clearStr($item);
 			}
 
@@ -22,6 +24,7 @@ class AjaxController extends BaseAdmin
 					break;
 
 				case 'editData':
+					// сформируем $_POST['return_id']
 					$_POST['return_id'] = true;
 					$this->checkPost();
 					return json_encode(['success' => 1]);
@@ -56,12 +59,16 @@ class AjaxController extends BaseAdmin
 		return $this->model->search($data, $table, 20);
 	}
 
+	// метод работающий при смене родительской категории
 	protected function changeParent()
 	{
+		// вернём результат запроса к административной панели
+		// на вход метода: get (1- из какой таблицы вернуть данные, 2- необходимые параметры)
 		return $this->model->get($this->ajaxData['table'], [
 			'fields' => ['COUNT(*) as count'],
 			'where' => ['parent_id' => $this->ajaxData['parent_id']],
 			'no_concat' => true
-		])[0]['count'] + $this->ajaxData['iteration'];
+		])[0]['count'] + $this->ajaxData['iteration']; // вернуть то, что придёт в нулевом элементе (в ячейке: count) 
+		// вернуть исходя из того, что пришло (т.е. прибавим приведённое к числу текущее значение (из ячейки: ajaxData['iteration']))
 	}
 }

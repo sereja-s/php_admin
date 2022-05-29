@@ -512,6 +512,7 @@ abstract class BaseAdmin extends BaseController
 		$method = 'add';
 
 		if (!empty($_POST['return_id'])) {
+
 			$returnId = true;
 		}
 

@@ -21,26 +21,36 @@ class BaseAjax extends BaseController
 			return $this->generateToken();
 		}
 
+		// заменим слеши на экранированные (где менять- передадим 3-им параметром)
 		$httpReferer = str_replace('/', '\/', $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['SERVER_NAME'] . PATH . $route['admin']['alias']);
 
-		// если существует ячейка: $data['ADMIN_MODE']
+
+		// если существует ячейка: $data['ADMIN_MODE'] или шаблон указанный 1-ым параметром найден в ячейке (2-ой параметр)
 		if (isset($data['ADMIN_MODE']) || preg_match('/^' . $httpReferer . '(\/?|$)/', $_SERVER['HTTP_REFERER'])) {
+
 			// разрегистрируем (удалим) ячейку: $data['ADMIN_MODE'] У нас она просто флаг
 			unset($data['ADMIN_MODE']);
 
-			// и переопределяем переменную: $controller
+			// и переопределяем переменную: $controller (подключаем: AjaxController) Иначе это будет пользовательский контроллер
 			$controller = $route['admin']['path'] . 'AjaxController';
 		}
 
 		$controller = str_replace('/', '\\', $controller);
+
 		$ajax = new $controller;
+
+		// данные будем заносить в ajaxData
 		$ajax->ajaxData = $data;
 
+		// в переменную сохраним результат работы метода: ajax()
 		$res = $ajax->ajax();
 
 		if (is_array($res) || is_object($res)) {
+
 			$res = json_encode($res);
 		} elseif (is_int($res)) {
+
+			// приведём результат к числу с плавающей точкой
 			$res = (float)$res;
 		}
 
