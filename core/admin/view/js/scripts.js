@@ -511,28 +511,46 @@ let searchResultHover = (() => {
 	// метод, который будет обрабатывать нажатие стрелочек (вниз-вверх) в подсказках при поиске
 	// на вход: объект события
 	function searchKeyDown(e) {
+
+		// если элемент с id = searchButton не содержит класса: vg-search-reverse или нажата не кнопка: вверх и не кнопка: вниз
 		if (!(document.querySelector('#searchButton').classList.contains('vg-search-reverse')) ||
 			(e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) {
+			// завершаем работу скрипта
 			return;
 		}
 
+		// сделаем деструктивное присваивание (приведём к массиву) для содержимого из searchRes.children
 		let children = [...searchRes.children];
 
 		if (children.length) {
+
+			// скинем действия по умолчанию 
 			e.preventDefault();
 
+			// получим активный элемент
 			let activeItem = searchRes.querySelector('.search_act');
+			// сформируем переменную по условию
 			let activeIndex = activeItem ? children.indexOf(activeItem) : -1;
 
+			// если нажата кнопка: стрелка вниз
 			if (e.key === 'ArrowUp') {
+
+				// сформируем переменную по условию
+				// здесь (children.length - 1) означает последний элемент массива
 				activeIndex = activeIndex <= 0 ? children.length - 1 : --activeIndex;
+				// если не нажата
 			} else {
+				// сформируем переменную по другому условию
 				activeIndex = activeIndex === children.length - 1 ? 0 : ++activeIndex;
 			}
 
+			// у всех элементов: children необходимо убрать класс: search_act (если он есть)
 			children.forEach(item => item.classList.remove('search_act'));
+
+			// обратимся к массиву в переменной: children (его ячейке: [activeIndex])  и добавим класс: search_act
 			children[activeIndex].classList.add('search_act');
 
+			// в элемент: searchInput (в его значение: value) занесём значение: innerText из children[activeIndex]
 			searchInput.value = children[activeIndex].innerText.replace(/\(.+?\)\s*$/, '');
 		}
 	}
@@ -570,7 +588,7 @@ let searchResultHover = (() => {
 					children.forEach(el => el.classList.remove('search_act'));
 					// для элемента: item добавим класс
 					item.classList.add('search_act');
-					// то что лежит в innerText для элемента: item положим в элемент: searchInput, его св-во: value
+					// то что лежит в innerText (для элемента: item) положим в элемент: searchInput, в его св-во: value
 					searchInput.value = item.innerText;
 				});
 			});
@@ -629,9 +647,14 @@ search();
 let galleries = document.querySelectorAll('.gallery_container');
 
 if (galleries.length) {
+
 	galleries.forEach(item => {
+
 		item.sortable({
+
+			// добавим в исклюючения (щапретим перетаскивать): ячейку с крестиком и пустые ячейки
 			excludedElements: 'label .empty_container',
+
 			stop: function (dragEl) {
 				//console.log(this)
 			}

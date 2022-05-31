@@ -154,77 +154,129 @@ Element.prototype.slideToggle = function (time, callback) {
 	}
 }
 
+// опишем самовызывающуюся функцию сортировки
 Element.prototype.sortable = (function () {
+	// инициализируем переменные для элемента, который перемещается и элемента, который стоит за ним по умолчанию
 	let dragEl, nextEl;
 
+
 	function _unDraggable(elements) {
+
 		if (elements && elements.length) {
+
 			for (let i = 0; i < elements.length; i++) {
+
 				if (!elements[i].hasAttribute('draggable')) {
+
 					elements[i].draggable = false;
 
+					// рекурсивно запускаем функцию
 					_unDraggable(elements[i].children);
 				}
 			}
 		}
 	}
 
+
 	function _onDragStart(e) {
+
+		// блокируем всплытие событий
 		e.stopPropagation();
+
 		this.tempTarget = null;
+
+		// в переменную: dragEl положим элемент который будем (начинаем) тащить
 		dragEl = e.target;
+
+		//в переменную положим св-во: nextSibling (из dragEl)
+		// Доступное только для чтения свойство nextSibling интерфейса Node возвращает узел, следующий сразу за указанным в
+		// childNodes их родителя , или возвращает значение null , если указанный узел является последним дочерним элементом // в родительском элементе
 		nextEl = dragEl.nextSibling;
+
+		// установим св-во в значение: перемещать
 		e.dataTransfer.dropEffect = 'move';
 
+		// добавим два слушателя событий
+		// т.к. мы работаем на прототипе элемента (Element.prototype), то сам элемент, к которому будем обращаться, находится в св-ве: this
 		this.addEventListener('dragover', _onDragOver, false);
 		this.addEventListener('dragend', _onDragEnd, false);
 	}
 
+
 	function _onDragOver(e) {
+		// скинем действия по умолчанию 
 		e.preventDefault();
+		// блокируем всплытие событий
 		e.stopPropagation();
+		// установим св-во в значение: перемещать
 		e.dataTransfer.dropEffect = 'move';
 
 		let target;
 
 		if (e.target !== this.tempTarget) {
+
+			// здесь в e.target приходит элемент над которым мы тащим
 			this.tempTarget = e.target;
+
+			// в переменую сохраним: e.target с атрибутом: draggable = true
 			target = e.target.closest('[draggable=true]');
 		}
 
 		if (target && target !== dragEl && target.parentElement === this) {
+
 			let rect = target.getBoundingClientRect();
+
+			// в переменную положим результат расчёта координат
 			let next = (e.clientY - rect.top) / (rect.bottom - rect.top) > .5;
 
+			// обращаемся к this, вызываем у него метод: insertBefore()
+			// на вход: 1- указыаваем что вставляем: dragEl, 2- куда вствляем (если next, то вставим после: target.nextSibling
+			// иначе вставим после: target)
 			this.insertBefore(dragEl, next && target.nextSibling || target);
 		}
 	}
 
-	function _onDragEnd(e) {
+	function _onDragEnd(e) { // на вход методу подаём: объект событие: e
+
+		// отменим действие по умолчанию
 		e.preventDefault();
 
+		// скинем два слушателя событий
 		this.removeEventListener('dragover', _onDragOver, false);
 		this.removeEventListener('dragend', _onDragEnd, false);
 
 		if (nextEl !== dragEl.nextSibling) {
+
 			this.onUpdate && this.onUpdate(dragEl);
 		}
 	}
 
+
+	// реализуем замыкание
 	return function (options) {
+		// в переменную положим: options (если туда что то пришло иначе- пустой объект)
 		options = options || {};
 
 		this.onUpdate = options.stop || null;
 
+		// в переменную сохраним элементы, которые необходмо исключить из процесса: сортировки (перетаскивания)
+		// Метод split() разбивает объект String на массив строк, путём разделения строки указанной подстрокой
 		let excludedElements = options.excludedElements && options.excludedElements.split(/,*\s+/) || null;
 
 		[...this.children].forEach(item => {
+
 			let draggable = 'true';
 
 			if (excludedElements) {
+
 				for (let i in excludedElements) {
+
+					// метод: hasOwnProperty() проверяет, является ли св-во поданное на вход, собственным свойством элемента
+					// метод: matches() проверяет элемент на соответствие заданному селектору 
 					if (excludedElements.hasOwnProperty(i) && item.matches(excludedElements[i])) {
+
 						draggable = false;
+
 						break;
 					}
 				}
@@ -232,10 +284,13 @@ Element.prototype.sortable = (function () {
 
 			item.draggable = draggable;
 
+			// вызываем метод
 			_unDraggable(item.children);
 		});
 
+		// сбосим слушатель события: dragstart, 2-ым параметром передаётся метод: _onDragStart, 3-ий параметр: false (т.е с теми же опциями)
 		this.removeEventListener('dragstart', _onDragStart, false);
+
 		this.addEventListener('dragstart', _onDragStart, false);
 	}
 })();
