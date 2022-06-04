@@ -99,6 +99,7 @@ function createFile() {
 
 					// проверим является ли св-во: files, свойством данного элемента (объекта): (this)
 					if (this.files.hasOwnProperty(i)) {
+
 						if (multiple) {
 
 							// проверим есть ли ячейка массива: fileStore[fileName]
@@ -116,8 +117,12 @@ function createFile() {
 							// создадим атрибут у контейнера (его i-того элемента) для того чтобы можно было удалять добавленные 
 							// элементы Метод: setAttribute() получает на вход: 1- название атрибута (с добавлением атрибута в виде переменной: ${attributeName}) в обратных кавычках, 2- значение атрибута: elId 
 							container[i].setAttribute(`data-deleteFileId-${attributeName}`, elId);
+
+							// добавив 3-им параметром ф-ию, получаем возможность сортировки картинок сразу после добавления
 							showImage(this.files[i], container[i], function () {
+
 								parentContainer.sortable({
+
 									excludedElements: 'label .empty_container'
 								});
 							});
@@ -159,10 +164,12 @@ function createFile() {
 			// Событие onsubmit возникает при отправке формы, это обычно происходит, когда пользователь нажимает специальную 
 			// кнопку Submit
 			form.onsubmit = function (e) {
+
 				createJsSortable(form);
 
 				// если массив не пуст
 				if (!isEmpty(fileStore)) {
+
 					e.preventDefault();
 
 					// создадим объект FormData (элемент js-формы) Получим форму в которой мы находимся: form (т.е. this)
@@ -264,6 +271,7 @@ function createFile() {
 				// строку с названием класса)
 				container.classList.remove('empty_container');
 
+				// проверка: если в calcback что то пришло, то вызовем ф-ию: calcback()
 				calcback && calcback();
 			}
 		}
@@ -598,19 +606,28 @@ let searchResultHover = (() => {
 
 searchResultHover();
 
+// метод работы поиска в админке (вывод подсказок(ссылок))
 function search() {
+
 	let searchInput = document.querySelector('input[name=search]');
-	console.log(searchInput);
+
+	//console.log(searchInput);
 
 	if (searchInput) {
+
 		searchInput.oninput = () => {
+
+			// сделаем ограничение (подсказки (ссылки) появятся при вводе более одного символа в поисковой строке)
 			if (searchInput.value.length > 1) {
+
 				Ajax(
 					{
+						// в Ajax нам нужен объект: data
 						data: {
+							// в котором будет три поля (свойства)
 							data: searchInput.value,
 							table: document.querySelector('input[name="search_table"]').value,
-							ajax: 'search'
+							ajax: 'search' // управляющий флаг (для Ajax-контроллера)
 						}
 					}
 				).then(res => {
@@ -663,23 +680,33 @@ if (galleries.length) {
 }
 
 function createJsSortable(form) {
+
 	if (form) {
+
+		// получим все блоки, которые надо сортирвоать (т.е. input с [type=file] и с атрибутом: multiple)
 		let sortable = form.querySelectorAll('input[type=file][multiple]');
 
 		if (sortable.length) {
+
 			sortable.forEach(item => {
+
 				let container = item.closest('.gallery_container');
+
 				let name = item.getAttribute('name');
 
 				if (name && container) {
+
+					// удалим все скобки
 					name = name.replace(/\[\]/g, '');
 
 					let inputSorting = form.querySelector('input[name="js-sorting[${name}]"]');
 
 					if (!inputSorting) {
+						// создадим элемент
 						inputSorting = document.createElement('input');
+						// установим его атрибут
 						inputSorting.name = `js-sorting[${name}]`;
-
+						// закинем созданный элемент в форму
 						form.append(inputSorting);
 					}
 
@@ -687,7 +714,9 @@ function createJsSortable(form) {
 
 					for (let i in container.children) {
 						if (container.children.hasOwnProperty(i)) {
+							// проверим на наличие элементов которые в сортировке не учавствуют: label и empty_container
 							if (!container.children[i].matches('label') && !container.children[i].matches('.empty_container')) {
+								// здесь: А- новодобавленный элемент
 								if (container.children[i].tagName === 'A') {
 									res.push(container.children[i].querySelector('img').getAttribute('src'));
 								} else {
@@ -698,6 +727,7 @@ function createJsSortable(form) {
 					}
 					//console.log(res);
 
+					// stringify()- из массива или объекта сделает строку
 					inputSorting.value = JSON.stringify(res);
 				}
 			})

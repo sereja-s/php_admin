@@ -622,19 +622,26 @@ abstract class BaseAdmin extends BaseController
 	// метод создания файлов
 	protected function createFiles($id)
 	{
+
 		$fileEdit = new FileEdit();
+
 		$this->fileArray = $fileEdit->addFile($this->table);
 
 		if ($id) {
+
 			$this->checkFiles($id);
 		}
 
 		if (!empty($_POST['js-sorting']) && $this->fileArray) {
+
 			foreach ($_POST['js-sorting'] as $key => $item) {
+
 				if (!empty($item) && !empty($this->fileArray[$key])) {
+
 					$fileArr = json_decode($item);
 
 					if ($fileArr) {
+
 						$this->fileArray[$key] = $this->sortingFiles($fileArr, $this->fileArray[$key]);
 					}
 				}
@@ -647,13 +654,18 @@ abstract class BaseAdmin extends BaseController
 		$res = [];
 
 		foreach ($fileArr as $file) {
+
 			if (!is_numeric($file)) {
+
+				// обрежем название файла
 				$file = substr($file, strlen(PATH . UPLOAD_DIR));
 			} else {
+
 				$file = $arr[$file];
 			}
 
 			if ($file && in_array($file, $arr)) {
+
 				$res[] = $file;
 			}
 		}
@@ -1430,6 +1442,7 @@ abstract class BaseAdmin extends BaseController
 	protected function checkFiles($id)
 	{
 		if ($id) {
+
 			$arrKeys = [];
 
 			if (!empty($this->fileArray)) {
@@ -1437,10 +1450,14 @@ abstract class BaseAdmin extends BaseController
 			}
 
 			if (!empty($_POST['js-sorting'])) {
+				// array_merge()- объединяет элементы одного или нескольких массивов таким образом, чтобы значения одного из 
+				// них добавлялись в конец предыдущего. Он возвращает результирующий масси
 				$arrKeys = array_merge($arrKeys, array_keys($_POST['js-sorting']));
 			}
 
 			if ($arrKeys) {
+
+				// отфильтруем массив по уникальным значениям
 				$arrKeys = array_unique($arrKeys);
 
 				$data = $this->model->get($this->table, [
@@ -1449,19 +1466,24 @@ abstract class BaseAdmin extends BaseController
 				]);
 
 				if ($data) {
+
 					$data = $data[0];
 
 					foreach ($data as $key => $item) {
+
 						if ((!empty($this->fileArray[$key]) && is_array($this->fileArray[$key])) || !empty($_POST['js-sorting'][$key])) {
+
 							$fileArr = json_decode($item);
 
 							if ($fileArr) {
+
 								foreach ($fileArr as $file) {
 									// добавляем файл
 									$this->fileArray[$key][] = $file;
 								}
 							}
 						} elseif (!empty($this->fileArray[$key])) {
+
 							@unlink($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $item);
 						}
 					}

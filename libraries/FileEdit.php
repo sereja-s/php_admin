@@ -8,6 +8,7 @@ class FileEdit
 	protected $imgArr = [];
 	// свойство в котором будет храниться путь куда мы будем сохранять файлы
 	protected $directory;
+	// свойство (управляющий флаг) даёт возможность относительно таблицы не искать уникальное имя файла, а пересожранять его
 	protected $uniqueFile = true;
 
 	// метод для добавления файлов
@@ -53,6 +54,7 @@ class FileEdit
 					$res_name = $this->createFile($file);
 
 					if ($res_name) {
+
 						$this->imgArr[$key] = $directory . $res_name;
 					}
 				}
@@ -111,6 +113,7 @@ class FileEdit
 	// файла, которая будет генерироваться динамически вслучае если такой файл существует)
 	protected function checkFile($fileName, $ext, $fileLastName = '')
 	{
+
 		// проверим: существует ли такой файл в заданной директории Если не существует
 		if (!file_exists($this->directory . $fileName . $fileLastName . '.' . $ext) || !$this->uniqueFile) {
 			// вернём готовое имя файла (с расширением)
@@ -127,6 +130,7 @@ class FileEdit
 
 	public function setUniqueFile($value)
 	{
+
 		$this->uniqueFile = $value ? true : false;
 	}
 
@@ -136,6 +140,7 @@ class FileEdit
 		$this->directory = $_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . $directory;
 
 		if (!file_exists($this->directory)) {
+
 			mkdir($this->directory, 0777, true);
 		}
 	}
