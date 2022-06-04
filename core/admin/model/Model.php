@@ -198,7 +198,11 @@ class Model extends BaseModel
 			unset($arr[count($arr) - 1]);
 		}
 
+		// определим переменную (флаг) и установим ей значение по умолчанию
+		// (понадобится при выводе подсказок поиска с приоритетом той таблицы (категории) из которой осуществляется поиск)
 		$correctCurrentTable = false;
+
+		// получим свойство с таблицами проекта
 		$projectTables = Settings::get('projectTables');
 
 		if (!$projectTables) {
@@ -206,21 +210,30 @@ class Model extends BaseModel
 		}
 
 		foreach ($projectTables as $table => $item) {
+
+			// проверка на существование таблицы
 			if (!in_array($table, $dbTables)) {
 				continue;
 			}
 
 			$searchRows = [];
+			// массив по которому будем сортировать
 			$orderRows = ['name'];
+			// массив полей по которорым будем искать
 			$fields = [];
+			// поля, которые есть в БД
 			$columns = $this->showColumns($table);
 
 			$fields[] = $columns['id_row'] . ' as id';
 
+			// сформируем переменую:
+			// если существует ячейка: $columns['name'], то будем исползовать конструкцию: CASE и через WHEN и THEN заполнять // поле: name из таблицы по указанным условиям (здесь если имя не равно пустой строке, то в переменную: $fieldName сохраним строку с именем (и названием таблицы впереди) иначе - пустую строку )
 			$fieldName = isset($columns['name']) ? "CASE WHEN {$table}.name <> '' THEN {$table}.name " : '';
 
 			foreach ($columns as $col => $value) {
+
 				if ($col !== 'name' && stripos($col, 'name') !== false) {
+
 					if (!$fieldName) {
 						$fieldName = 'CASE ';
 					}
@@ -228,6 +241,7 @@ class Model extends BaseModel
 					$fieldName .= "WHEN {$table}.$col <> '' THEN {$table}.$col ";
 				}
 
+				// формируем поля в которых будем искать (здесь- по текстовому признаку (по вхождению в поле слов: char или text))
 				if (
 					isset($value['Type']) &&
 					(stripos($value['Type'], 'char') !== false ||
@@ -238,24 +252,35 @@ class Model extends BaseModel
 			}
 
 			if ($fieldName) {
+				// сохраним в массиве, то что пришло в переменную и закроем конструкцию: CASE (описана выше) конструкцией: END и далее укажем: как псевдоним имени
 				$fields[] = $fieldName . 'END as name';
 			} else {
+
 				$fields[] = $columns['id_row'] . ' as name';
 			}
 
+			// чтобы понимать из какой таблицы получены данные
+			// добавим в массив ещё поле (с названием таблицы)
 			$fields[] = "('$table') AS table_name";
 
 			$res = $this->createWhereOrder($searchRows, $searchArr, $orderRows, $table);
 
 			$where = $res['where'];
+			// если $order ещё не заполнялось
 			!$order && $order = $res['order'];
 
+
 			if ($table === $currentTable) {
+
 				$correctCurrentTable = true;
+
 				$fields[] = "('current_table') AS current_table";
 			}
 
+
 			if ($where) {
+
+				// обратимся к методу модели для формирования UNION запросов к базе данных
 				$this->buildUnion($table, [
 					'fields' => $fields,
 					'where' => $where,
@@ -266,8 +291,13 @@ class Model extends BaseModel
 
 		$orderDirection = null;
 
+		// сформируем: $order
 		if ($order) {
+
+			// если correctCurrentTable имеет значение: true, зачит мы используем выбранную таблицу (применяется поиск по 
+			// админке с приоритетом таблицы)
 			$order = ($correctCurrentTable ? 'current_table DESC, ' : '') . '(' . implode('+', $order) . ')';
+
 			$orderDirection = 'DESC';
 		}
 
@@ -279,8 +309,12 @@ class Model extends BaseModel
 			'order_direction' => $orderDirection
 		]);
 
+		// произведём вывод поиска (подсказки (ссылки))
+
 		if ($result) {
+
 			foreach ($result as $index => $item) {
+
 				$result[$index]['name'] .= '(' .
 					(isset($projectTables[$item['table_name']]['name'])
 						? $projectTables[$item['table_name']]['name']
@@ -294,37 +328,54 @@ class Model extends BaseModel
 		return $result ?: [];
 	}
 
+	// метод для формирования инструкций WHERE и ORDER для системы поиска
 	protected function createWhereOrder($searchRows, $searchArr, $orderRows, $table)
 	{
 		$where = '';
 		$order = [];
 
 		if ($searchRows && $searchArr) {
+
 			$columns = $this->showColumns($table);
 
 			if ($columns) {
+
+				// определи первую скобку в инструкции:
 				$where = '(';
 
 				foreach ($searchRows as $row) {
+
+					// на каждой итерации добавляем ещё одну скобку
 					$where .= '(';
 
 					foreach ($searchArr as $item) {
+
 						if (in_array($row, $orderRows)) {
+
+							// символ: %- означает искать и до и после
 							$str = "($row LIKE '%$item%')";
 
 							if (!in_array($str, $order)) {
+
 								$order[] = $str;
 							}
 						}
 
+
 						if (isset($columns[$row])) {
+
 							$where .= "{$table}.$row LIKE '%$item%' OR ";
 						}
 					}
 
+
+					// preg_replace() — поиск и замена регулярных выражений
+					// на вход: 1- шаблон (регулярное выражение) для поиска, 2- строка (или массив со строками) для замены
+					// 3- строка или массив со строками для поиска и замены (где ищем)
 					$where = preg_replace('/\)?\s*or\s*\(?$/i', '', $where) . ') OR ';
 				}
 
+				// обработаем переменную ещё раз
 				$where && $where = preg_replace('/\s*or\s*$/i', '', $where) . ')';
 			}
 		}

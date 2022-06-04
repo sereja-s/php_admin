@@ -496,7 +496,10 @@ function showHideMenuSearch() {
 
 	// организуем закрытие поиска при потере фокуса (щелчке на другом месте, переключении вкладок): вешаем событие: blur
 	searchInput.addEventListener('blur', e => {
+
+		// организуем в поиске переход по подсказке (ссылке) при нажатии на неё
 		if (e.relatedTarget && e.relatedTarget.tagName === 'A') {
+
 			return
 		}
 
@@ -557,6 +560,7 @@ let searchResultHover = (() => {
 
 			// обратимся к массиву в переменной: children (его ячейке: [activeIndex])  и добавим класс: search_act
 			children[activeIndex].classList.add('search_act');
+
 
 			// в элемент: searchInput (в его значение: value) занесём значение: innerText из children[activeIndex]
 			searchInput.value = children[activeIndex].innerText.replace(/\(.+?\)\s*$/, '');
@@ -632,21 +636,30 @@ function search() {
 					}
 				).then(res => {
 					//console.log(res);
+
 					try {
+
 						res = JSON.parse(res);
-						console.log('success');
+						//console.log('success');
+
 						let resBlok = document.querySelector('.search_res');
+
 						let counter = res.length > 20 ? 20 : res.length;
 
 						if (resBlok) {
+
 							resBlok.innerHTML = '';
+
 							for (let i = 0; i < counter; i++) {
+
+								// на вход: 1- параметр: вставляем в конец, 2-ой: что вставляем
 								resBlok.insertAdjacentHTML('beforeend', `<a href="${res[i]['alias']}">${res[i]['name']}</a>`);
 							}
 
 							searchResultHover();
 						}
 					} catch (e) {
+
 						console.log('error');
 						//alert('Ошибка в системе поиска в админ панели');
 					}

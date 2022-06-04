@@ -8,6 +8,7 @@ abstract class BaseModelMethods
 {
 	protected $sqlFunc = ['NOW()'];
 	protected $tableRows;
+	// свойство используемое в методах модели для формирования UNION запросов к базе данных
 	protected $union = [];
 
 	protected function createFields($set, $table = false, $join = false)
@@ -75,10 +76,14 @@ abstract class BaseModelMethods
 					$id_field = true;
 				}
 
+
 				// делаем проверку что в переменную что то пришло или то что пришло равно: null
 				if ($field || $field === null) {
+
 					if ($field === null) {
+
 						$fields .= "NULL,";
+
 						continue;
 					}
 
@@ -94,11 +99,15 @@ abstract class BaseModelMethods
 							// здесь- т.к. в регулярке две переменных в круглых скобках, в matches[1] будет храниться 
 							// нормальное название поля (1-ая переменная), а в $matches[2]- его псевдоним (2-ая переменная)
 							$fields .= $concat_table . $matches[1] . ' as TABLE' . $alias_table . 'TABLE_' . $matches[2] . ',';
+
 							// иначе (т.е. если не соответствует регулярному выражению)
 						} else {
+
 							$fields .= $concat_table . $field . ' as TABLE' . $alias_table . 'TABLE_' . $field . ',';
 						}
 					} else {
+
+						// применяется также для системы поиска по административной панели сайта 
 						$fields .= (!preg_match('/(\([^()]*\))|(case\s+.+?\s+end)/i', $field) ? $concat_table : '') . $field . ',';
 					}
 				}

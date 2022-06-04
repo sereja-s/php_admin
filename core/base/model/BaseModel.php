@@ -174,8 +174,11 @@ abstract class BaseModel extends BaseModelMethods
 		// придут если они есть $join $where $order $limit
 		$query = "SELECT $fields FROM $table $join $where $order $limit";
 
+
+		// если не пусто в ячейке: $set['return_query']
 		if (!empty($set['return_query'])) {
-			return $query;
+
+			return $query; // вернём запрос, а не выборку
 		}
 
 		// вернём результат работы метода query() в переменную $res
@@ -384,56 +387,83 @@ abstract class BaseModel extends BaseModelMethods
 		return $this->query($query, 'u');
 	}
 
+	// метод модели для формирования UNION запросов к базе данных
 	public function buildUnion($table, $set)
 	{
 		if (array_key_exists('fields', $set) && $set['fields'] === null) {
+
 			return $this;
 		}
 
 		if (!array_key_exists('fields', $set) || empty($set['fields'])) {
+
 			$set['fields'] = [];
 
 			$columns = $this->showColumns($table);
 
+			// удалим служебные поля
 			unset($columns['id_row'], $columns['multi_id_row']);
 
+			// проходимся в цикле по всем колонкам и заполняем массив
 			foreach ($columns as $row => $item) {
+
+				// и заполняем массив
+				// (кол-во полей, которые мы выбираем из БД должно во всех union быть одинаковым (соответствовать) То что не 
+				// соответствут будем дополнять: null )
 				$set['fields'][] = $row;
 			}
 		}
 
+		// обращаемся к св-ву: union, создаём у него ячейку: table и в неё сохраняем массив из переменой $set
 		$this->union[$table] = $set;
+
 		$this->union[$table]['return_query'] = true;
-		return $this;
+
+		return $this; // возвращаем указатель на контекст (на текущий объект данного класса)
 	}
 
+	// метод для генерации UNION запросов и их выполнения
 	public function getUnion($set = [])
 	{
 		if (!$this->union) {
+
 			return false;
 		}
 
 		$unionType = ' UNION ' . (!empty($set['type']) ? strtoupper($set['type']) . ' ' : '');
 
+		// для подсчёта наибольшего кол-ва столбцов (полей) объявим переменную
 		$maxCount = 0;
+		// переменная для названия таблицы с самым большим кол-вом полей (поставим её на первое место в запросе)
 		$maxTableCount = '';
 
 		foreach ($this->union as $key => $item) {
+
+			// сохраняем из каждого $union количество элементов в ячейке: $item['fields']
 			$count = count($item['fields']);
+
+			// объявим переменную, чтобы предусмотреть работу с join
 			$joinFields = '';
 
 			if (!empty($item['join'])) {
+
 				foreach ($item['join'] as $table => $data) {
+
+					// если ключ: fields в переменной: $data есть и в ячейку: $data['fields'] что то пришло
 					if (array_key_exists('fields', $data) && $data['fields']) {
+
 						$count += count($data['fields']);
 						$joinFields = $table;
+						// иначе если
 					} elseif (!array_key_exists('fields', $data) || (!$joinFields['data'] || $data['fields'] === null)) {
+
 						$columns = $this->showColumns($table);
 						unset($columns['id_row'], $columns['multi_id_row']);
 
 						$count += count($columns);
 
 						foreach ($columns as $field => $value) {
+
 							$this->union[$key]['join'][$table]['fields'][] = $field;
 						}
 
@@ -441,28 +471,43 @@ abstract class BaseModel extends BaseModelMethods
 					}
 				}
 			} else {
+
 				$this->union[$key]['no_concat'] = true;
 			}
 
+			// поиск максимального значения: 
+
 			if ($count > $maxCount || ($count === $maxCount && $joinFields)) {
+
 				$maxCount = $count;
 				$maxTableCount = $key;
 			}
 
+			// создадим 2-е ячейки в массиве и установим для них первоначальные значения
 			$this->union[$key]['lastJoinTable'] = $joinFields;
 			$this->union[$key]['countFields'] = $count;
 		}
 
+		// выстроим необходимый запрос к БД:
+
 		$query = '';
 
+
 		if ($maxCount && $maxTableCount) {
+
 			$query .= '(' . $this->get($maxTableCount, $this->union[$maxTableCount]) . ')';
+
 			unset($this->union[$maxTableCount]);
 		}
 
+
 		foreach ($this->union as $key => $item) {
+
 			if (isset($item['countFields']) && $item['countFields'] < $maxCount) {
+
+				// то запрос неоюходимо дополнить соответствующим кол-вом: null
 				for ($i = 0; $i < $maxCount - $item['countFields']; $i++) {
+
 					if ($item['lastJoinTable']) {
 						$item['join'][$item['lastJoinTable']]['fields'][] = null;
 					} else {
@@ -471,7 +516,9 @@ abstract class BaseModel extends BaseModelMethods
 				}
 			}
 
+
 			$query && $query .= $unionType;
+
 			$query .= '(' . $this->get($key, $item) . ')';
 		}
 
@@ -479,12 +526,15 @@ abstract class BaseModel extends BaseModelMethods
 
 		$limit = !empty($set['limit']) ? 'LIMIT ' . $set['limit'] : '';
 
+
 		if (method_exists($this, 'createPagination')) {
+
 			$this->createPagination($set, "($query)", $limit);
 		}
 
 		$query .= " $order $limit";
 
+		// для корректного начала в переменную: $union положим пустой массив
 		$this->union = [];
 
 		return $this->query(trim($query));
