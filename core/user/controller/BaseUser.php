@@ -14,12 +14,15 @@ abstract class BaseUser extends \core\base\controller\BaseController
 
 	/*Проектные свойства*/
 	protected $socials;
-	/*Проектные свойства*/
+
 
 	protected function inputData()
 	{
+		// инициализируем стили и скрипты На вход здесь ничего не передаём
 		$this->init();
+
 		!$this->model && $this->model = Model::instance();
+
 
 		$this->set = $this->model->get('settings', [
 			'order' => ['id'],
@@ -63,13 +66,25 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		return $this->render(TEMPLATE . 'layout/default');
 	}
 
+
+	// метод для удобного заполнения пути к изображению в файлах
 	protected function img($img = '', $tag = false)
 	{
+
+		// если картинка отсутствует и есть папка с изображениями по умолчанию
 		if (!$img && is_dir($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . DEFAULT_IMAGE_DIRECTORY)) {
+
+			// scandir() — возвращает список файлов и каталогов внутри указанного пути
 			$dir = scandir($_SERVER['DOCUMENT_ROOT'] . PATH . UPLOAD_DIR . DEFAULT_IMAGE_DIRECTORY);
 
+			// preg_grep() — возвращает записи массива, соответствующие шаблону ( или регулярному выражению)
+			// в переменную: $imgArr положим то что в названии будет указывать на IndexController далее точка и какое то 
+			// расширение, если такого нет, то будем искать файл с названием: default далее точка и какое то расширение
 			$imgArr = preg_grep('/' . $this->getController() . '\./i', $dir) ?: preg_grep('/default\./i', $dir);
 
+			// если в переменную: $imgArr что то пришло, то в переменную $img сохраним выражение, где 
+			// array_shift()— возвращает массив поданный на вход, исключив первый элемент (все ключи числового массива будут 
+			// изменены, чтобы начать отсчет с нуля)
 			$imgArr && $img = DEFAULT_IMAGE_DIRECTORY . '/' . array_shift($imgArr);
 		}
 

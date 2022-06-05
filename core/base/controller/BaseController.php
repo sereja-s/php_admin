@@ -216,9 +216,11 @@ abstract class BaseController
 		if (!$admin) {
 			// если в константе USER_CSS_JS (в её ячейке) есть массив (не пустой)
 			if (USER_CSS_JS['styles']) {
+
 				// запускаем цикл перебираем массив в константе (в её заданной ячейке styles') 
 				// (на каждой итерации значение текущего элемента присваивается переменной $item)
 				foreach (USER_CSS_JS['styles'] as $item) {
+
 					// к массиву в свойстве $this->styles добавим  элемент (обозначается символами []) описаный после знака =
 					// в котором прописано условие, где ф-ия php: preg_match() — Выполняет проверку на соответствие регулярному 
 					// выражению На вход подаётся: 1- Искомый шаблон в виде строки 2- Входная строка (здесь- $item) 
@@ -229,14 +231,19 @@ abstract class BaseController
 			}
 
 			if (USER_CSS_JS['scripts']) {
+
 				foreach (USER_CSS_JS['scripts'] as $item) {
+
 					$this->scripts[] = (!preg_match('/^\s*https?:\/\//i', $item) ? PATH . TEMPLATE : '') . trim($item, '/');
 				}
 			}
 		} else {
+
 			// тоже для административной части
 			if (ADMIN_CSS_JS['styles']) {
+
 				foreach (ADMIN_CSS_JS['styles'] as $item) {
+
 					$this->styles[] = (!preg_match('/^\s*https?:\/\//i', $item) ? PATH . ADMIN_TEMPLATE : '') . trim($item, '/');
 				}
 			}
@@ -248,8 +255,8 @@ abstract class BaseController
 		}
 	}
 
-	// метод который отвечает за проверку авторизации (на вход принимает флаг: $type (значение по умолчанию: false) Показывает: 
-	// admin или нет)
+	// метод который отвечает за проверку авторизации (на вход принимает флаг: $type (значение по умолчанию: false) 
+	// показывает: admin или нет)
 	protected function checkAuth($type = false)
 	{
 		// метод: checkUser()- делает проверку пользователя

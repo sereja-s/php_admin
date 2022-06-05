@@ -12,14 +12,10 @@ class IndexController extends BaseUser
 
 	protected function inputData()
 	{
-		//		exit();
-
 		parent::inputData();
 
-		$alias = '';
+		//echo $this->getController();
 
-		$res = $this->alias(['catalog' => 'auto', 'vasya' => 'petya'], ['page' => 1, 'order' => 'desc']);
-
-		$a = 1;
+		//exit;
 	}
 }

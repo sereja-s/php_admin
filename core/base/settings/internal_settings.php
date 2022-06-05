@@ -12,6 +12,7 @@ const TEMPLATE = 'templates/default/';
 const ADMIN_TEMPLATE = 'core/admin/view/';
 // константа, указывающая директорию где у нас будут храниться загружаемые файлы
 const UPLOAD_DIR = 'userfiles/';
+// константа, указывающая директорию где у нас будут храниться изображения используемые по умолчанию
 const DEFAULT_IMAGE_DIRECTORY = 'default_images';
 
 // константа для хранения версии куки файлов (версия выбирается произвольно)
@@ -49,6 +50,7 @@ const ADMIN_CSS_JS = [
 	]
 
 ];
+
 
 //  константа для хранения путей css- и js-файлов пользовательской части сайта
 const USER_CSS_JS = [
