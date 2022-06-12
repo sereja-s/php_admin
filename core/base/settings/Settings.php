@@ -65,6 +65,7 @@ class Settings
 		'goods' => ['name' => 'Товары', 'img' => 'pages.png'],
 		'filters' => ['name' => 'Фильтры', 'img' => 'pages.png'],
 		'articles' => ['name' => 'Статьи'],
+		'sales' => ['name' => 'Акции'],
 		'information' => ['name' => 'Информация'],
 		'socials' => ['name' => 'Социальные сети'],
 		'settings' => ['name' => 'Настройки системы']
@@ -74,13 +75,12 @@ class Settings
 	private $templateArr = [
 
 		// массив вида: 'название шаблона' => массив с полями для которых должен быть подключен соответствующий шаблон
-
-		'text' => ['name', 'phone', 'email', 'alias', 'external_alias'],
-		'textarea' => ['keywords', 'content', 'address', 'description', 'address'],
-		'radio' => ['visible', 'show_top_menu'],
+		'text' => ['name', 'phone', 'email', 'alias', 'external_alias', 'sub_title', 'number_of_years', 'discount', 'price'],
+		'textarea' => ['keywords', 'content', 'address', 'description', 'short_content'],
+		'radio' => ['visible', 'show_top_menu', 'hit', 'sale', 'new', 'hot'],
 		'checkboxlist' => ['filters'],
 		'select' => ['menu_position', 'parent_id'],
-		'img' => ['img', 'main_img'],
+		'img' => ['img', 'main_img', 'img_years'],
 		'gallery_img' => ['gallery_img', 'new_gallery_img']
 	];
 
@@ -99,7 +99,17 @@ class Settings
 		'img' => ['Изображение'],
 		'visible' => ['Видимость'],
 		'menu_position' => ['Позиция в списке'],
-		'show_top_menu' => ['Показывать в верхнем меню']
+		'show_top_menu' => ['Показывать в верхнем меню'],
+		'sub_title' => ['Подзаголовок'],
+		'short_content' => ['Краткое описание'],
+		'img_years' => ['Изображение количества лет на рынке'],
+		'number_of_years' => ['Количество лет на рынке'],
+		'hit' => ['Хит продаж'],
+		'sale' => ['Акция'],
+		'new' => ['Новинка'],
+		'hot' => ['Горячее предложение'],
+		'discount' => ['Скидка'],
+		'price' => ['Цена']
 	];
 
 	// св-во, в котором будет храниться массив шаблонов в которых выводятся файлы
@@ -108,7 +118,11 @@ class Settings
 	// св-во, в котором будут храниться значения для input type radio (кнопок переключателей (да, нет и т.д.))
 	private $radio = [
 		'visible' => ['НЕТ', 'ДА', 'default' => 'ДА'],
-		'show_top_menu' => ['НЕТ', 'ДА', 'default' => 'ДА']
+		'show_top_menu' => ['НЕТ', 'ДА', 'default' => 'ДА'],
+		'hit' => ['НЕТ', 'ДА', 'default' => 'НЕТ'],
+		'sale' => ['НЕТ', 'ДА', 'default' => 'НЕТ'],
+		'new' => ['НЕТ', 'ДА', 'default' => 'НЕТ'],
+		'hot' => ['НЕТ', 'ДА', 'default' => 'НЕТ']
 	];
 
 	// св-во, в котором будет храниться информация о корневых таблицах
@@ -125,7 +139,7 @@ class Settings
 	// св-во, в котором будут храниться блоки
 	private $blockNeedle = [
 		'vg-rows' => [],
-		'vg-img' => ['img', 'main_img'],
+		'vg-img' => ['img', 'main_img', 'img_years', 'number_of_years'],
 		'vg-content' => ['content']
 	];
 
@@ -133,6 +147,7 @@ class Settings
 	private $validation = [
 		'name' => ['empty' => true, 'trim' => true],
 		'price' => ['int' => true],
+		'discount' => ['int' => true],
 		'login' => ['empty' => true, 'trim' => true],
 		'password' => ['crypt' => true, 'empty' => true],
 		'keywords' => ['count' => 70, 'trim' => true],

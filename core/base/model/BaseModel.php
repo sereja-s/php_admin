@@ -168,7 +168,7 @@ abstract class BaseModel extends BaseModelMethods
 
 		// если в массив set (его ячейку limit) что то пришло, то в переменную $limit запишем 'LIMIT ' . $set['limit'], 
 		// иначе запишем пустую строку
-		$limit = $set['limit'] ? 'LIMIT ' . $set['limit'] : '';
+		$limit = (!empty($set['limit'])) ? 'LIMIT ' . $set['limit'] : '';
 
 		// формируем запрос в переменной $query: Выбрать поля $fields из переменной $table, далее указываем переменные, которые 
 		// придут если они есть $join $where $order $limit
@@ -549,7 +549,7 @@ abstract class BaseModel extends BaseModelMethods
 			$checkTable = $this->createTableAlias($table);
 
 			// если что то пришло в ячейку: 
-			if ($this->tableRows[$checkTable['table']]) {
+			if (!empty($this->tableRows[$checkTable['table']])) {
 				// то в в массиве: tableRows, создадим ячейку массива с псевдонимом таблицы, которая будет равна ячейке 
 				// массива с названием таблицы ( без псевдонима)
 				return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
@@ -593,7 +593,7 @@ abstract class BaseModel extends BaseModelMethods
 		}
 
 		if (isset($checkTable) && $checkTable['table'] !== $checkTable['alias']) {
-			return $this->tableRows[$checkTable['alias']] = $this->tableRows[$checkTable['table']];
+			return $this->tableRows[$checkTable['alias']] = &$this->tableRows[$checkTable['table']];
 		}
 
 		return $this->tableRows[$table];

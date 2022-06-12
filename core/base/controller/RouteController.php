@@ -164,7 +164,7 @@ class RouteController extends BaseController
 			// В нулевом элементе массива $url[0] у нас хранится контроллер
 			// Параметры будут храниться в массиве $url[1] начиная с первого элемента
 			// сделаем проверку: есть ли у нас что-нибудь в первом элементе массива $url[1], значит у нас есть реализация этого массива
-			if ($url[1]) {
+			if (!empty($url[1])) {
 				// тогда объявим переменную $count и с помощью ф-ции php: count() посчитаем кол-во элементов массива $url
 				$count = count($url);
 				// объявим переменную $key в которой оставим пустую строку
@@ -214,7 +214,7 @@ class RouteController extends BaseController
 
 			// проверка: существует ли для ячейки $var алиас маршрутов
 			// если существует, то подключить контроллеры и методы согласно алиаса маршрутов
-			if ($this->routes[$var]['routes'][$arr[0]]) {
+			if (!empty($this->routes[$var]['routes'][$arr[0]])) {
 				// разберём маршрут по разделителю /
 				$route = explode('/', $this->routes[$var]['routes'][$arr[0]]);
 
@@ -240,8 +240,12 @@ class RouteController extends BaseController
 		// тогда они подключаются,
 		// иначе (если у нас не прописаны такие методы в файле Settings.php), 
 		// подключатся методы по умолчанию: inputMethod и outputMethod
-		$this->inputMethod = $route[1] ? $route[1] : $this->routes['default']['inputMethod'];
-		$this->outputMethod = $route[2] ? $route[2] : $this->routes['default']['outputMethod'];
+
+		// $this->inputMethod = $route[1] ? $route[1] : $this->routes['default']['inputMethod'];
+		$this->inputMethod = $route[1] ?? $this->routes['default']['inputMethod'];
+
+		// $this->outputMethod = $route[2] ? $route[2] : $this->routes['default']['outputMethod'];
+		$this->outputMethod = $route[2] ?? $this->routes['default']['outputMethod'];
 
 		return;
 	}

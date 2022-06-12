@@ -21,7 +21,8 @@ abstract class BaseModelMethods
 		$concat_table = '';
 		$alias_table = $table;
 
-		if (!$set['no_concat']) {
+		if (empty($set['no_concat'])) {
+
 			$arr = $this->createTableAlias($table);
 			$concat_table = $arr['alias'] . '.';
 			$alias_table = $arr['alias'];
@@ -138,7 +139,7 @@ abstract class BaseModelMethods
 			// переменной: $table (если условие выполнится) Иначе переменная: $table будет пустой
 			? $this->createTableAlias($table)['alias'] . '.' : '';
 
-		// сформируем пкстую строковую переменную $order_by
+		// сформируем пустую строковую переменную $order_by
 		$order_by = '';
 
 		// если $set['order'] существует и в нём есть значение
@@ -150,7 +151,7 @@ abstract class BaseModelMethods
 			$set['order_direction'] = (isset($set['order_direction']) && $set['order_direction'])
 				? (array)$set['order_direction'] : ['ASC'];
 
-			// что бы каждый раз не делать проверку пришло ли что-нибудь в переменную $order_by (пусто или нет), сразу занесём в неё строк:у ORDER BY 
+			// что бы каждый раз не делать проверку пришло ли что-нибудь в переменную $order_by (пусто или нет), сразу занесём в неё строку: ORDER BY 
 			$order_by = 'ORDER BY ';
 
 			// объявим переменную $direct_count и изначально поставим в значение: ноль
@@ -206,17 +207,17 @@ abstract class BaseModelMethods
 		$where = ''; // в переменную записали пустую строку
 
 		// если в ячейку: where массива: set пришла строка
-		if (is_string($set['where'])) {
+		if (!empty($set['where']) && is_string(($set['where']))) {
 			return $instruction . ' ' . trim($set['where']);
 		}
 
 		// если в ячейку where массива $set что то пришло, проверим массив ли это и не пуст ли он
-		if (is_array($set['where']) && !empty($set['where'])) {
+		if (!empty($set['where']) && is_array(($set['where']))) {
 
 			// перед сохранением результата сделаем проверки: пришло ли что-нибудь и является ли это массивом (не пустым) 
 			// тогда сохраняем соответствующее значение иначе значение по умолчанию (в 1-ом случае: ячейку =, во 2-ом: ячейку AND)
-			$set['operand'] = (is_array($set['operand']) && !empty($set['operand'])) ? $set['operand'] : ['='];
-			$set['condition'] = (is_array($set['condition']) && !empty($set['condition'])) ? $set['condition'] : ['AND'];
+			$set['operand'] = (!empty($set['operand']) && is_array($set['operand'])) ? $set['operand'] : ['='];
+			$set['condition'] = (!empty($set['condition']) && is_array($set['condition'])) ? $set['condition'] : ['AND'];
 
 			$where = $instruction;
 
@@ -230,7 +231,7 @@ abstract class BaseModelMethods
 				$where .= ' ';
 
 				// проверим есть ли в ячейке operand массива $set, в ячейку $o_count что то пришло
-				if ($set['operand'][$o_count]) {
+				if (!empty($set['operand'][$o_count])) {
 					// то в переменную $operand сохраним то, что пришло
 					$operand = $set['operand'][$o_count];
 					// и делаем приращение переменной $o_count
@@ -241,7 +242,7 @@ abstract class BaseModelMethods
 				}
 
 				// такую же проверку делаем в массиве $set для ячейки condition (её ячейки $c_count)
-				if ($set['condition'][$c_count]) {
+				if (!empty($set['condition'][$c_count])) {
 					$condition = $set['condition'][$c_count];
 					$c_count++;
 				} else {
@@ -346,7 +347,7 @@ abstract class BaseModelMethods
 		$where = '';
 
 		// если в массиве $set его ячейка join не пустая (что то пришло)
-		if ($set['join']) {
+		if (!empty($set['join'])) {
 			$join_table = $table;
 
 			foreach ($set['join'] as $key => $item) {
@@ -396,7 +397,8 @@ abstract class BaseModelMethods
 
 					// определим тип присоединения
 					// если тип JOIN не пришёл
-					if (!$item['type']) {
+					if (empty($item['type'])) {
+
 						// то по умолчанию: к преременной $join конкатенируем (присоединяем) LEFT JOIN
 						$join .= 'LEFT JOIN ';
 					} else {
@@ -410,7 +412,7 @@ abstract class BaseModelMethods
 					$join .= $key . ' ON ';
 
 					// если существует переменная $item с массивом, в нём- ячека on с массивом, а в нём ячейка: table
-					if ($item['on']['table']) {
+					if (!empty($item['on']['table'])) {
 						// сохраняем эту переменную
 						$join_temp_table = $item['on']['table'];
 					} else {
@@ -420,10 +422,12 @@ abstract class BaseModelMethods
 
 					$join .= $this->createTableAlias($join_temp_table)['alias'];
 
+
+
 					// добавим поле таблицы, которую мы пристыковываем
 					$join .= '.' . $join_fields[0] . '=' . $concatTable . '.' . $join_fields[1];
 
-					// ханесём в переменную $join_table текущую таблицу (в переменной $key), что бы следующая итерация цикла могла работать с предыдущей таблицей (в итерации- текущая)
+					// занесём в переменную $join_table текущую таблицу (в переменной $key), что бы следующая итерация цикла могла работать с предыдущей таблицей (в итерации- текущая)
 					$join_table = $key;
 
 					// если пришла новая инструкция where
@@ -438,10 +442,10 @@ abstract class BaseModelMethods
 					} else {
 						// сохраним результат проврки в переменную $group_condition: если пришёл $item['group_condition'], то 
 						// сохраним его (предварительно преобразовав в заглавные буквы), иначе сохраним слово: AND
-						$group_condition = $item['group_condition'] ? strtoupper($item['group_condition']) : 'AND';
+						$group_condition = (!empty($item['group_condition'])) ? strtoupper($item['group_condition']) : 'AND';
 					}
 
-					$fields .= $this->createFields($item, $key, $set['join_structure']);
+					$fields .= $this->createFields($item, $key, (!empty($set['join_structure'])));
 
 					$where .= $this->createWhere($item, $key, $group_condition);
 				}

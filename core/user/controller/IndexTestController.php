@@ -16,8 +16,8 @@ class IndexTestController extends BaseUser
 
 		parent::inputData();
 
-		echo $this->getController();
+		$years = $this->wordsForCounter(111);
 
-		exit();
+		$a = 1;
 	}
 }

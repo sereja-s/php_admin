@@ -35,7 +35,7 @@
 									<ul class="header__nav-sublist">
 										<?php foreach ($this->menu['catalog'] as $item) : ?>
 											<li>
-												<a href="<?= $this->alias(['catalog' => $item['alias']]); ?>"><span><?= $item['name'] ?></span></a>
+												<a href="<?= $this->alias(['catalog' => $item['alias']]); ?>"><span><?= $item['name']; ?></span></a>
 											</li>
 										<?php endforeach; ?>
 									</ul>
@@ -101,53 +101,48 @@
 				</div>
 				<div class="header__menu _hidden">
 					<div class="header__menu_close close_modal"></div>
+
 					<ul class="header__menu_burger">
 
-						<li>
-							<a href="http://somesite.ru/catalog/"><span>Каталог</span></a>
+						<?php if (!empty($this->menu['catalog'])) : ?>
 
-							<ul class="header__menu_sublist">
+							<li>
+								<a href="<?= $this->alias('catalog'); ?>"><span>Каталог</span></a>
+
+								<ul class="header__menu_sublist">
+
+									<?php foreach ($this->menu['catalog'] as $item) : ?>
+
+										<li>
+											<a href="<?= $this->alias(['catalog' => $item['alias']]); ?>"><span><?= $item['name']; ?></span></a>
+										</li>
+
+									<?php endforeach; ?>
+
+							</li>
+
+						<?php endif; ?>
+
+
+						<?php if (!empty($this->menu['information'])) : ?>
+
+							<? foreach ($this->menu['information'] as $item) : ?>
 
 								<li>
-									<a href="http://somesite.ru/for-clients/"><span>item-1</span></a>
+									<a href="<?= $this->alias(['information' => $item['alias']]); ?>"><span><?= $item['name']; ?></span></a>
+
+									<ul class="header__menu_sublist">
+
+									</ul>
+
 								</li>
 
-								<li>
-									<a href="http://somesite.ru/for-installers/"><span>item-2</span></a>
-								</li>
+							<?php endforeach; ?>
 
-								<li>
-									<a href="http://somesite.ru/for-stores/"><span>item-3</span></a>
-								</li>
-
-								<li>
-									<a href="http://somesite.ru/for-builders/"><span>item-4</span></a>
-								</li>
-
-							</ul>
-
-						</li>
+						<?php endif; ?>
 
 						<li>
-							<a href="http://somesite.ru/delivery/"><span>Оплата и доставка</span></a>
-
-							<ul class="header__menu_sublist">
-
-							</ul>
-
-						</li>
-
-						<li>
-							<a href="http://somesite.ru/actions/"><span>Акции и скидки</span></a>
-
-							<ul class="header__menu_sublist">
-
-							</ul>
-
-						</li>
-
-						<li>
-							<a href="http://somesite.ru/news/"><span>Новости</span></a>
+							<a href="<?= $this->alias('news'); ?>"><span>Новости</span></a>
 
 							<ul class="header__menu_sublist">
 
@@ -156,7 +151,7 @@
 						</li>
 
 						<li>
-							<a href="http://somesite.ru/contacts/"><span>Контакты</span></a>
+							<a href="<?= $this->alias('contacts'); ?>"><span>Контакты</span></a>
 
 							<ul class="header__menu_sublist">
 
@@ -165,13 +160,16 @@
 						</li>
 
 					</ul>
+
 				</div>
+
+
 				<div class="header__callback _hidden">
 					<div class="header__callback_close close_modal"></div>
 					<div class="header__callback_header">
 						Связаться с нами
 					</div>
-					<form class="header__callback_form">
+					<form class="header__callback_form" method="post" <?= $this->alias('send-mail'); ?>>
 						<input type="text" class="input-text header__callback_input" placeholder="Ваше имя">
 						<input type="email" class="input-text header__callback_input" placeholder="E-mail">
 						<input type="text" class="input-text header__callback_input js-mask-phone" placeholder="Телефон">

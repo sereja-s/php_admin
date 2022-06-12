@@ -24,23 +24,31 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		!$this->model && $this->model = Model::instance();
 
 
+		// в переменную получим данные для шапки сайта из таблицы: settings (логотип, название сайта, телефон, эл.почта, адрес)
 		$this->set = $this->model->get('settings', [
-			'order' => ['id'],
+			'order' => ['id'], // сортируем по полю: id
 			'limit' => 1
 		]);
 
+		// в переменной доступно, то что лежит первым по очереди
 		$this->set && $this->set = $this->set[0];
 
+
+		// получим в ячейку данные меню каталога (с раскрывающимся списком) в шапке сайта
 		$this->menu['catalog'] = $this->model->get('catalog', [
-			'where' => ['visible' => 1, 'parent_id' => null],
-			'order' => ['menu_position']
+			'where' => ['visible' => 1, 'parent_id' => null], // условие по которым выводить данные
+			'order' => ['menu_position'] // сортируем по указанному полю
 		]);
 
+
+		// получим в ячейку информационные данные (акции и скидки, оплата и доставка, политика конф.)
 		$this->menu['information'] = $this->model->get('information', [
 			'where' => ['visible' => 1, 'show_top_menu' => 1],
 			'order' => ['menu_position']
 		]);
 
+
+		// получим социальные сети из таблицы БД
 		$this->socials = $this->model->get('socials', [
 			'where' => ['visible' => 1],
 			'order' => ['menu_position']
@@ -89,9 +97,11 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		}
 
 		if ($img) {
+
 			$path = PATH . UPLOAD_DIR . $img;
 
 			if (!$tag) {
+
 				return $path;
 			}
 
@@ -101,27 +111,42 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		return '';
 	}
 
+	// метод формирования ссылок
 	protected function alias($alias = '', $queryString = '')
 	{
+
 		$str = '';
 
 		if ($queryString) {
+
 			if (is_array($queryString)) {
+
 				foreach ($queryString as $key => $item) {
+
+					// к переменной: $str конкатенируем символ: знак вопроса (если в строку ничего не пришло) иначе- символ амперсанд
 					$str .= (!$str ? '?' : '&');
 
 					if (is_array($item)) {
+
+						// к ключу конкатенируем символ квадратных скобок
 						$key .= '[]';
 
 						foreach ($item as $v) {
+
 							$str .= $key . '=' . $v;
 						}
 					} else {
+
 						$str .= $key . '=' . $item;
 					}
 				}
+
+				// иначе если в переменную: $queryString пришёл не массив
 			} else {
+
+				// проверим не пришёл ли уже знак вопроса в переменную: $queryString
 				if (strpos($queryString, '?') === false) {
+
 					$str = '?' . $str;
 				}
 
@@ -129,28 +154,84 @@ abstract class BaseUser extends \core\base\controller\BaseController
 			}
 		}
 
+
 		if (is_array($alias)) {
+
 			$aliasStr = '';
 
 			foreach ($alias as $key => $item) {
+
+				// если пришёл не числовой ключ и что то пришло в переменную: $item
 				if (!is_numeric($key) && $item) {
+
 					$aliasStr .= $key . '/' . $item . '/';
+
+					// иначе если что то пришло в переменную: $item, но ключ числовой
 				} elseif ($item) {
+
 					$aliasStr .= $item . '/';
 				}
 			}
 
+			// trim() — удаление пробелов (или других символов (здесь- символ: / )) из начала и конца строки
 			$alias = trim($aliasStr, '/');
 		}
 
 		if (!$alias || $alias === '/') {
+
 			return PATH . $str;
 		}
 
 		if (preg_match('/^\s*https?:\/\//i', $alias)) {
+
 			return $alias . $str;
 		}
 
+		// ищем слеш повторяющийся 2-а и более раз и меняем на единичный слеш, и выводить это будем в готовом пути
 		return preg_replace('/\/{2,}/', '/', PATH . $alias . END_SLASH . $str);
+	}
+
+	// метод, для автоматической подстановки слов рядом с цифрой (кол-во лет на рынке)
+	protected function wordsForCounter($counter, $arrElement = 'years')
+	{
+
+		$arr = [
+			'years' => [
+				'лет',
+				'год',
+				'года'
+			]
+		];
+
+		if (is_array($arrElement)) {
+
+			$arr = $arrElement;
+		} else {
+
+			// в переменную положим то что лежит в ячейке: $arr[$arrElement] (если что то в неё пришло) или возьмём 1-ый 
+			// элемент массива (при этом он удаляется из массива и все ключи массива будут изменены, чтобы начать отсчет с нуля)
+			$arr = $arr[$arrElement] ?? array_shift($arr);
+		}
+
+		if (!$arr)
+			return null;
+
+		// сохраним в переменную: приведённый к целому числу, обрезанный из содержимого переменной: $counter последний символ
+		$char = (int)substr($counter, -1);
+
+		// аналогично для переменной: $counter (но обрезаем с конца два символа)
+		$counter = (int)substr($counter, -2);
+
+		if (($counter >= 10 && $counter <= 20) || ($char >= 5 && $char <= 9) || !$char) {
+
+			// вернём то что лежит в ячейке: $arr[0] (если там что то есть) или null
+			return $arr[0] ?? null;
+		} elseif ($char === 1) {
+
+			return $arr[1] ?? null;
+		} else {
+
+			return $arr[2] ?? null;
+		}
 	}
 }
