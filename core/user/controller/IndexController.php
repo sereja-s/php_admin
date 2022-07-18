@@ -32,13 +32,13 @@ class IndexController extends BaseUser
 
 		$goods = [];
 
-		/* foreach ($arrHits as $type) {
+		foreach ($arrHits as $type) {
 
 			$goods[$type] = $this->model->getGoods([
-				'where' => [$type = 1],
+				'where' => [$type => 1],
 				'limit' => 6 // ограничение (к выводу 6-ть товаров (хит продаж, акция, новинка, горячее предложение))
 			]);
-		} */
+		}
 
 		//$goods = $this->model->getGoods();
 

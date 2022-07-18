@@ -164,7 +164,7 @@ abstract class BaseModelMethods
 				// проверим существует ли элемент массива order_direction с таким же порядковым номером, как элемент массива order
 				// ( здесь элемент с номером ноль будет всегда (даже по умолчанию в $set['order_direction'] что то будет изначально))
 				// т.е. если в элементе order_direction массива $set, есть ячейка direct_count
-				if ($set['order_direction'][$direct_count]) {
+				if (!empty($set['order_direction'][$direct_count])) {
 
 					// то в переменную $order_direction сохраним этот элемент массива
 					// ф-ия php: strtoupper()  — Преобразует строку в верхний регистр

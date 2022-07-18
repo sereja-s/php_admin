@@ -123,7 +123,7 @@ class Model extends \core\base\model\BaseModel
 
 					foreach ($goods as $key => $item) {
 
-						$this->applyDiscount(!empty($data[$key]), $item['discount']);
+						$this->applyDiscount($goods[$key], $item['discount']);
 					}
 				}
 
@@ -212,11 +212,14 @@ class Model extends \core\base\model\BaseModel
 
 		if ($discount) {
 
+			//if (isset($data['price'])) {
+
 			$data['old_price'] = $data['price'];
 
 			$data['discount'] = $discount;
 
 			$data['price'] = $data['old_price'] - ($data['old_price'] / 100 * $discount);
+			//}
 		}
 	}
 }
