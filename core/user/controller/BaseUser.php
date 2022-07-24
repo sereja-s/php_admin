@@ -12,6 +12,8 @@ abstract class BaseUser extends \core\base\controller\BaseController
 	protected $set;
 	protected $menu;
 
+	protected $breadcrumbs;
+
 	/*Проектные свойства*/
 	protected $socials;
 
@@ -57,11 +59,18 @@ abstract class BaseUser extends \core\base\controller\BaseController
 
 	protected function outputData()
 	{
+
+		// в переменной сохраним результат работы ф-ии php: func_get_arg()- Возвращает указанный аргумент из списка аргументов пользовательской функции (здесь- порядковый номер: 0)
+		$args = func_get_arg(0);
+		$vars = $args ? $args : [];
+
+		$this->breadcrumbs = $this->render(TEMPLATE . 'include/breadcrumbs');
+
+
+
 		if (!$this->content) {
 
-			// в переменной сохраним результат работы ф-ии php: func_get_arg()- Возвращает указанный аргумент из списка аргументов пользовательской функции (здесь- порядковый номер: 0)
-			$args = func_get_arg(0);
-			$vars = $args ? $args : [];
+
 
 			//if(!$this->template) { $this->template = ADMIN_TEMPLATE . 'show'; }
 
@@ -232,6 +241,14 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		} else {
 
 			return $arr[2] ?? null;
+		}
+	}
+
+	protected function showGoods($data, $parameters = [], $template = 'goodsItem')
+	{
+		if (!empty($data)) {
+
+			echo $this->render(TEMPLATE . 'include/' . $template, compact('data', 'parameters'));
 		}
 	}
 }

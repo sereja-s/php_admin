@@ -199,15 +199,15 @@ label.vg-element {
 }
 
 .vg-firm-color1 {
-    color: #2f3b4c;
+    color: #04502a;
 }
 
 .vg-firm-color2 {
-    color: #00bfe8;
+    color: #14033a;
 }
 
 .vg-firm-color3 {
-    color: #eceef2;
+    color: #013741;
 }
 
 .vg-firm-color4 {
@@ -215,19 +215,20 @@ label.vg-element {
 }
 
 .vg-firm-color5 {
-    color: #b0bec5;
+    color: #280753;
 }
 
 .vg-firm-background-color1 {
-    background-color: #2f3b4c;
+    background-color:  #f8f8f77d;
 }
 
 .vg-firm-background-color2 {
-    background-color: #00bfe8;
+    /* background-color: #00bfe8; */
+	 background-color: #ffca85;
 }
 
 .vg-firm-background-color3 {
-    background-color: #eceef2;
+    background-color: #f8fc06;
 }
 
 .vg-firm-background-color4 {
@@ -359,18 +360,20 @@ label.vg-element {
 
 .vg-menu {
     position: absolute;
+	/*  position: fixed; */
     height: 100%;
     left: 0;
     width: 6.8%;
+	 z-index: 99;
 }
 
 .vg-menu a {
     padding: 3.5%;
-    background: #2f3b4c;
+    /* background: #2f3b4c; */
     width: 25vw;
     padding: 1vw 0;
-    border-right: 1px solid rgba(24, 30, 38, 0.1);
-    border-bottom: 1px solid #2d3848;
+   /*  border-right: 1px solid rgba(24, 30, 38, 0.1);
+    border-bottom: 1px solid #2d3848; */
     position: relative;
     z-index: 2;
 }
@@ -393,8 +396,9 @@ label.vg-element {
 }
 
 .vg-menu a:hover {
-    background: #262f3d;
-    border-left: 2px solid #00bfe8;
+    background: #ffd16d;
+    border-left: 2px solid #00e81f;
+	
 }
 
 .vg-menu a .vg-half {
@@ -409,7 +413,7 @@ label.vg-element {
 
 .vg-hide .vg-menu a {
     width: auto;
-    padding: 14%;
+    padding: 5%;
 }
 
 @media (max-width: 768px) {
@@ -419,9 +423,9 @@ label.vg-element {
 }
 
 .vg-hide .vg-menu a:hover {
-    width: 15vw;
+    width: 12vw;
     position: relative;
-    z-index: 2;
+    z-index: 10;
 }
 
 .vg-hide .vg-menu a:hover .vg_hidden {

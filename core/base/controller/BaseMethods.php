@@ -151,4 +151,61 @@ trait BaseMethods
 			// в переменную: $this->controller вернём нулевой элемент полученного в результате массива
 			$this->controller = preg_split('/_?controller/', strtolower(preg_replace('/([^A-Z])([A-Z])/', '$1_$2', (new \ReflectionClass($this))->getShortName())), 0, PREG_SPLIT_NO_EMPTY)[0];
 	}
+
+	/**
+	 * метод для отображения даты 
+	 * (по умолчанию на вход принимает строку: $date)
+	 */
+	protected function dateFormat($date)
+	{
+		if (!$date) {
+			return $date;
+		}
+
+		$daysArr = [
+			'Sunday' => 'Воскресенье',
+			'Monday' => 'Понедельник',
+			'Tuesday' => 'Вторник',
+			'Wednesday' => 'Среда',
+			'Thursday' => 'Четверг',
+			'Friday' => 'Пятница',
+			'Saturday' => 'Суббота'
+		];
+
+		$monthArr = [
+			1 => 'Январь',
+			2 => 'Февраль',
+			3 => 'Март',
+			4 => 'Апрель',
+			5 => 'Май',
+			6 => 'Июнь',
+			7 => 'Июль',
+			8 => 'Август',
+			9 => 'Сентябрь',
+			10 => 'Октябрь',
+			11 => 'Ноябрь',
+			12 => 'Декабрь',
+		];
+
+		$dateArr = [];
+
+		$dateData = new \DateTime($date);
+
+		$dateArr['year'] = $dateData->format('Y');
+
+		$dateArr['month'] = $monthArr[$this->clearNum($dateData->format('m'))];
+
+		$dateArr['monthFormat'] = preg_match('/т$/u', $dateArr['month']) ? $dateArr['month'] . 'а' : preg_replace('/[ьй]/u', 'я', $dateArr['month']);
+
+		$dateArr['weekDay'] = $daysArr[$dateData->format('L')];
+
+		$dateArr['day'] = $dateData->format('d');
+
+		$dateArr['time'] = $dateData->format('H:i:s');
+
+		$dateArr['format'] = mb_strtolower($dateArr['day']) . ' ' . $dateArr['monthFormat'] . ' ' . $dateArr['year'];
+
+
+		return $dateArr;
+	}
 }

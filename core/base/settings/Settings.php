@@ -66,7 +66,9 @@ class Settings
 		'filters' => ['name' => 'Фильтры', 'img' => 'pages.png'],
 		'articles' => ['name' => 'Статьи'],
 		'sales' => ['name' => 'Акции'],
+		'news' => ['name' => 'Новости'],
 		'information' => ['name' => 'Информация'],
+		'advantages' => ['name' => 'Приемущества'],
 		'socials' => ['name' => 'Социальные сети'],
 		'settings' => ['name' => 'Настройки системы']
 	];
@@ -80,7 +82,7 @@ class Settings
 		'radio' => ['visible', 'show_top_menu', 'hit', 'sale', 'new', 'hot'],
 		'checkboxlist' => ['filters'],
 		'select' => ['menu_position', 'parent_id'],
-		'img' => ['img', 'main_img', 'img_years'],
+		'img' => ['img', 'main_img', 'img_years', 'promo_img'],
 		'gallery_img' => ['gallery_img', 'new_gallery_img']
 	];
 
@@ -110,7 +112,8 @@ class Settings
 		'hot' => ['Горячее предложение'],
 		'discount' => ['Скидка'],
 		'price' => ['Цена'],
-		'parent_id' => ['Выбрать категорию']
+		'parent_id' => ['Выбрать категорию'],
+		'promo_img' => ['Изображение для главной страницы']
 	];
 
 	// св-во, в котором будет храниться массив шаблонов в которых выводятся файлы
@@ -140,7 +143,7 @@ class Settings
 	// св-во, в котором будут храниться блоки
 	private $blockNeedle = [
 		'vg-rows' => [],
-		'vg-img' => ['img', 'main_img', 'img_years', 'number_of_years'],
+		'vg-img' => ['img', 'main_img', 'img_years', 'number_of_years', 'promo_img'],
 		'vg-content' => ['content']
 	];
 

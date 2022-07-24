@@ -186,4 +186,15 @@
 		</div>
 	</header>
 
+
+	<div class="search search-internal">
+		<button>
+			<svg class="inline-svg-icon svg-search">
+				<use xlink:href="<?= PATH . TEMPLATE ?>assets/img/icons.svg#search"></use>
+			</svg>
+		</button>
+		<input type="search" placeholder="Поиск по каталогу">
+	</div>
+
+
 	<main class="main">

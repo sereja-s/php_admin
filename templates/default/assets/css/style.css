@@ -325,7 +325,7 @@ input[type='search'], input[type='text'], input[type='email'] {
 @media screen and (max-width: 1715px) {
 	.icon-offer {
 		padding: 0 10px;
-		font-size: 22px
+		font-size: 15px;
 	}
 }
 
@@ -910,7 +910,7 @@ input[type='search'], input[type='text'], input[type='email'] {
 		right: 0;
 		width: 60px;
 		height: 100vh;
-		border-left: 1px solid #335252
+		/* border-left: 1px solid #335252 */
 	}
 }
 

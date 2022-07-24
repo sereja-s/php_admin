@@ -22,10 +22,10 @@ class RouteController extends BaseController
 		$adress_str = $_SERVER['REQUEST_URI'];
 
 		// если в суперглобальном массиве: $_SERVER и его ячейке: QUERY_STRING что-нибудь есть (не пустая)
-		if ($_SERVER['QUERY_STRING']) {
+		/* if ($_SERVER['QUERY_STRING']) {
 			// обрезаем строку: $adress_str с нулевого элемента по (находим первое вхождение в строке (в $adress_str) подстроки (в // $_SERVER['QUERY_STRING']) элемент, минус 1 элемент (знак- ?) и результат сохраняем в переменной: $adress_str
 			$adress_str = substr($adress_str, 0, strpos($adress_str, $_SERVER['QUERY_STRING']) - 1);
-		}
+		} */
 
 		// В переменную $path сохраним обрезанную строку (без знака /), в которой содержится имя выполнения скрипта
 		// (в ячейке PHP_SELF глобального массива $_SERVER)
@@ -39,7 +39,7 @@ class RouteController extends BaseController
 
 			// сделаем проверку: есть ли в конце адресной строки знак / 
 			// при этом знак / сразу после домена необходим (ставится системой автоматически и указыввает на корень сайта) 
-			if (
+			/* if (
 				// функция php: strrpos() ищет последнее вхождение подстроки (здесь- /) в строке (здесь- $adress_str) и возвращает номер позиции
 				// функция php: strlen() показвает длину строки (массива символов (здесь- $adress_str)) 
 				// т.к. у массива нумерация начинается с 0, а длина строки меряется с 1, учтём это и запишем -1 
@@ -54,7 +54,7 @@ class RouteController extends BaseController
 				// а также символы в конце строки, которые указаны в качестве второго не обязательного параметра на входе (здесь- /)
 				// 2-ым параметром функции php: redirect() укажем: 301- код ответа сервера (будет отправлен браузеру)
 				$this->redirect(rtrim($adress_str, '/'), 301);
-			}
+			} */
 
 			// в свойстве routes сохраним маршруты (обратились к классу Settings и его статическому методу get())
 			$this->routes = Settings::get('routes');
@@ -68,7 +68,12 @@ class RouteController extends BaseController
 			// функция php: explode()- перобразует строку (2-ой параметр) в массив по заданному разделителю (1-ый параметр)
 			// у нас адресная строка будет возвращена, сразу начиная 1-го символа, после знака / функцией substr() и только затем преобазована
 			// т.е. в переменную $url попадает полный маршрут
-			$url = explode('/', substr($adress_str, strlen(PATH)));
+			/* $url = explode('/', substr($adress_str, strlen(PATH))); */
+
+
+
+			$url = preg_split('/(\/)|(\?.*)/', $adress_str, 0, PREG_SPLIT_NO_EMPTY);
+
 
 			// проверим не в админку ли хочет попасть пользователь
 			// если запрос в админку
@@ -142,6 +147,47 @@ class RouteController extends BaseController
 					$route = 'admin';
 				}
 			} else {
+
+				// убедимся, что отправлен не Post-запрос (выпуск № 130 (отправка формы фильтров товара))
+				if (!$this->isPost()) {
+
+					$pattern = '';
+
+					$replacement = '';
+
+					if (END_SLASH) {
+
+						if (!preg_match('/\/(\?|$)/', $adress_str)) {
+
+							$pattern = '/(^.*?)(\?.*)?$/';
+
+							$replacement = '$1/';
+						}
+					} else {
+
+						if (preg_match('/\/(\?|$)/', $adress_str)) {
+
+							$pattern = '/(^.*?)\/(\?.*)?$/';
+
+							$replacement = '$1';
+						}
+					}
+
+					if ($pattern) {
+
+						$adress_str = preg_replace($pattern, $replacement, $adress_str);
+
+						if (!empty($_SERVER['QUERY_STRING'])) {
+
+							$adress_str .= '?' . $_SERVER['QUERY_STRING'];
+						}
+
+						$this->redirect($adress_str, 301);
+					}
+				}
+
+
+
 
 				// В переменную сохраним то что находится в переменной $routes (ячейке user, в его ячейке hrUrl) 
 				// (чтобы система понимала работать ей с ЧПУ или нет)

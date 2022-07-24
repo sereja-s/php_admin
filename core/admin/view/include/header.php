@@ -73,6 +73,7 @@
 							<div class="vg-element vg-half  vg-center">
 								<div>
 									<img src="<?= PATH . ADMIN_TEMPLATE ?>img/<?= $item['img'] ? $item['img'] : 'pages.png' ?>" alt="pages">
+									<?= $table ?>
 								</div>
 							</div>
 							<div class="vg-element vg-half vg-center vg_hidden">
