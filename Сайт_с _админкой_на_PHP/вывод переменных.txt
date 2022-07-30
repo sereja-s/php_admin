@@ -1,3 +1,11 @@
 <?= '<pre>';
 print_r($data['filters']);
 ?>
+
+'<pre>';
+print_r($res);
+'<pre>';
+
+'<pre>';
+var_dump($res);
+'<pre>';

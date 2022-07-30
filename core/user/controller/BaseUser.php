@@ -140,9 +140,9 @@ abstract class BaseUser extends \core\base\controller\BaseController
 						// к ключу конкатенируем символ квадратных скобок
 						$key .= '[]';
 
-						foreach ($item as $v) {
+						foreach ($item as $k => $v) {
 
-							$str .= $key . '=' . $v;
+							$str .= $key . '=' . $v . (!empty($item[$k + 1]) ? '&' : '');
 						}
 					} else {
 
