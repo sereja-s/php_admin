@@ -143,7 +143,7 @@ abstract class BaseModel extends BaseModelMethods
 
 		$order = $this->createOrder($set, $table); // переменная для хранения результата работы метода сортировки
 
-		$where = $this->createWhere($set, $table); // переменная для базового запроса
+		$paginationWhere = $where = $this->createWhere($set, $table); // переменная для базового запроса
 
 		// если в переменную ничего не пришло
 		if (!$where) {
@@ -170,8 +170,12 @@ abstract class BaseModel extends BaseModelMethods
 		// иначе запишем пустую строку
 		$limit = (!empty($set['limit'])) ? 'LIMIT ' . $set['limit'] : '';
 
+
+		$this->createPagination($set, $table, $paginationWhere, $limit);
+
+
 		// формируем запрос в переменной $query: Выбрать поля $fields из переменной $table, далее указываем переменные, которые 
-		// придут если они есть $join $where $order $limit
+		// придут (если они есть) $join $where $order $limit
 		$query = "SELECT $fields FROM $table $join $where $order $limit";
 
 
@@ -192,6 +196,31 @@ abstract class BaseModel extends BaseModelMethods
 
 		return $res;
 	}
+
+
+
+	protected function createPagination($set, $table, $where, &$limit)
+	{
+
+		if (!empty($set['pagination'])) {
+
+			$this->postNumber = isset($set['pagination']['qty']) ? (int)$set['pagination']['qty'] : QTY;
+
+			$this->linksNumber = isset($set['pagination']['qty_links']) ? (int)$set['pagination']['qty_links'] : QTY_LINKS;
+
+			$this->page = !is_array($set['pagination']) ? (int)$set['pagination'] : (int)($set['pagination']['page'] ?? 1);
+
+			if ($this->page > 0 && $this->postNumber > 0) {
+
+				$this->totalCount = $this->getTotalCount($table, $where);
+
+				$this->numberPages = (int)ceil($this->totalCount / $this->postNumber);
+
+				$limit = 'LIMIT ' . ($this->page - 1) * $this->postNumber . ',' . $this->postNumber;
+			}
+		}
+	}
+
 
 
 	/**

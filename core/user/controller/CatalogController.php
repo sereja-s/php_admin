@@ -19,6 +19,10 @@ class CatalogController extends BaseUser
 			'name' => 'названию'
 		]; */
 
+		// количество товаров для отображения на странице каталога
+		$quantities = [3, 5, 10];
+
+
 		$data = [];
 
 		if (!empty($this->parameters['alias'])) {
@@ -51,8 +55,6 @@ class CatalogController extends BaseUser
 
 		$order = $this->createCatalogOrder($orderDb);
 
-
-
 		$operand = $this->checkFilters($where);
 
 
@@ -65,12 +67,18 @@ class CatalogController extends BaseUser
 
 			'order' => $orderDb['order'],
 
-			'order_direction' => $orderDb['order_direction']
+			'order_direction' => $orderDb['order_direction'],
+
+			'pagination' => [
+
+				'qty' => $_SESSION['quantities'] ?? QTY,
+				'page' => $this->clearNum($_GET['page'] ?? 1) ?: 1
+			]
 
 		], $catalogFilters, $catalogPrices);
 
 
-		return compact('data', 'goods', 'catalogFilters', 'catalogPrices', 'order');
+		return compact('data', 'goods', 'catalogFilters', 'catalogPrices', 'order', 'quantities');
 	}
 
 

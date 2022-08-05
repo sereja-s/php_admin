@@ -6,7 +6,18 @@ namespace core\base\model;
 
 abstract class BaseModelMethods
 {
-	protected $sqlFunc = ['NOW()'];
+	// количество элементов для показа
+	protected $postNumber;
+	// количество ссылок
+	protected $linksNumber;
+	// количество страниц
+	protected $numberPages;
+	// текущая страница
+	protected $page;
+	// количество записей
+	protected $totalCount;
+
+	protected $sqlFunc = ['NOW()', 'RAND()'];
 	protected $tableRows;
 	// свойство используемое в методах модели для формирования UNION запросов к базе данных
 	protected $union = [];
@@ -765,6 +776,14 @@ abstract class BaseModelMethods
 
 		return $join_arr;
 	}
+
+
+	protected function getTotalCount($table, $where)
+	{
+
+		return $this->query("SELECT COUNT(*) as count FROM $table $where")[0]['count'];
+	}
+
 
 	// метод, для создания алиасов таблиц
 	protected function createTableAlias($table)

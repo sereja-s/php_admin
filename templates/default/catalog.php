@@ -192,9 +192,27 @@
 
 								<?php endif; ?>
 
-								<div class="catalog-section-top-items__unit catalog-section-top-items__toggle">
-									Показывать по:
-								</div>
+
+								<?php if (!empty($quantities)) : ?>
+
+
+									<div class="catalog-section-top-items__unit catalog-section-top-items__toggle" onclick="this.querySelector('.qty-items').classList.toggle('opened')">
+										Показывать по: <span><?= $_SESSION['quantities'] ?? '' ?></span>
+
+										<div class="qty-items">
+
+											<?php foreach ($quantities as $item) : ?>
+
+												<a href="#" style="display: block;"><?= $item ?></a>
+
+											<?php endforeach; ?>
+
+										</div>
+									</div>
+
+
+								<?php endif; ?>
+
 							</div>
 						</div>
 						<div class="catalog-section__wrapper">

@@ -6302,6 +6302,32 @@ input[type='search'], input[type='text'], input[type='email'] {
 	letter-spacing: .16px
 }
 
+
+
+.qty-items {
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	/* width: 100%; */
+	z-index: 1;
+	background: #D4DDE1;
+	padding: 10px;
+	font-size: large;
+	display: none;
+}
+
+.qty-items.opened {
+	display: block;
+}
+
+
+.qty-items a {
+	color: black;
+	text-decoration: none;
+}
+
+
+
 @media screen and (max-width: 1366px) {
 	.catalog-section-top-items__unit {
 		margin-right: 15px
