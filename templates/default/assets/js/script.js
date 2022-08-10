@@ -219,6 +219,13 @@ $(function () {
 
 				}
 			})
+
+			setTimeout(() => {
+
+				location.href = location.pathname
+
+			}, 100)
+
 		}
 	})
 

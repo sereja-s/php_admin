@@ -71,14 +71,22 @@ class CatalogController extends BaseUser
 
 			'pagination' => [
 
-				'qty' => $_SESSION['quantities'] ?? QTY,
+				'qty' =>  1/* $_SESSION['quantities'] ?? QTY */,
+
 				'page' => $this->clearNum($_GET['page'] ?? 1) ?: 1
 			]
+
+
+			//'pagination' => $this->clearNum($_GET['page'] ?? 1) ?: 1
 
 		], $catalogFilters, $catalogPrices);
 
 
-		return compact('data', 'goods', 'catalogFilters', 'catalogPrices', 'order', 'quantities');
+		$pages = $this->model->getPagination();
+
+
+
+		return compact('data', 'goods', 'catalogFilters', 'catalogPrices', 'order', 'quantities', 'pages');
 	}
 
 

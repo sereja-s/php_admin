@@ -6327,6 +6327,15 @@ input[type='search'], input[type='text'], input[type='email'] {
 }
 
 
+.pagination-current {	
+width: 25px; 
+height: 25px;
+background:#fff3b0;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;  
+}
+
+
 
 @media screen and (max-width: 1366px) {
 	.catalog-section-top-items__unit {

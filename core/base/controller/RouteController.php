@@ -14,7 +14,9 @@ class RouteController extends BaseController
 	// свойство маршруты
 	protected $routes;
 
-	// конструктор класса
+	/**
+	 * Конструктор класса (вызывается при создании объекта класса)
+	 */
 	private function __construct()
 	{
 		// получим адресную строку (сохраняем ячейку 'REQUEST_URI' суперглобального массива СЕРВЕР)
