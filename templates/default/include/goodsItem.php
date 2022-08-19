@@ -8,7 +8,7 @@
 
 	?>
 
-	<div class="<?= $mainClass ?>">
+	<a href="<?= $this->alias(['product' => $data['alias']]) ?>" class="<?= $mainClass ?>" style="color: black; text-decoration: none; font-size: 20px;">
 		<div class="<?= $classPrefix ?>__tabs_image">
 			<img src="<?= $this->img($data['img']) ?>" alt="<?= $data['name'] ?>">
 		</div>
@@ -64,6 +64,6 @@
 
 		<?php endif; ?>
 
-	</div>
+	</a>
 
 <?php endif; ?>
