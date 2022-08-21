@@ -71,7 +71,7 @@ class CatalogController extends BaseUser
 
 			'pagination' => [
 
-				'qty' =>  1/* $_SESSION['quantities'] ?? QTY */,
+				'qty' =>   $_SESSION['quantities'] ?? QTY,
 
 				'page' => $this->clearNum($_GET['page'] ?? 1) ?: 1
 			]

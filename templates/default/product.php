@@ -121,7 +121,7 @@
 
 									<?php
 
-									if (++$counter === 5) break;
+									if (++$counter > 5) break;
 
 									?>
 
@@ -208,80 +208,34 @@
 					<div class="card-tabs__bottom-wrapper">
 
 						<div class="card-tabs-item-wrapper tabs__tab">
-							<ul>
-								<li>Устраняет скрип дверей и петель</li>
-								<li>Препятствует коррозии</li>
-								<li>Препятствует обмерзанию</li>
-								<li>Облегчает монтаж пластиковых труб</li>
-								<li>Уменьшает трение поверхностей</li>
-								<li>Продлевает срок службы резиновых уплотнителей</li>
-								<li>Долговечна</li>
-								<li>Обладает водоотталкивающими свойствами</li>
-								<li>Обладает высокой термостойкостью (от -50°C до +230°C)</li>
-								<li>Не требует распыления</li>
-								<li>Не смывается и не стекает</li>
-								<li>Не испаряется</li>
-								<li>Нетоксична</li>
-							</ul>
+							<?= $data['content'] ?>
 						</div>
 
 						<div class="card-tabs-item-wrapper tabs__tab">
 							<div class="card-main-info__table main-info card-main-indfo_toggle">
-								<div class="card-main-info__table-row">
-									<div class="card-main-info__table-item">
-										Бренд
-									</div>
-									<div class="card-main-info__table-item">
-										ВМПАВТО
-									</div>
-								</div>
 
-								<div class="card-main-info__table-row">
-									<div class="card-main-info__table-item">
-										Вес
-									</div>
-									<div class="card-main-info__table-item">
-										0.1 кг
-									</div>
-								</div>
+								<?php if ($data['filters']) : ?>
 
-								<div class="card-main-info__table-row">
-									<div class="card-main-info__table-item">
-										Номинальный объем
-									</div>
-									<div class="card-main-info__table-item">
-										10 гр
-									</div>
-								</div>
+									<?php foreach ($data['filters'] as $item) : ?>
 
-								<div class="card-main-info__table-row">
-									<div class="card-main-info__table-item">
-										Термостойкость
-									</div>
-									<div class="card-main-info__table-item">
-										от -50°C до +230°C
-									</div>
-								</div>
+										<div class="card-main-info__table-row">
+											<div class="card-main-info__table-item">
+												<?= $item['name'] ?>
+											</div>
+											<div class="card-main-info__table-item">
+												<?= implode(', ', array_column($item['values'], 'name')) ?>
+											</div>
+										</div>
 
-								<div class="card-main-info__table-row">
-									<div class="card-main-info__table-item">
-										Номинальный объем
-									</div>
-									<div class="card-main-info__table-item">
-										10 гр
-									</div>
-								</div>
+									<?php endforeach; ?>
+
+								<?php endif; ?>
 
 							</div>
 						</div>
 
 						<div class="card-tabs-item-wrapper tabs__tab">
-							<ul>
-								<li>Самовывоз</li>
-								<li>Курьером</li>
-								<li>Наличный</li>
-								<li>Безналичный расчет</li>
-							</ul>
+							<?= !empty($deliveryInfo['content']) ? $deliveryInfo['content'] : '' ?>
 						</div>
 
 					</div>

@@ -231,3 +231,28 @@ $(function () {
 
 
 });
+
+/* =================================== кнопка ПОКАЗАТЬ ВСЁ ====================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+	let moreBtn = document.querySelector('.card-main-info__description .more-button')
+
+	if (moreBtn) {
+
+		moreBtn.addEventListener('click', e => {
+
+			e.preventDefault()
+
+			// плавный скролл к блоку характеристик товара при щелчке на кнопке ПОКАЗАТЬ ВСЁ
+			window.scrollTo({
+
+				top: document.querySelector('.card-tabs').getBoundingClientRect().top + scrollY,
+				behavior: 'smooth'
+			})
+
+			// блок характеристик товаров откроется при плавном скролле к нему
+			document.querySelectorAll('.card-tabs__toggle.tabs__toggle')[1].dispatchEvent(new Event('click'))
+		})
+	}
+})
