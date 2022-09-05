@@ -8,7 +8,7 @@
 
 	?>
 
-	<a href="<?= $this->alias(['product' => $data['alias']]) ?>" class="<?= $mainClass ?>" style="color: black; text-decoration: none; font-size: 20px;">
+	<a href="<?= $this->alias(['product' => $data['alias']]) ?>" class="<?= $mainClass ?>" style="color: black; text-decoration: none; font-size: 20px;" data-productContainer>
 		<div class="<?= $classPrefix ?>__tabs_image">
 			<img src="<?= $this->img($data['img']) ?>" alt="<?= $data['name'] ?>">
 		</div>
