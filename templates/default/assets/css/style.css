@@ -1011,6 +1011,22 @@ input[type='search'], input[type='text'], input[type='email'] {
 	height: 25px
 }
 
+.cart-btn-wrap [data-totalQty] {
+	width: 19px;
+	height: 19px;
+	border: 1px solid rgb(236, 163, 27);
+	background: white;
+	border-radius: 50%;
+	position: absolute;
+	right: calc(50% - 22px);
+	top: calc(50% - 22px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 12px;
+	font-weight: 900;
+}
+
 @media screen and (max-width: 1600px) {
 	.header__sidebar_btn svg.svg-basket {
 		width: 20px;
@@ -7255,7 +7271,11 @@ display: flex; align-items: center; justify-content: center;
 }
 
 .basket-btn{
-	display: block;
+	/* display: block; */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-decoration: none;
 	width: 280px;
 	text-transform: uppercase;
     min-height: 50px;

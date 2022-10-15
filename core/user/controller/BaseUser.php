@@ -38,6 +38,13 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		$this->set && $this->set = $this->set[0];
 
 
+		// получим данные для корзины
+		if (!$this->isAjax() && !$this->isPost()) {
+
+			$this->getCartData();
+		}
+
+
 		// получим в ячейку данные меню каталога (с раскрывающимся списком) в шапке сайта
 		$this->menu['catalog'] = $this->model->get('catalog', [
 			'where' => ['visible' => 1, 'parent_id' => null], // условие по которым выводить данные
@@ -510,10 +517,19 @@ abstract class BaseUser extends \core\base\controller\BaseController
 
 			$this->cart['total_sum'] += round($item['qty'] * $item['price'], 2);
 
-			if (!empty($item['old_price'])) {
+			// Выпуск №143 | Пользовательская часть | Корзина товаров | ч 1
+			$this->cart['total_old_sum'] += round($item['qty'] * ($item['old_price'] ?? $item['price']), 2);
+
+			/* if (!empty($item['old_price'])) {
 
 				$this->cart['total_old_sum'] += round($item['qty'] * $item['old_price'], 2);
-			}
+			} */
+		}
+
+		if ($this->cart['total_sum'] === $this->cart['total_old_sum']) {
+
+			// разрегистрируем ячейку (т.е. не будем выводить перечёркнутую сумму)
+			unset($this->cart['total_old_sum']);
 		}
 
 		return $this->cart;
