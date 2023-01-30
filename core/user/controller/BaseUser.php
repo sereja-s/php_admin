@@ -571,6 +571,26 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		/* return null; */
 	}
 
+	/**
+	 * Метод удаления данных из корзины
+	 */
+	protected function deleteCartData($id)
+	{
+		$id = $this->clearNum($id);
+
+		if ($id) {
+
+			$cart = &$this->getCart();
+
+			unset($cart[$id]);
+
+			$this->updateCart();
+
+			// вызываем метол с обязательным пересчётом (передаём true)
+			$this->getCartData(true);
+		}
+	}
+
 	// нам будет удобно работать, получив корзину единоразово
 	// (чтобы понять какой у нас массив будет можно хранить ссылку на суперглобальные массивы, но только 
 	// через передачу функции по ссылке)

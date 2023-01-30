@@ -556,10 +556,10 @@ abstract class BaseModel extends BaseModelMethods
 		$limit = !empty($set['limit']) ? 'LIMIT ' . $set['limit'] : '';
 
 
-		if (method_exists($this, 'createPagination')) {
+		/* if (method_exists($this, 'createPagination')) {
 
 			$this->createPagination($set, "($query)", $limit);
-		}
+		} */
 
 		$query .= " $order $limit";
 

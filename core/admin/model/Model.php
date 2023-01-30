@@ -274,7 +274,7 @@ class Model extends BaseModel
 
 				$correctCurrentTable = true;
 
-				$fields[] = "('current_table') AS current_table";
+				$fields[] = "('$currentTable') AS current_table";
 			}
 
 

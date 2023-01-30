@@ -260,6 +260,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	addToCart()
 
+	/* ====================================== order-popup при оформлении заказа ====================================== */
+
+	document.querySelectorAll('[data-popup]').forEach(item => {
+
+		if (item.getAttribute('data-popup')) {
+
+			let popupElement = document.querySelector(`.${item.getAttribute('data-popup')}`);
+
+			if (popupElement) {
+
+				item.addEventListener('click', () => {
+
+					popupElement.classList.add('open')
+				});
+
+				popupElement.addEventListener('click', e => {
+
+					if (e.target === popupElement) {
+
+						popupElement.classList.remove('open')
+					}
+
+				});
+
+			}
+		}
+	})
+
 })
 
 /* ================================================== Кнопки плюс и минус ========================================== */
@@ -327,7 +355,7 @@ function addToCart() {
 
 									if (typeof res[cartAttr] !== 'undefined') {
 
-										el.innerHTML = res[cartAttr] /* + ' руб.' */
+										el.innerHTML = res[cartAttr] + (attr === 'data-totalQty' ? '' : ' руб.')
 
 									}
 
