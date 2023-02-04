@@ -418,3 +418,122 @@ function changeQty() {
 		})
 	})
 }
+
+//------------------------------------ валидатор номера телефона (Выпуск №146) ---------------------------------------//
+
+document.querySelectorAll('input[type="tel"]').forEach(item => phoneValidate(item));
+
+function phoneValidate(item) {
+
+	let countriesOptions = {
+
+		// +7(495)111-22-33
+		'+7': {
+
+			// укажем лимит символов в строке телефона в форме
+			limit: 16,
+			// укажем св-во, в котором сохраним первые цифры для которых будет осуществляться подмена
+			firstDigits: '87',
+			// св-во при помощи которого будет осуществляться форматирование телефона (здесь- это объект, в котором мы 
+			// будем хранить порядковые номера символов, после которых будем что то вствлть(заменять и т.д.))
+			formatChars: {
+
+				2: '(',
+				6: ')',
+				10: '-',
+				13: '-',
+			}
+		},
+
+		// например добавим форатирование для другой страны:
+		'+994': {
+
+			// укажем лимит символов в строке телефона в форме
+			limit: 18,
+			// св-во при помощи которого будет осуществляться форматирование телефона (здесь- это объект, в котором мы 
+			// будем хранить порядковые номера символов, после которых будем что то вствлть(заменять и т.д.))
+			formatChars: {
+
+				4: '(',
+				8: ')',
+				12: '-',
+				15: '-',
+			}
+		}
+	};
+
+	item.addEventListener('input', e => {
+
+		if (e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward') {
+
+			// не мешаем пользователю ничего удалить
+			return false
+		};
+
+		// чистим от не цифр, всё что пользователь вводит в поле тел.номера формы
+		item.value = item.value.replace(/\D/g, '');
+
+		if (item.value) {
+
+			// сформируем корректные ключи (по стране)
+			for (let code in countriesOptions) {
+
+				if (countriesOptions.hasOwnProperty(code) && countriesOptions[code].firstDigits) {
+
+					let regExp = new RegExp(`^[${countriesOptions[code].firstDigits}]`);
+
+					if (regExp.test(item.value)) {
+
+						// заменяем value на code (здесь- код страны: +7)
+						item.value = item.value.replace(regExp, code);
+						break;
+					}
+				}
+			}
+
+			// если символа: + нет, его надо подставить
+			if (!/^\+/.test(item.value)) {
+
+				item.value = '+' + item.value;
+			}
+
+			// снова запустим цикл:
+			// сформируем корректные ключи (по стране)
+			for (let code in countriesOptions) {
+
+				if (countriesOptions.hasOwnProperty(code)/*  && countriesOptions[code].firstDigits */) {
+
+					let regExp = new RegExp(code.replace(/\+/g, '\\+'), 'g');
+
+					if (regExp.test(item.value)) {
+
+						for (let i in countriesOptions[code].formatChars) {
+
+							// приведём к xислу строковую переменную i
+							let j = +i;
+
+							if (item.value[j] && item.value[j] !== countriesOptions[code].formatChars[i]) {
+
+								item.value = item.value.substring(0, j) + countriesOptions[code].formatChars[i] + item.value.substring(j)
+							}
+						}
+
+						// ограничим данные
+						if (item.value[countriesOptions[code].limit]) {
+
+							item.value = item.value.substring(0, countriesOptions[code].limit);
+						}
+					}
+				}
+			}
+		}
+	});
+
+	// для корректной работы при перезагрузке страницы
+	item.dispatchEvent(new Event('input'));
+
+	// если после ввода телефонного номера пользователь попытается изменить формат записи на неправильный, номер 
+	// автоматически будет исправлен на корректный
+	item.addEventListener('change', () => phoneValidate(item));
+
+}

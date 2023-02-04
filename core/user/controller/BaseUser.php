@@ -16,6 +16,11 @@ abstract class BaseUser extends \core\base\controller\BaseController
 
 	protected $breadcrumbs;
 
+	/** 
+	 * св-во в котором будем держать данные пользователя (Выпуск №145)
+	 */
+	protected $userData = [];
+
 	/*Проектные свойства*/
 	protected $socials;
 
@@ -385,6 +390,16 @@ abstract class BaseUser extends \core\base\controller\BaseController
 
 			HEREDOC;
 		}
+	}
+
+	/** 
+	 * Метод установки данных пользователя в форму
+	 */
+	protected function setFormValues($key, $property = null, $arr = [])
+	{
+		!$arr && $arr = $_SESSION['res'] ?? [];
+
+		return $arr[$key] ?? ($this->$property[$key] ?? '');
 	}
 
 	protected function addToCart($id, $qty)

@@ -397,20 +397,7 @@ abstract class BaseAdmin extends BaseController
 		}
 	}
 
-	// метод, который будет добавлять данные в сесссионный массив
-	protected function addSessionData($arr = [])
-	{
-		if (!$arr) {
-			$arr = $_POST;
-		}
 
-		foreach ($arr as $key => $item) {
-			$_SESSION['res'][$key] = $item;
-		}
-
-		// перенаправим пользователя на ту же страницу
-		$this->redirect();
-	}
 
 	protected function countChar($str, $counter, $answer, $arr)
 	{

@@ -124,7 +124,7 @@
 
 		<section class="order-registration">
 			<div class="container">
-				<form class="order-registration-form">
+				<form class="order-registration-form" method="post" action="<?= $this->alias('orders') ?>">
 
 					<?php if (!empty($this->payments)) : ?>
 
@@ -176,10 +176,12 @@
 
 						<div class="order-popup__inner">
 
-							<input type="text" name="name" required placeholder="Ваше имя">
-							<input type="tel" name="phone" required placeholder="Телефон">
-							<input type="email" name="email" required placeholder="E-mail">
-							<textarea name="address" rows="10"></textarea>
+							<h2>Оформление заказа</h2>
+
+							<input type="text" name="name" required placeholder="Ваше имя" value="<?= $this->setFormValues('name', 'userData') ?>">
+							<input type="tel" name="phone" required placeholder="Телефон" value="<?= $this->setFormValues('phone', 'userData') ?>">
+							<input type="email" name="email" required placeholder="E-mail" value="<?= $this->setFormValues('email', 'userData') ?>">
+							<textarea name="address" rows="5"><?= $this->setFormValues('address', 'userData') ?></textarea>
 
 							<div class="amount-pay-wrapp">
 								Сумма к оплате:

@@ -16,6 +16,15 @@ class CartController extends BaseUser
 	{
 		parent::inputData();
 
+
+		/* $_SESSION['res']['phone'] = '9999999999999';
+
+		$this->userData = [
+			'name' => 'Masha',
+			'phone' => '78965411223',
+			'email' => 'mail@mail.ru'
+		]; */
+
 		$this->delivery = $this->model->get('delivery');
 		$this->payments = $this->model->get('payments');
 

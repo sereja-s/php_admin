@@ -152,6 +152,21 @@ trait BaseMethods
 			$this->controller = preg_split('/_?controller/', strtolower(preg_replace('/([^A-Z])([A-Z])/', '$1_$2', (new \ReflectionClass($this))->getShortName())), 0, PREG_SPLIT_NO_EMPTY)[0];
 	}
 
+	// метод, который будет добавлять данные в сесссионный массив
+	protected function addSessionData($arr = [])
+	{
+		if (!$arr) {
+			$arr = $_POST;
+		}
+
+		foreach ($arr as $key => $item) {
+			$_SESSION['res'][$key] = $item;
+		}
+
+		// перенаправим пользователя на ту же страницу
+		$this->redirect();
+	}
+
 	/**
 	 * метод для отображения даты 
 	 * (по умолчанию на вход принимает строку: $date)
