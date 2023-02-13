@@ -135,7 +135,7 @@
 								<?php foreach ($this->payments as $key => $item) : ?>
 
 									<label class="order-registration-radio-item">
-										<input class="order-registration-rad-inp" type="radio" name="payments_id" <?= !$key ? 'checked' : '' ?>>
+										<input class="order-registration-rad-inp" type="radio" value="<?= $item['id'] ?>" name="payments_id" <?= !$key ? 'checked' : '' ?>>
 										<div class="order-registration-radio-item-descr"><?= $item['name'] ?></div>
 									</label>
 
@@ -155,7 +155,7 @@
 								<?php foreach ($this->delivery as $key => $item) : ?>
 
 									<label class="order-registration-radio-item">
-										<input class="order-registration-rad-inp" type="radio" name="delivery_id" <?= !$key ? 'checked' : '' ?>>
+										<input class="order-registration-rad-inp" type="radio" value="<?= $item['id'] ?>" name="delivery_id" <?= !$key ? 'checked' : '' ?>>
 										<div class="order-registration-radio-item-descr"><?= $item['name'] ?></div>
 									</label>
 

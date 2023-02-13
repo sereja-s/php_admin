@@ -43,8 +43,8 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		$this->set && $this->set = $this->set[0];
 
 
-		// получим данные для корзины
-		if (!$this->isAjax() && !$this->isPost()) {
+		// получим данные для корзины (+Выпуск №147)
+		if (!$this->isAjax()/*  && !$this->isPost() */) {
 
 			$this->getCartData();
 		}
