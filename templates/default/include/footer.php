@@ -62,6 +62,7 @@
 <?php $this->getScripts(); ?>
 
 <!-- Выпуск №147 -->
+<!-- Выпуск №148 | Пользовательская часть | показ уведомлений пользователю -->
 <?php if (!empty($_SESSION['res']['answer'])) : ?>
 
 	<div class="wq-message__wrap"><?= $_SESSION['res']['answer'] ?></div>
