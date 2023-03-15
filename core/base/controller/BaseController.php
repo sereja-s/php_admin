@@ -266,6 +266,9 @@ abstract class BaseController
 			$type && $this->redirect(PATH);
 		}
 
+		// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+		$this->userData = $this->userId;
+
 		// сформируем модель пользователя (понадобится в пользовательской части)
 		// property_exists() — проверяет, имеет ли объект (или класс): $this свойство: userModel
 		if (property_exists($this, 'userModel')) {

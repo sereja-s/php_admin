@@ -30,8 +30,10 @@ abstract class BaseUser extends \core\base\controller\BaseController
 		// инициализируем стили и скрипты На вход здесь ничего не передаём
 		$this->init();
 
-		!$this->model && $this->model = Model::instance();
+		// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+		$this->checkAuth();
 
+		!$this->model && $this->model = Model::instance();
 
 		// в переменную получим данные для шапки сайта из таблицы: settings (логотип, название сайта, телефон, эл.почта, адрес)
 		$this->set = $this->model->get('settings', [

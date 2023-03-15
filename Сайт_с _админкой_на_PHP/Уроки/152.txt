@@ -1,0 +1,5 @@
+Подключим библиотеку для отправки почты: 
+	- переходим по ссылке: https://packagist.org/packages/phpmailer/phpmailer
+
+	- устанавливаем в проект пакет из консоли Open Server командой: composer require phpmailer/phpmailer
+

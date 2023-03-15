@@ -19,8 +19,8 @@ class OrdersController extends BaseUser
 
 		if ($this->isPost()) {
 
-			$this->delivery = $this->model->get('delivery');
-			$this->payments = $this->model->get('payments');
+			$this->delivery = $this->model->get('delivery', ['join_structure' => true]);
+			$this->payments = $this->model->get('payments', ['join_structure' => true]);
 
 			$this->order();
 		}
@@ -170,16 +170,148 @@ class OrdersController extends BaseUser
 			UserModel::instance()->checkUser($order['visitors_id']);
 		}
 
+		// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+		if (!($goods = $this->setOrdersGoods($order))) {
+
+			$this->sendError('Ошибка сохранения товаров заказа. Обратитесь к администрации сайта');
+		}
+
 		$this->sendSuccess('Спасибо за заказ! В ближайшее время наш специалист свяжется с Вами для уточнения деталей');
 
-		$this->sendOrderEmail(['order' => $order, 'visitor' => $visitor]);
+		// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+		$order['delivery'] = $this->delivery[$order['delivery_id']]['name'] ?? '';
+		$order['payments'] = $this->payments[$order['payments_id']]['name'] ?? '';
+
+		// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+		$this->sendOrderEmail(['order' => $order, 'visitor' => $visitor, 'goods' => $goods]);
 
 		$this->clearCart();
 
 		$this->redirect();
 	}
 
+
+	// Выпуск №150 | Пользовательская часть | сохранение товаров заказа
+	// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+
+	/** 
+	 * метод сохранения товаров заказа (просто установщик данных)
+	 */
+	protected function setOrdersGoods(array $order): ?array
+	{
+		// проверим есть ли таблица с товарами заказов
+		if (in_array('orders_goods', $this->model->showTables())) {
+
+			$ordersGoods = [];
+
+			// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+			$preparedGoods = [];
+
+			foreach ($this->cart['goods'] as $key => $item) {
+
+				// идентификатор заказа
+				$ordersGoods[$key]['orders_id'] = $order['id'];
+
+				// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+				$preparedGoods[$key] = $item;
+				$preparedGoods[$key]['total_sum'] = $item['qty'] * $item['price'];
+
+				foreach ($item as $field => $value) {
+
+					// проверим есть ли такое поле в соответствующей таблице (здесь- orders_goods)
+					if (!empty($this->model->showColumns('orders_goods')[$field])) {
+
+						// проверим является ли поле, которое пришло идентификатором: id
+						if ($this->model->showColumns('orders_goods')['id_row'] === $field) {
+
+							if ($this->model->showColumns('orders_goods')['goods_id']) {
+
+								$ordersGoods[$key]['goods_id'] = $value;
+							}
+						} else {
+
+							$ordersGoods[$key][$field] = $value;
+						}
+					}
+				}
+			}
+
+			// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+			if ($this->model->add('orders_goods', [
+
+				'fields' => $ordersGoods
+			])) {
+
+				return $preparedGoods;
+			}
+		}
+
+		// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+		return null;
+	}
+
 	protected function sendOrderEmail(array $orderData)
 	{
+		// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+		$dir = TEMPLATE . 'include/orderTemplates/';
+
+		$templatesArr = [];
+
+		if (is_dir($dir)) {
+
+			$list = scandir($dir);
+
+			foreach ($orderData as $name => $item) {
+
+				// используем поиск в массиве по регулярному выражению
+				if ($file = preg_grep('/^' . $name . '\./', $list)) {
+
+					$file = array_shift($file);
+
+					$template = file_get_contents($dir . $file);
+
+					if (!is_numeric(key($item))) {
+
+						$templatesArr[] = $this->renderOrderMailTemplate($template, $item);
+					} else {
+
+						if (($common = preg_grep('/' . $name . 'Header\./', $list))) {
+
+							$common = array_shift($common);
+
+							$templatesArr[] = $this->renderOrderMailTemplate(file_get_contents($dir . $common), []);
+						}
+
+						foreach ($item as $value) {
+
+							$templatesArr[] = $this->renderOrderMailTemplate($template, $value);
+						}
+
+						if (($common = preg_grep('/' . $name . 'Footer\./', $list))) {
+
+							$common = array_shift($common);
+
+							$templatesArr[] = $this->renderOrderMailTemplate(file_get_contents($dir . $common), []);
+						}
+					}
+				}
+			}
+
+			$sender = new SendMailController();
+
+			$sender->setMailBody($templatesArr)->send($orderData['visitor']['email']);
+		}
+	}
+
+	// Интернет магазин с нуля на php Выпуск №151 | Пользовательская часть | подготовка почтовых шаблонов
+	protected function renderOrderMailTemplate(string $template, array $data): string
+	{
+
+		foreach ($data as $key => $item) {
+
+			$template = preg_replace('/#' . $key . '#/i', $item, $template);
+		}
+
+		return $template;
 	}
 }

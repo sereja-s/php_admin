@@ -224,16 +224,18 @@ class Model extends \core\base\model\BaseModel
 	public function applyDiscount(&$data, $discount)
 	{
 
-		if ($discount) {
+		if (!empty($this->showColumns('goods')['discount'])) {
 
-			//if (isset($data['price'])) {
+			$data['old_price'] = null;
+		}
+
+		if ($discount) {
 
 			$data['old_price'] = $data['price'];
 
 			$data['discount'] = $discount;
 
 			$data['price'] = $data['old_price'] - ($data['old_price'] / 100 * $discount);
-			//}
 		}
 	}
 }

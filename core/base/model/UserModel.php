@@ -17,6 +17,7 @@ class UserModel extends BaseModel
 
 	// пользовательские данные
 	private $userData = [];
+
 	// ошибки
 	private $error;
 	// таблица БД (данные пользователей сайта)

@@ -109,3 +109,10 @@ function autoloadMainClasses($class_name)
 
 // функция автоматической загрузки классов
 spl_autoload_register('autoloadMainClasses');
+
+// Выпуск №152 | Пользовательская часть | отправка уведомлений на email
+// для подключения композером своих файлов для автозагрузки загруженных пакетов(библиотек) 
+if (is_readable('vendor/autoload.php')) {
+
+	include 'vendor/autoload.php';
+}
