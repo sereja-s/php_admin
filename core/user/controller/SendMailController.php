@@ -66,13 +66,13 @@ class SendMailController extends BaseUser
 			$mail->isSMTP();                                            //Send using SMTP
 			$mail->Host       = 'smtp.mail.ru';                     //Set the SMTP server to send through
 			$mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-			$mail->Username   = 'sereja-suvorov-1979@mail.ru';                     //SMTP username
+			$mail->Username   = 'sait_postroen@mail.ru';                     //SMTP username
 			$mail->Password   = 'zu9aDdrrty7xiWfaY3JA';                               //SMTP password
 			$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
 			$mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
-			//Recipients
-			$mail->setFrom('sereja-suvorov-1979@mail.ru', 'Заявка с интернет-магазина ' . $_SERVER['HTTP_HOST']);
+			//Recipients - Получатели
+			$mail->setFrom('sait_postroen@mail.ru', 'Заявка с интернет-магазина ' . $_SERVER['HTTP_HOST']);
 			//$mail->addAddress('joe@example.net', 'Joe User');     //Add a recipient
 
 			foreach ($to as $adress) {
@@ -81,7 +81,7 @@ class SendMailController extends BaseUser
 			}
 
 
-			$mail->addReplyTo('sereja-suvorov-1979@mail.ru'/* , 'Information' */);
+			$mail->addReplyTo('sait_postroen@mail.ru'/* , 'Information' */);
 			//$mail->addCC('cc@example.com');
 			//$mail->addBCC('bcc@example.com');
 
