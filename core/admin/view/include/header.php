@@ -36,6 +36,7 @@
 						</div>
 						<form action="<?= PATH . \core\base\settings\Settings::get('routes')['admin']['alias'] ?>/search" autocomplete="off">
 							<input type="text" name="search" class="vg-input vg-text">
+							<!-- подкинули дополнительный input (для работы с ним в JS ппри реализации поиска по админке) -->
 							<input type="hidden" name="search_table" value="<?= $this->table ?>">
 							<div class="vg-element vg-firm-background-color4 vg-box-shadow search_links search_res">
 

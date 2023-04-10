@@ -59,6 +59,48 @@
 	</svg>
 </div>
 
+<?php if (!$this->userData) : ?>
+
+	<div class="login-popup">
+
+		<div class="order-popup__inner">
+
+			<h2><span>Регистрация</span> <span>Вход</span> </h2>
+
+			<form action="<?= $this->alias(['login' => 'registration']) ?>" method="post">
+
+				<input type="text" name="name" required placeholder="Ваше имя" value="<?= $this->setFormValues('name') ?>">
+				<input type="tel" name="phone" required placeholder="Телефон" value="<?= $this->setFormValues('phone') ?>">
+				<input type="email" name="email" required placeholder="E-mail" value="<?= $this->setFormValues('email') ?>">
+
+				<input type="password" name="password" required placeholder="Пароль">
+				<input type="password" name="confirm_password" required placeholder="Подтверждение пароля">
+
+
+				<div class="send-order">
+					<input class="execute-order_btn" type="submit" value="Регистрация">
+				</div>
+
+			</form>
+			<form action="<?= $this->alias(['login' => 'login']) ?>" method="post" style='display: none'>
+
+				<input type="text" name="login" required placeholder="E-mail" value="<?= $this->setFormValues('email') ?>">
+				<input type="password" name="password" required placeholder="Пароль">
+
+				<div class="send-order">
+					<input class="execute-order_btn" type="submit" value="Вход">
+				</div>
+
+			</form>
+
+
+
+		</div>
+
+	</div>
+
+<?php endif; ?>
+
 <?php $this->getScripts(); ?>
 
 <!-- Выпуск №147 -->

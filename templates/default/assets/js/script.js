@@ -270,7 +270,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			if (popupElement) {
 
-				item.addEventListener('click', () => {
+				// Выпуск №154 | Пользовательская часть | регистрация пользователя
+				item.addEventListener('click', e => {
+
+					e.preventDefault()
 
 					popupElement.classList.add('open')
 				});
@@ -286,6 +289,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			}
 		}
+	})
+
+	// Выпуск №154 | Пользовательская часть | регистрация пользователя
+	let loginVariants = document.querySelectorAll('.login-popup h2 span')
+	let loginFormVariants = document.querySelectorAll('.login-popup form')
+
+	loginVariants.forEach(item => {
+
+		item.addEventListener('click', () => {
+
+			// получим порядковый номер элемента
+			let index = [...loginVariants].indexOf(item)
+
+			loginFormVariants[index].style.display = 'block'
+			loginFormVariants[+!index].style.display = 'none'
+		})
 	})
 
 })

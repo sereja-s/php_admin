@@ -89,6 +89,13 @@
 						</div>
 					</div>
 
+					<!-- кнопка перехода к регистрации (авторизации) -->
+					<div class="header__sidebar_btn">
+						<a href="<?= $this->userData ? $this->alias('lk') : '#' ?>" <?= !$this->userData ? 'data-popup = "login-popup"' : '' ?>>
+							<img class="social" src="<?= PATH . TEMPLATE ?>assets/img/user_2.png">
+						</a>
+					</div>
+
 					<?php if (!empty($this->socials)) : ?>
 						<?php foreach ($this->socials as $item) : ?>
 							<div class="header__sidebar_btn">
@@ -188,14 +195,18 @@
 	</header>
 
 
-	<div class="search search-internal">
-		<button>
-			<svg class="inline-svg-icon svg-search">
-				<use xlink:href="<?= PATH . TEMPLATE ?>assets/img/icons.svg#search"></use>
-			</svg>
-		</button>
-		<input type="search" placeholder="Поиск по каталогу">
-	</div>
+	<?php if ($this->getController() !== 'index') : ?>
+
+		<div class="search search-internal">
+			<button>
+				<svg class="inline-svg-icon svg-search">
+					<use xlink:href="<?= PATH . TEMPLATE ?>assets/img/icons.svg#search"></use>
+				</svg>
+			</button>
+			<input type="search" placeholder="Поиск по каталогу">
+		</div>
+
+	<?php endif; ?>
 
 
 	<main class="main">

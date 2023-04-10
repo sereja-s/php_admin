@@ -16,6 +16,8 @@ abstract class BaseUser extends \core\base\controller\BaseController
 
 	protected $breadcrumbs;
 
+
+
 	/** 
 	 * св-во в котором будем держать данные пользователя (Выпуск №145)
 	 */

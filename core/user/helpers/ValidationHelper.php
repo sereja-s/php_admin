@@ -61,6 +61,9 @@ trait ValidationHelper
 
 			$this->addSessionData();
 		}
+
+		// Выпуск №154 | Пользовательская часть | регистрация
+		$this->redirect();
 	}
 
 	protected function sendSuccess($text, $class = 'success')
