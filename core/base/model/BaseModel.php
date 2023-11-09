@@ -105,7 +105,7 @@ abstract class BaseModel extends BaseModelMethods
 	 * 			 'no_concat' => false/true Если True не присоединяем имя таблицы к полям и Where
 	 *           'where' =>  ['fio'=>'Smirnova', 'name'=>'Masha', 'surname'=>'Sergeevna'],
 	 *           'operand' =>['=', '<>'],
-	 *           'condition'=>['ADN'],
+	 *           'condition'=>['AND'],
 	 *           'order'=>['fio','name','surname'],
 	 *           'order_direction'=>['ASC','DESC'],
 	 *           'limit'=>'1'

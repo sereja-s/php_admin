@@ -82,9 +82,10 @@
 				</div>
 
 			</form>
-			<form action="<?= $this->alias(['login' => 'login']) ?>" method="post" style='display: none'>
+			<!-- <form id="lk" action="<?= $this->alias('lk') ?>" method="post" style='display: none'> -->
+			<form id="lk" action="<?= $this->alias(['login' => 'login']) ?>" method="post" style='display: none'>
 
-				<input type="text" name="login" required placeholder="E-mail" value="<?= $this->setFormValues('email') ?>">
+				<input type="text" name="email" required placeholder="E-mail" value="<?= $this->setFormValues('email', 'userData') ?>">
 				<input type="password" name="password" required placeholder="Пароль">
 
 				<div class="send-order">
@@ -93,11 +94,46 @@
 
 			</form>
 
-
-
 		</div>
 
 	</div>
+
+	<script src="<?= PATH . ADMIN_TEMPLATE ?>js/frameworkfunctions.js"></script>
+
+	<script>
+		let form = document.querySelector('#lk')
+
+		if (form) {
+
+			form.addEventListener('submit', e => {
+
+				// проверим событие сгенерировано пользователем или программным кодом
+				if (e.isTrusted) {
+
+					e.preventDefault
+
+					Ajax({
+
+						data: {
+
+							ajax: 'token'
+						}
+					}).then(res => {
+
+						if (res) {
+
+							form.insertAdjacentHTML('afterbegin', `<input type="hidden" name="token" value="${res}">`)
+						}
+
+						// тригируем событие (здесь- опять сработает событие: submit и добавленный ранее input тоже попадёт в POST-запрос)
+						// при этом код выше повторно не сработает (т.к. событие вызвано программныи кодом)
+						form.submit()
+
+					})
+				}
+			})
+		}
+	</script>
 
 <?php endif; ?>
 

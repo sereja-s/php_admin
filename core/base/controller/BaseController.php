@@ -34,6 +34,9 @@ abstract class BaseController
 	protected $scripts;
 
 	protected $userId;
+	// +Выпуск №117
+	protected $userData;
+	protected $userModel;
 
 	// свойство, в котором будут находиться данные, которые пришли из БД (если будет подключаться шаблон редактирования)
 	protected $data;
@@ -256,7 +259,7 @@ abstract class BaseController
 	}
 
 	// метод который отвечает за проверку авторизации (на вход принимает флаг: $type (значение по умолчанию: false) 
-	// показывает: admin или нет)
+	// показывает: admin или нет) +Выпуск №117
 	protected function checkAuth($type = false)
 	{
 		// метод: checkUser()- делает проверку пользователя
@@ -270,7 +273,7 @@ abstract class BaseController
 		$this->userData = $this->userId;
 
 		// сформируем модель пользователя (понадобится в пользовательской части)
-		// property_exists() — проверяет, имеет ли объект (или класс): $this свойство: userModel
+		// property_exists() — проверяет, имеет ли объект(или класс): $this свойство: userModel
 		if (property_exists($this, 'userModel')) {
 			// в свойство: userModel вернётся объект класса: UserModel
 			$this->userModel = UserModel::instance();

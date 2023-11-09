@@ -64,15 +64,15 @@ class SendMailController extends BaseUser
 			//Server settings
 			//$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
 			$mail->isSMTP();                                            //Send using SMTP
-			$mail->Host       = 'smtp.mail.ru';                     //Set the SMTP server to send through
+			$mail->Host       = 'smtp.yandex.ru';                     //Set the SMTP server to send through
 			$mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-			$mail->Username   = 'sait_postroen@mail.ru';                     //SMTP username
-			$mail->Password   = 'zu9aDdrrty7xiWfaY3JA';                               //SMTP password
+			$mail->Username   = 'SaitPostroen';                     //SMTP username
+			$mail->Password   = 'lvhmhnkqorkwcimp';                               //SMTP password
 			$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
 			$mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
 			//Recipients - Получатели
-			$mail->setFrom('sait_postroen@mail.ru', 'Заявка с интернет-магазина ' . $_SERVER['HTTP_HOST']);
+			$mail->setFrom('SaitPostroen@yandex.ru', 'Заявка с интернет-магазина ' . $_SERVER['HTTP_HOST']);
 			//$mail->addAddress('joe@example.net', 'Joe User');     //Add a recipient
 
 			foreach ($to as $adress) {
@@ -81,7 +81,7 @@ class SendMailController extends BaseUser
 			}
 
 
-			$mail->addReplyTo('sait_postroen@mail.ru'/* , 'Information' */);
+			$mail->addReplyTo('SaitPostroen@yandex.ru'/* , 'Information' */);
 			//$mail->addCC('cc@example.com');
 			//$mail->addBCC('bcc@example.com');
 

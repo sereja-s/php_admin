@@ -11,7 +11,6 @@ class CatalogController extends BaseUser
 
 	protected function inputData()
 	{
-
 		parent::inputData();
 
 		/* $order = [
@@ -21,7 +20,6 @@ class CatalogController extends BaseUser
 
 		// количество товаров для отображения на странице каталога
 		$quantities = [3, 5, 10];
-
 
 		$data = [];
 
@@ -57,8 +55,6 @@ class CatalogController extends BaseUser
 
 		$operand = $this->checkFilters($where);
 
-
-
 		$goods = $this->model->getGoods([
 
 			'where' => $where,
@@ -76,20 +72,14 @@ class CatalogController extends BaseUser
 				'page' => $this->clearNum($_GET['page'] ?? 1) ?: 1
 			]
 
-
 			//'pagination' => $this->clearNum($_GET['page'] ?? 1) ?: 1
 
 		], $catalogFilters, $catalogPrices);
 
-
 		$pages = $this->model->getPagination();
-
-
 
 		return compact('data', 'goods', 'catalogFilters', 'catalogPrices', 'order', 'quantities', 'pages');
 	}
-
-
 
 	protected function checkFilters(&$where)
 	{

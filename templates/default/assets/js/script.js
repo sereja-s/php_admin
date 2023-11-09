@@ -198,10 +198,7 @@ $(function () {
 
 		e.preventDefault();
 
-
 		let qty = +$(this).text()
-
-
 
 		if (qty && !isNaN(qty)) {
 
@@ -448,7 +445,6 @@ function phoneValidate(item) {
 
 		// +7(495)111-22-33
 		'+7': {
-
 			// укажем лимит символов в строке телефона в форме
 			limit: 16,
 			// укажем св-во, в котором сохраним первые цифры для которых будет осуществляться подмена
@@ -483,6 +479,7 @@ function phoneValidate(item) {
 
 	item.addEventListener('input', e => {
 
+		// если тип кнопки, которую нажимает пользователь: удалить символ(впереди или вконце)
 		if (e.inputType === 'deleteContentBackward' || e.inputType === 'deleteContentForward') {
 
 			// не мешаем пользователю ничего удалить
@@ -493,17 +490,17 @@ function phoneValidate(item) {
 		item.value = item.value.replace(/\D/g, '');
 
 		if (item.value) {
-
 			// сформируем корректные ключи (по стране)
 			for (let code in countriesOptions) {
 
 				if (countriesOptions.hasOwnProperty(code) && countriesOptions[code].firstDigits) {
 
+					// создадим объект регулярного выражения
 					let regExp = new RegExp(`^[${countriesOptions[code].firstDigits}]`);
 
 					if (regExp.test(item.value)) {
 
-						// заменяем value на code (здесь- код страны: +7)
+						// заменяем value на code(здесь- код страны: +7)
 						item.value = item.value.replace(regExp, code);
 						break;
 					}
@@ -528,7 +525,7 @@ function phoneValidate(item) {
 
 						for (let i in countriesOptions[code].formatChars) {
 
-							// приведём к xислу строковую переменную i
+							// приведём к числу строковую переменную i
 							let j = +i;
 
 							if (item.value[j] && item.value[j] !== countriesOptions[code].formatChars[i]) {

@@ -8,7 +8,6 @@ class AjaxController extends BaseUser
 {
 	public function ajax()
 	{
-
 		if (isset($this->ajaxData['ajax'])) {
 
 			$this->inputData();
@@ -21,7 +20,6 @@ class AjaxController extends BaseUser
 			switch ($this->ajaxData['ajax']) {
 
 				case 'catalog_quantities':
-
 
 					$qty =  $this->clearNum($this->ajaxData['qty'] ?? 0);
 

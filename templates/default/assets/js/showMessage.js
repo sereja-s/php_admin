@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		};
 
 		let successStyles = {
-
 			backgroundColor: '#4c8a3c',
 			color: 'white',
 			marginBottom: '10px',
@@ -44,9 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			}
 
-			// если не пришёл тег div (т.е. если дочерних элементов у класса нет, то children.length вернёт ноль)
+			// если не пришёл тег div (т.е. если дочерних элементов(сообщений) у класса нет, то children.length вернёт ноль)
 			if (!messageWrap.children.length) {
-
 				// оборачиваем в div
 				messageWrap.innerHTML = `<div>${messageWrap.innerHTML}</div>`
 
@@ -57,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 				if (messageWrap.children.hasOwnProperty(i)) {
 
-					// определим тип стилей
+					// Определим тип стилей( для success или error)
 
 					// если находим поле: success, обратимся к value, в котором хранится строка с классами, то в переменную 
 					// положим то что хранится в successStyles, иначе errorStyles
@@ -74,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 			}
 
-			// полключим слушатели для двух событий
+			// полключим слушатели для двух событий (на вход- 1-событие, 2-функция, 3-фаза- необязательный(т.к. фаза- всплытие))
 			['click', 'scroll'].forEach(event => document.addEventListener(event, hideMessages));
 
 		}
@@ -87,14 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		let messageWrap = document.querySelector('.wq-message__wrap');
 
-
 		if (messageWrap) {
 
 			messageWrap.remove()
-
 		}
 
-		// отключим слушатели для двух событий
+		// отключим слушатели для двух событий (на вход- 1-событие, 2-функция, 3-фаза- необязательный(т.к. фаза- всплытие))
 		['click', 'scroll'].forEach(event => document.removeEventListener(event, hideMessages));
 	}
 });

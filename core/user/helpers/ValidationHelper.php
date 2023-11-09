@@ -59,6 +59,7 @@ trait ValidationHelper
 
 		if ($class === 'error') {
 
+			// добавляем данные в сессионный массив (метод из BaseMethods.php)
 			$this->addSessionData();
 		}
 
@@ -68,7 +69,7 @@ trait ValidationHelper
 
 	protected function sendSuccess($text, $class = 'success')
 	{
-
-		$this->sendError($text, $class);
+		$_SESSION['res']['answer'] = '<div class="' . $class . '">' . $text . '</div>';
+		//$this->sendError($text, $class);
 	}
 }

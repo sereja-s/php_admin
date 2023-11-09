@@ -5,7 +5,6 @@ namespace core\base\controller;
 // класс вспомогательных методов
 trait BaseMethods
 {
-
 	// Метод очистки данных (для строковых данных, а также массивов)
 	protected function clearStr($str)
 	{
@@ -152,7 +151,9 @@ trait BaseMethods
 			$this->controller = preg_split('/_?controller/', strtolower(preg_replace('/([^A-Z])([A-Z])/', '$1_$2', (new \ReflectionClass($this))->getShortName())), 0, PREG_SPLIT_NO_EMPTY)[0];
 	}
 
-	// метод, который будет добавлять данные в сесссионный массив
+	/** 
+	 * метод, который будет добавлять данные в сессионный массив (+Выпуск №145)
+	 */
 	protected function addSessionData($arr = [])
 	{
 		if (!$arr) {

@@ -116,7 +116,7 @@ class LoginController extends \core\base\controller\BaseController
 
 					// иначе (если данные пользователя пришли)
 				} else {
-					// если пользоватль не прошёл проверку в методе: checkUser() из класса: UserModel
+					// если пользователь не прошёл проверку в методе: checkUser() из класса: UserModel
 					if (!$this->model->checkUser($userData[0]['id'])) {
 						// в переменной: $error сохраним результат работы метода: getLastError() из класса: UserModel
 						$error = $this->model->getLastError();

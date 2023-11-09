@@ -7,7 +7,6 @@ use core\user\helpers\ValidationHelper;
 
 class OrdersController extends BaseUser
 {
-
 	use ValidationHelper;
 
 	protected $delivery = [];
@@ -26,6 +25,7 @@ class OrdersController extends BaseUser
 		}
 	}
 
+	// Выпуск №147
 	protected function order()
 	{
 		if (empty($this->cart['goods']) || empty($_POST)) {
@@ -134,7 +134,6 @@ class OrdersController extends BaseUser
 				'return_id' // указали ключ, чтобы вернулся
 			]);
 		}
-
 
 		// после того как зарегистрировали пользователя, формируем оставшиеся данные о заказе:
 

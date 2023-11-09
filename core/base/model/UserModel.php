@@ -70,7 +70,6 @@ class UserModel extends BaseModel
 			}
 
 			// добавим запись в таблицу БД (из $userTable) авторизации админа
-
 			$this->add($this->userTable, [
 				'fields' => [
 					'name' => 'admin',
@@ -100,7 +99,7 @@ class UserModel extends BaseModel
 		}
 	}
 
-	// Метод проверки пользователя (на вход: 1- идентификатор пользователя, 2- флаг администратора)
+	// Метод проверки пользователя (на вход: 1- идентификатор пользователя, 2- флаг администратора) Точка входа
 	public function checkUser($id = false, $admin = false)
 	{
 		// если что то пришло в $admin и метод: setAdmin() ещё не был вызван, вызовем его
@@ -117,7 +116,6 @@ class UserModel extends BaseModel
 			$method = 'set';
 		}
 
-		// описываем конструкцию: try-catch
 		try {
 			// вызовем метод из переменной: $method
 			$this->$method();
@@ -196,7 +194,7 @@ class UserModel extends BaseModel
 			throw new AuthException('Не найжены данные в таблице ' . $this->userTable . ' по идентификатору ' . $data['id'], 1);
 		}
 
-		// получим данные пользователя (что бы они сразу лежали массивом)
+		// получим данные пользователя (что бы они сразу лежали массивом) +Выпуск №116
 		$this->userData = $this->userData[0];
 
 		return true;

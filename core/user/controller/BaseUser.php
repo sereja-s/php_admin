@@ -84,11 +84,7 @@ abstract class BaseUser extends \core\base\controller\BaseController
 
 		$this->breadcrumbs = $this->render(TEMPLATE . 'include/breadcrumbs');
 
-
-
 		if (!$this->content) {
-
-
 
 			//if(!$this->template) { $this->template = ADMIN_TEMPLATE . 'show'; }
 
