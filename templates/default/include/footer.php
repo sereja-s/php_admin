@@ -82,8 +82,8 @@
 				</div>
 
 			</form>
-			<!-- <form id="lk" action="<?= $this->alias('lk') ?>" method="post" style='display: none'> -->
-			<form id="lk" action="<?= $this->alias(['login' => 'login']) ?>" method="post" style='display: none'>
+			<form id="lk" action="<?= $this->alias('lk') ?>" method="post" style='display: none'>
+				<!-- <form id="lk" action="<?= $this->alias(['login' => 'login']) ?>" method="post" style='display: none'> -->
 
 				<input type="text" name="email" required placeholder="E-mail" value="<?= $this->setFormValues('email', 'userData') ?>">
 				<input type="password" name="password" required placeholder="Пароль">

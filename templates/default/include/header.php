@@ -91,7 +91,7 @@
 
 					<!-- кнопка перехода к регистрации (авторизации) -->
 					<div class="header__sidebar_btn">
-						<a href="<?= $this->userData ? $this->alias(['login' => 'login']) : '#' ?>" <?= !$this->userData ? 'data-popup = "login-popup"' : '' ?>>
+						<a href="<?= $this->userData ? $this->alias(['lk']) : '#' ?>" <?= !$this->userData ? 'data-popup = "login-popup"' : '' ?>>
 							<img class="social" src="<?= PATH . TEMPLATE ?>assets/img/user_2.png">
 						</a>
 						<!-- <a href="#" data-popup="login-popup">

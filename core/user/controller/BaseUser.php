@@ -77,7 +77,6 @@ abstract class BaseUser extends \core\base\controller\BaseController
 
 	protected function outputData()
 	{
-
 		// в переменной сохраним результат работы ф-ии php: func_get_arg()- Возвращает указанный аргумент из списка аргументов пользовательской функции (здесь- порядковый номер: 0)
 		$args = func_get_arg(0);
 		$vars = $args ? $args : [];
